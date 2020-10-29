@@ -649,8 +649,8 @@ Wire Wire Line
 Wire Wire Line
 	10800 6000 10800 6050
 Connection ~ 10800 6000
-Text Notes 10250 5200 0    50   ~ 0
-Add a 100nF ceramic \ncapacitor to every IC.
+Text Notes 10250 5300 0    50   ~ 0
+Add a 100nF ceramic \ncapacitor to every IC\nto please the gods of\nsignal integrity.
 Wire Wire Line
 	1450 5750 2000 5750
 Wire Wire Line
@@ -676,23 +676,23 @@ Wire Wire Line
 $Comp
 L 74xx:7400 U1
 U 1 1 5FAC566C
-P 1150 1300
-F 0 "U1" H 1350 1550 50  0000 C CNN
-F 1 "7400" H 1400 1450 50  0000 C CNN
-F 2 "" H 1150 1300 50  0001 C CNN
-F 3 "http://www.ti.com/lit/gpn/sn7400" H 1150 1300 50  0001 C CNN
-	1    1150 1300
+P 10600 2300
+F 0 "U1" H 10800 2550 50  0000 C CNN
+F 1 "7400" H 10850 2450 50  0000 C CNN
+F 2 "" H 10600 2300 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn7400" H 10600 2300 50  0001 C CNN
+	1    10600 2300
 	1    0    0    -1  
 $EndComp
 $Comp
 L 74xx:7400 U1
 U 2 1 5FAC56A9
-P 6500 1150
-F 0 "U1" H 6650 1450 50  0000 C CNN
-F 1 "7400" H 6650 1350 50  0000 C CNN
-F 2 "" H 6500 1150 50  0001 C CNN
-F 3 "http://www.ti.com/lit/gpn/sn7400" H 6500 1150 50  0001 C CNN
-	2    6500 1150
+P 10600 2850
+F 0 "U1" H 10750 3150 50  0000 C CNN
+F 1 "7400" H 10750 3050 50  0000 C CNN
+F 2 "" H 10600 2850 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn7400" H 10600 2850 50  0001 C CNN
+	2    10600 2850
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -708,11 +708,6 @@ F 3 "http://www.ti.com/lit/gpn/sn7400" H 10600 1300 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	1450 1300 1600 1300
-Wire Wire Line
-	850  850  850  1200
-Wire Wire Line
-	850  1200 850  1400
-Connection ~ 850  1200
 Wire Wire Line
 	9650 5550 9650 6350
 Connection ~ 9650 5550
@@ -891,61 +886,29 @@ Wire Wire Line
 $Comp
 L 74xx:7400 U1
 U 3 1 5FECED65
-P 10600 2750
+P 6500 1150
 AR Path="/5FECED65" Ref="U1"  Part="3" 
 AR Path="/60888F9A/5FECED65" Ref="U?"  Part="3" 
-F 0 "U1" H 10600 3075 50  0000 C CNN
-F 1 "7400" H 10600 2984 50  0000 C CNN
-F 2 "" H 10600 2750 50  0001 C CNN
-F 3 "http://www.ti.com/lit/gpn/sn7400" H 10600 2750 50  0001 C CNN
-	3    10600 2750
+F 0 "U1" H 6500 1475 50  0000 C CNN
+F 1 "7400" H 6500 1384 50  0000 C CNN
+F 2 "" H 6500 1150 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn7400" H 6500 1150 50  0001 C CNN
+	3    6500 1150
 	1    0    0    -1  
 $EndComp
 $Comp
 L 74xx:7400 U1
 U 4 1 5FECED6C
-P 10600 3300
+P 10600 3400
 AR Path="/5FECED6C" Ref="U1"  Part="4" 
 AR Path="/60888F9A/5FECED6C" Ref="U?"  Part="4" 
-F 0 "U1" H 10800 3550 50  0000 C CNN
-F 1 "7400" H 10800 3450 50  0000 C CNN
-F 2 "" H 10600 3300 50  0001 C CNN
-F 3 "http://www.ti.com/lit/gpn/sn7400" H 10600 3300 50  0001 C CNN
-	4    10600 3300
+F 0 "U1" H 10800 3650 50  0000 C CNN
+F 1 "7400" H 10800 3550 50  0000 C CNN
+F 2 "" H 10600 3400 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn7400" H 10600 3400 50  0001 C CNN
+	4    10600 3400
 	1    0    0    -1  
 $EndComp
-NoConn ~ 10900 2750
-NoConn ~ 10900 3300
-$Comp
-L power:GND #PWR0181
-U 1 1 5FEFA9A6
-P 10250 3500
-F 0 "#PWR0181" H 10250 3250 50  0001 C CNN
-F 1 "GND" H 10255 3327 50  0000 C CNN
-F 2 "" H 10250 3500 50  0001 C CNN
-F 3 "" H 10250 3500 50  0001 C CNN
-	1    10250 3500
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	10250 3500 10250 3400
-Wire Wire Line
-	10250 3400 10300 3400
-Wire Wire Line
-	10250 3400 10250 3200
-Wire Wire Line
-	10250 3200 10300 3200
-Connection ~ 10250 3400
-Wire Wire Line
-	10250 3200 10250 2850
-Wire Wire Line
-	10250 2850 10300 2850
-Connection ~ 10250 3200
-Wire Wire Line
-	10250 2850 10250 2650
-Wire Wire Line
-	10250 2650 10300 2650
-Connection ~ 10250 2850
 $Comp
 L Connector_Generic:Conn_01x06 J1
 U 1 1 5FF37057
@@ -957,5 +920,79 @@ F 3 "~" H 950 650 50  0001 C CNN
 	1    950  650 
 	0    1    -1   0   
 $EndComp
-Connection ~ 3550 2050
+Text Label 850  1050 1    50   ~ 0
+CIN
+Wire Wire Line
+	850  1050 850  850 
+Wire Wire Line
+	10250 2200 10250 2400
+Wire Wire Line
+	10250 2400 10300 2400
+Wire Wire Line
+	10250 2200 10300 2200
+Wire Wire Line
+	10250 2400 10250 2750
+Wire Wire Line
+	10250 2750 10300 2750
+Connection ~ 10250 2400
+Wire Wire Line
+	10250 2750 10250 2950
+Wire Wire Line
+	10250 2950 10300 2950
+Connection ~ 10250 2750
+Wire Wire Line
+	10250 2950 10250 3300
+Wire Wire Line
+	10250 3300 10300 3300
+Connection ~ 10250 2950
+Wire Wire Line
+	10250 3300 10250 3500
+Wire Wire Line
+	10250 3500 10300 3500
+Connection ~ 10250 3300
+Text Label 11050 4400 2    50   ~ 0
+CLK
+$Comp
+L 74xx:74LS08 U?
+U 3 1 5F9E78CE
+P 10600 4400
+AR Path="/6088908D/5F9E78CE" Ref="U?"  Part="3" 
+AR Path="/5F9E78CE" Ref="U?"  Part="3" 
+F 0 "U?" H 10850 4550 50  0000 C CNN
+F 1 "74HC08" H 10850 4650 50  0000 C CNN
+F 2 "" H 10600 4400 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn74LS08" H 10600 4400 50  0001 C CNN
+	3    10600 4400
+	1    0    0    -1  
+$EndComp
+Text Label 10050 4400 0    50   ~ 0
+CIN
+Wire Wire Line
+	10050 4400 10250 4400
+Wire Wire Line
+	10250 4400 10250 4500
+Wire Wire Line
+	10250 4500 10300 4500
+Wire Wire Line
+	10250 4400 10250 4300
+Wire Wire Line
+	10250 4300 10300 4300
+Connection ~ 10250 4400
+Wire Wire Line
+	10900 4400 11050 4400
+NoConn ~ 10900 2300
+NoConn ~ 10900 2850
+NoConn ~ 10900 3400
+$Comp
+L power:GND #PWR?
+U 1 1 5FA9B133
+P 10250 3500
+F 0 "#PWR?" H 10250 3250 50  0001 C CNN
+F 1 "GND" H 10255 3327 50  0000 C CNN
+F 2 "" H 10250 3500 50  0001 C CNN
+F 3 "" H 10250 3500 50  0001 C CNN
+	1    10250 3500
+	1    0    0    -1  
+$EndComp
+Connection ~ 10250 3500
 $EndSCHEMATC

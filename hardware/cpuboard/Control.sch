@@ -356,17 +356,6 @@ F 3 "http://www.ti.com/lit/gpn/sn74LS11" H 5700 4200 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L 74xx:74LS08 U3
-U 3 1 6030F158
-P 10300 4450
-F 0 "U3" V 10350 4200 50  0000 C CNN
-F 1 "74HC08" V 10250 4100 50  0000 C CNN
-F 2 "" H 10300 4450 50  0001 C CNN
-F 3 "http://www.ti.com/lit/gpn/sn74LS08" H 10300 4450 50  0001 C CNN
-	3    10300 4450
-	1    0    0    -1  
-$EndComp
-$Comp
 L 74xx:74LS11 U5
 U 1 1 6031EE13
 P 5250 850
@@ -830,16 +819,6 @@ Wire Wire Line
 	5150 4100 5400 4100
 Wire Wire Line
 	5150 4200 5400 4200
-Wire Wire Line
-	9950 4900 9950 4550
-Wire Wire Line
-	9950 4550 10000 4550
-Connection ~ 9950 4900
-Wire Wire Line
-	9950 4550 9950 4350
-Wire Wire Line
-	9950 4350 10000 4350
-Connection ~ 9950 4550
 $Comp
 L 74xx:74LS138 UDEC1
 U 1 1 60258CFE
@@ -909,7 +888,6 @@ Wire Wire Line
 Connection ~ 2150 3550
 Wire Wire Line
 	2150 3550 2150 4150
-NoConn ~ 10600 4450
 NoConn ~ 2650 4150
 Wire Wire Line
 	1950 5200 1950 5950
