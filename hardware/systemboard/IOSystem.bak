@@ -5,7 +5,7 @@ EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
 Sheet 2 2
-Title ""
+Title "BreadBin SystemBoard IO and Memory"
 Date ""
 Rev ""
 Comp ""
@@ -14,22 +14,20 @@ Comment2 ""
 Comment3 ""
 Comment4 ""
 $EndDescr
-Text HLabel 2650 800  1    50   Input ~ 0
-A0
 Text HLabel 2550 800  1    50   Input ~ 0
-A1
+A0
 Text HLabel 2450 800  1    50   Input ~ 0
-A2
+A1
 Text HLabel 2350 800  1    50   Input ~ 0
-A3
+A2
 Text HLabel 2250 800  1    50   Input ~ 0
-A4
+A3
 Text HLabel 2150 800  1    50   Input ~ 0
-A5
+A4
 Text HLabel 2050 800  1    50   Input ~ 0
-A6
+A5
 Text HLabel 1950 800  1    50   Input ~ 0
-A7
+A6
 Text HLabel 5950 800  1    50   Input ~ 0
 D0
 Text HLabel 5850 800  1    50   Input ~ 0
@@ -190,19 +188,6 @@ F 1 "74HC574" V 5495 3191 50  0000 L CNN
 F 2 "" H 5450 2350 50  0001 C CNN
 F 3 "http://www.ti.com/lit/gpn/sn74LS574" H 5450 2350 50  0001 C CNN
 	1    5450 2350
-	0    1    1    0   
-$EndComp
-$Comp
-L 74xx:74HC04 U?
-U 6 1 5FA1E5AB
-P 1950 2200
-AR Path="/5FA1E5AB" Ref="U?"  Part="6" 
-AR Path="/5FA0C35A/5FA1E5AB" Ref="UINV1"  Part="6" 
-F 0 "UINV1" H 1950 2517 50  0000 C CNN
-F 1 "74HC04" H 1950 2426 50  0000 C CNN
-F 2 "" H 1950 2200 50  0001 C CNN
-F 3 "http://www.nxp.com/documents/data_sheet/74HC_HCT04.pdf" H 1950 2200 50  0001 C CNN
-	6    1950 2200
 	0    1    1    0   
 $EndComp
 $Comp
@@ -1022,22 +1007,18 @@ Wire Wire Line
 	5950 1500 6000 1500
 Wire Wire Line
 	2500 3200 2500 3400
-Text Label 2650 1000 1    50   ~ 0
-A0
 Text Label 2550 1000 1    50   ~ 0
-A1
+A0
 Text Label 2450 1000 1    50   ~ 0
-A2
+A1
 Text Label 2350 1000 1    50   ~ 0
-A3
+A2
 Text Label 2250 1000 1    50   ~ 0
-A4
+A3
 Text Label 2150 1000 1    50   ~ 0
-A5
+A4
 Text Label 2050 1000 1    50   ~ 0
-A6
-Wire Wire Line
-	2650 1000 2650 800 
+A5
 Wire Wire Line
 	2550 1000 2550 800 
 Wire Wire Line
@@ -1050,24 +1031,22 @@ Wire Wire Line
 	2150 1000 2150 800 
 Wire Wire Line
 	2050 1000 2050 800 
-Text Label 5950 3050 1    50   ~ 0
-A7
 Text Label 5850 3050 1    50   ~ 0
-A8
+A7
 Text Label 5750 3050 1    50   ~ 0
-A9
+A8
 Text Label 5650 3050 1    50   ~ 0
-A10
+A9
 Text Label 5550 3050 1    50   ~ 0
-A11
+A10
 Text Label 5450 3050 1    50   ~ 0
-A12
+A11
 Text Label 5350 3050 1    50   ~ 0
-A13
+A12
 Text Label 5250 3050 1    50   ~ 0
+A13
+Text Label 5950 4550 1    50   ~ 0
 A14
-Wire Wire Line
-	5950 3050 5950 2850
 Wire Wire Line
 	5850 3050 5850 2850
 Wire Wire Line
@@ -1082,22 +1061,22 @@ Wire Wire Line
 	5350 3050 5350 2850
 Wire Wire Line
 	5250 3050 5250 2850
-Text Label 5950 4550 1    50   ~ 0
-A15
-Text Label 5850 4550 1    50   ~ 0
-A16
-Text Label 5750 4550 1    50   ~ 0
-A17
-Text Label 5650 4550 1    50   ~ 0
-A18
-Text Label 5550 4550 1    50   ~ 0
-A19
-Text Label 5450 4550 1    50   ~ 0
-A20
-Text Label 5350 4550 1    50   ~ 0
-A21
 Wire Wire Line
 	5950 4550 5950 4350
+Text Label 5850 4550 1    50   ~ 0
+A15
+Text Label 5750 4550 1    50   ~ 0
+A16
+Text Label 5650 4550 1    50   ~ 0
+A17
+Text Label 5550 4550 1    50   ~ 0
+A18
+Text Label 5450 4550 1    50   ~ 0
+A19
+Text Label 5350 4550 1    50   ~ 0
+A20
+Text Label 5250 4550 1    50   ~ 0
+A21
 Wire Wire Line
 	5850 4550 5850 4350
 Wire Wire Line
@@ -1110,6 +1089,8 @@ Wire Wire Line
 	5450 4550 5450 4350
 Wire Wire Line
 	5350 4550 5350 4350
+Wire Wire Line
+	5250 4550 5250 4350
 Text Label 7950 6200 1    50   ~ 0
 A0
 Text Label 7850 6200 1    50   ~ 0
@@ -2003,8 +1984,6 @@ F 3 "" H 9050 3750 50  0001 C CNN
 	1    9050 3750
 	1    0    0    -1  
 $EndComp
-Wire Wire Line
-	9050 3800 9050 3750
 $Comp
 L Library:AS6C4008 URAM2
 U 1 1 600E9616
@@ -2387,8 +2366,6 @@ Wire Wire Line
 	1550 3800 1550 3650
 Wire Wire Line
 	1650 3800 1650 3650
-Text Label 1650 4950 1    50   ~ 0
-A7
 Wire Wire Line
 	1950 4350 1950 4300
 Text Label 950  4950 1    50   ~ 0
@@ -2405,8 +2382,6 @@ Connection ~ 1100 1850
 Wire Wire Line
 	1100 1850 1100 850 
 Connection ~ 1950 1650
-Wire Wire Line
-	1950 1650 1950 1900
 Wire Wire Line
 	1300 2650 1300 2700
 Wire Wire Line
@@ -2426,23 +2401,21 @@ Wire Wire Line
 Wire Wire Line
 	2200 4150 2550 4150
 Wire Wire Line
-	1950 2650 1950 2500
+	1950 2650 1950 2550
 Connection ~ 1950 2650
 Wire Wire Line
 	1100 1850 1100 2700
 Wire Wire Line
 	950  4950 950  4800
-Wire Wire Line
-	1650 4950 1650 4800
 $Comp
 L power:GND #PWR0176
 U 1 1 61477D3C
-P 1550 4900
-F 0 "#PWR0176" H 1550 4650 50  0001 C CNN
-F 1 "GND" H 1555 4727 50  0000 C CNN
-F 2 "" H 1550 4900 50  0001 C CNN
-F 3 "" H 1550 4900 50  0001 C CNN
-	1    1550 4900
+P 1650 4900
+F 0 "#PWR0176" H 1650 4650 50  0001 C CNN
+F 1 "GND" H 1655 4727 50  0000 C CNN
+F 2 "" H 1650 4900 50  0001 C CNN
+F 3 "" H 1650 4900 50  0001 C CNN
+	1    1650 4900
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -2458,7 +2431,34 @@ F 3 "" H 1450 4850 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	1450 4850 1450 4800
+Text Label 5950 3050 1    50   ~ 0
+A6
 Wire Wire Line
-	1550 4900 1550 4800
-NoConn ~ 5250 4350
+	5950 3050 5950 2850
+$Comp
+L 74xx:74HC04 UINV?
+U 6 1 6003B54E
+P 1950 2250
+AR Path="/6003B54E" Ref="UINV?"  Part="6" 
+AR Path="/5FA0C35A/6003B54E" Ref="UINV1"  Part="6" 
+F 0 "UINV1" H 1950 2567 50  0000 C CNN
+F 1 "74HC04" H 1950 2476 50  0000 C CNN
+F 2 "" H 1950 2250 50  0001 C CNN
+F 3 "http://www.nxp.com/documents/data_sheet/74HC_HCT04.pdf" H 1950 2250 50  0001 C CNN
+	6    1950 2250
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	1950 1650 1950 1950
+Wire Wire Line
+	1650 4900 1650 4850
+Wire Wire Line
+	1650 4850 1550 4850
+Connection ~ 1650 4850
+Wire Wire Line
+	1650 4850 1650 4800
+Wire Wire Line
+	1550 4850 1550 4800
+Wire Wire Line
+	9050 3800 9050 3750
 $EndSCHEMATC
