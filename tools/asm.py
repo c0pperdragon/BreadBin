@@ -105,7 +105,7 @@ def processline(identifiers, generate, tokens, codeaddress):
             if id in identifiers:
                 raise AssemblerException("May not redefine '"+id+"'")
             else:
-                identifiers[id] = codeaddress[0]
+                identifiers[id] = codeaddress[1]
     elif len(tokens)>=3 and tokens[1]=='=':
         if not generate:
             id = tokens[0]
@@ -115,7 +115,10 @@ def processline(identifiers, generate, tokens, codeaddress):
             else:
                 identifiers[id] = value
     elif len(tokens)==2 and tokens[0]=="ORG":
-        codeaddress[0] = op(I,G,T, 1, 16)
+        codeaddress[0] = codeaddress[1] = evaluate(identifiers, tokens[1])
+    elif len(tokens)==3 and tokens[0]=="ORG":
+        codeaddress[0] = evaluate(identifiers, tokens[1])
+        codeaddress[1] = evaluate(identifiers, tokens[2])
     elif tokens[0]=="BYTE":
         for idx in range(1,len(tokens)):
             bytes.append(op(I,G,T, idx, 8))
@@ -155,23 +158,24 @@ def processline(identifiers, generate, tokens, codeaddress):
         raise AssemblerException("Unknown instruction "+tokens[0])     
 
     codeaddress[0] += len(bytes)
+    codeaddress[1] += len(bytes)
     return bytes
 
 def process(identifiers, sourcefile, outbuffer):
     generate = bool(outbuffer)
     src = open(sourcefile, "r")
-    codeaddress = [0]
+    codeaddress = [0, 0]
     linenumber = 1
     numerrors = 0
     for rawline in src:
         line = rawline.rstrip()
         try:
             tokens = tokenize(line)
-            startaddress = codeaddress[0]
+            romaddress = codeaddress[0]
             bytes = processline(identifiers, generate, tokens, codeaddress)
             if generate:
-                printlisting(startaddress, bytes, line)
-                outbuffer[startaddress:startaddress+len(bytes)] = bytes
+                printlisting(romaddress, bytes, line)
+                outbuffer[romaddress:romaddress+len(bytes)] = bytes
         except AssemblerException as e:
             print(sourcefile+":"+str(linenumber)+" "+str(e),file=sys.stderr)
             numerrors += 1
