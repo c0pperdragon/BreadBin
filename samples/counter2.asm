@@ -1,61 +1,93 @@
-; Short 24-bit counter demo program.
+; Counter demo program to be exectued from RAM (showing initial copying procdure)
 
     ; copy program from ROM to RAM before executing
     ORG $0000
-    
-    XOR R3 R3
-    DP R3    
-COPYLOOP:
-    SET R0 $18
-    ADD R0 R3
-    LD R1 R0
-    SET R0 .MAIN
-    ADD R0 R3
-    ST R1 R0
+    ; first part: copy ROM page 0 including second copy loop to RAM page 2
+    ZERO R3    ; loop counter
+COPYLOOP1:
+    SET R0 0
+    DP R0
+    LD R1 R3
+    SET R0 2
+    DP R0
+    ST R1 R3
     SET R0 1
     ADD R3 R0
-    SET R0 39
-    BLE R3 R0 COPYLOOP 
+    BGE R3 R0 COPYLOOP1
     
-    ; start to execute from RAM
-    BRA MAIN
- 
-    ; actual counter program is located in RAM, but needs to
-    ; be placed to different ROM location to copied from there  
-    ORG $0018 $0098 
-        
-MAIN:    
-    ; Zero out the counters
-    XOR R0 R0
-    XOR R1 R1
+    ; go to start of second copy routine
+    SET R0 .COPYROUTINE2
+    SET R1 ^COPYROUTINE2
+    JMP R0 R1   
+    
+    ; second part: this code is executed from RAM so it can 
+    ; switch ROM banks. 
+    ; in order for itself to be copied, its own ROM location and execution address 
+    ; can not be identical 
+    ORG $0080 $0280 
+COPYROUTINE2:
+    SET R3 $08 ; loop counter: high byte of target address  
+COPYLOOP2:    
+    ; set up the extension memory page address 
+    SET R0 1
+    DP R0     ; access the IO registers
+    ZERO R0
+    ST R3 R0  ; low byte of page number
+    SET R1 1
+    ST R0 R1  ; high byte of page number is always 0  
+    ; copy a whole page in one loop
+    ZERO R2   ; loop counter for low byte target address
+INNERLOOP2:
+    ZERO R0
     DP R0
-    SET R3 128
-    ST R0 R3
-    
-    ; Keep counting, propagate carries
-LOOP:
-    SET R3 1
-    ADD R0 R3
-    BGE R0 R3 LOOP
-    ADD R1 R3
-    BGE R1 R3 LOOP
+    LD R1 R2
+    DP R3
+    ST R1 R2
+    SET R0 1
+    ADD R2 R0
+    BGE R2 R0 INNERLOOP2
+    ADD R3 R0
+    BGE R3 R0 COPYLOOP2
+    ; start main program from RAM
+    SET R0 .MAIN
+    SET R1 ^MAIN
+    JMP R0 R1
 
-    ; use ram for slowest counter
-    SET R3 128
-    LD R2 R3
-    SET R3 1
-    ADD R2 R3
-    SET R3 128
-    ST R2 R3
     
-    ; send value of R2 to output ports
-    SET R3 64
+    ; actual program will be running from RAM
+    ORG $FF00
+    COUNTER = $0200   ; have counter in low RAM region
+MAIN:    
+    ; zero out the counter
+    SET R0 ^COUNTER
+    DP R0
+    SET R3 .COUNTER
+    ZERO R0
+    ST R0 R3    
+LOOP:
+    ZERO R3
+    ZERO R2
+DELAY:
+    SET R0 1
+    ADD R2 R0
+    BGE R2 R0 DELAY
+    ADD R3 R0
+    BGE R3 R0 DELAY
+    ; increment RAM-based counter and show on output ports
+    SET R0 ^COUNTER
+    DP R0
+    SET R3 .COUNTER
+    LD R2 R3
+    SET R1 1
+    ADD R2 R1
     ST R2 R3
-    SET R3 65
-    ST R2 R3
-    SET R3 66
-    ST R2 R3
-    SET R3 67
-    ST R2 R3
+    SET R0 1  ; page of IO range
+    DP R0
+    SET R0 2
+    ST R2 R0  ; write counter to port 2
+    SET R0 $FF
+    XOR R2 R0
+    SET R0 3  ; write inverted counter to port 3
+    ST R2 R0
     
     BRA LOOP

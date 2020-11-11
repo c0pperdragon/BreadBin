@@ -77,6 +77,19 @@ def op(identifiers, generate, tokens, tidx, bitlen):
         else:
             return value
 
+def branchtarget(identifiers, generate, tokens, tidx, pc):
+    if tidx >= len(tokens):
+        raise AssemblerException("Missing branch target")
+    elif not generate:
+        return 0
+    else:
+        pagestart = pc - (pc & 0xff)
+        value = evaluate(identifiers, tokens[tidx])
+        if value<pagestart or value>pagestart+255:
+            raise AssemblerException("Branch target outside current page")
+        else:
+            return value & 0xff
+
 def printlisting(startaddress, bytes, line):
     perpart = 4
     numparts = (max(len(bytes),1) +perpart-1) // perpart
@@ -96,6 +109,7 @@ def processline(identifiers, generate, tokens, codeaddress):
     I = identifiers
     G = generate
     T = tokens
+    pc = codeaddress[1]
     bytes = []
     if len(tokens)==0:
         pass
@@ -105,7 +119,7 @@ def processline(identifiers, generate, tokens, codeaddress):
             if id in identifiers:
                 raise AssemblerException("May not redefine '"+id+"'")
             else:
-                identifiers[id] = codeaddress[1]
+                identifiers[id] = pc
     elif len(tokens)>=3 and tokens[1]=='=':
         if not generate:
             id = tokens[0]
@@ -138,12 +152,14 @@ def processline(identifiers, generate, tokens, codeaddress):
         bytes = [ 0x60 | reg(T, 1, 0) | reg(T, 2, 2) ]
     elif tokens[0]=="XOR":
         bytes = [ 0x70 | reg(T, 1, 0) | reg(T, 2, 2) ]
+    elif tokens[0]=="ZERO":
+        bytes = [ 0x70 | reg(T, 1, 0) | reg(T, 1, 2) ]
     elif tokens[0]=="BLE":
-        bytes = [ 0x80 | reg(T, 1, 0) | reg(T, 2, 2) , op(I,G,T, 3, 8) ]
+        bytes = [ 0x80 | reg(T, 1, 0) | reg(T, 2, 2) , branchtarget(I,G,T, 3, pc) ]
     elif tokens[0]=="BGE":
-        bytes = [ 0x80 | reg(T, 1, 2) | reg(T, 2, 0) , op(I,G,T, 3, 8) ]
+        bytes = [ 0x80 | reg(T, 1, 2) | reg(T, 2, 0) , branchtarget(I,G,T, 3, pc) ]
     elif tokens[0]=="BRA":
-        bytes = [ 0x80 , op(I,G,T, 1, 8) ]
+        bytes = [ 0x80 , branchtarget(I,G,T, 1, pc) ]
     elif tokens[0]=="JMP":
         bytes = [ 0x90 | reg(T, 1, 0) | reg(T, 2, 2) ]
     elif tokens[0]=="DP":

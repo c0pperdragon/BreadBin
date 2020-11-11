@@ -531,61 +531,35 @@ Wire Wire Line
 Wire Wire Line
 	3050 1050 3050 1550
 Wire Wire Line
-	4000 2600 4000 2650
-Wire Wire Line
 	2950 1050 2950 2650
-Wire Wire Line
-	4100 2600 4100 2700
 Wire Wire Line
 	2850 1050 2850 2700
 Wire Wire Line
-	4200 2600 4200 2750
-Wire Wire Line
 	2750 1050 2750 2750
-Wire Wire Line
-	4300 2600 4300 2800
 Wire Wire Line
 	2650 1050 2650 2800
 Wire Wire Line
-	4400 2600 4400 2850
-Wire Wire Line
 	2550 1050 2550 2850
-Wire Wire Line
-	4500 2600 4500 2900
 Wire Wire Line
 	2450 1050 2450 2900
 Wire Wire Line
-	4600 2600 4600 2950
-Wire Wire Line
 	2350 1050 2350 2950
-Wire Wire Line
-	4700 2600 4700 3000
-Wire Wire Line
-	4700 3000 2250 3000
 Wire Wire Line
 	2250 1050 2250 3000
 Wire Wire Line
-	4800 2600 4800 3050
-Wire Wire Line
-	4800 3050 2150 3050
-Wire Wire Line
 	2150 1050 2150 3050
-Wire Wire Line
-	4900 2600 4900 3100
-Wire Wire Line
-	4900 3100 2050 3100
 Wire Wire Line
 	2050 1050 2050 3100
 $Comp
 L power:GND #PWR0111
 U 1 1 5FB1A5DE
-P 5000 2850
-F 0 "#PWR0111" H 5000 2600 50  0001 C CNN
-F 1 "GND" H 5005 2677 50  0000 C CNN
-F 2 "" H 5000 2850 50  0001 C CNN
-F 3 "" H 5000 2850 50  0001 C CNN
-	1    5000 2850
-	1    0    0    -1  
+P 3750 2500
+F 0 "#PWR0111" H 3750 2250 50  0001 C CNN
+F 1 "GND" H 3755 2327 50  0000 C CNN
+F 2 "" H 3750 2500 50  0001 C CNN
+F 3 "" H 3750 2500 50  0001 C CNN
+	1    3750 2500
+	0    1    1    0   
 $EndComp
 $Comp
 L power:+5V #PWR0112
@@ -629,8 +603,6 @@ Wire Wire Line
 	5400 2650 5400 2600
 Wire Wire Line
 	3900 1800 3900 1750
-Wire Wire Line
-	5000 2600 5000 2850
 Wire Wire Line
 	5400 1800 5400 1750
 Wire Wire Line
@@ -702,8 +674,6 @@ Connection ~ 5850 1600
 Wire Wire Line
 	5750 3350 5750 1550
 Connection ~ 5750 1550
-Wire Wire Line
-	2950 2650 4000 2650
 Text Label 4000 3200 3    50   ~ 0
 A6
 Text Label 4100 3200 3    50   ~ 0
@@ -1012,17 +982,6 @@ Wire Wire Line
 	2600 7250 2600 7200
 Wire Wire Line
 	900  7450 900  7400
-$Comp
-L power:+5V #PWR0104
-U 1 1 5FE06DEE
-P 3900 3350
-F 0 "#PWR0104" H 3900 3200 50  0001 C CNN
-F 1 "+5V" H 3915 3523 50  0000 C CNN
-F 2 "" H 3900 3350 50  0001 C CNN
-F 3 "" H 3900 3350 50  0001 C CNN
-	1    3900 3350
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	900  6400 900  6350
 Wire Wire Line
@@ -1093,14 +1052,6 @@ Wire Wire Line
 	2350 3350 2350 2950
 Connection ~ 2350 2950
 Wire Wire Line
-	2350 2950 4600 2950
-Wire Wire Line
-	2550 2850 4400 2850
-Wire Wire Line
-	2450 2900 4500 2900
-Wire Wire Line
-	2650 2800 4300 2800
-Wire Wire Line
 	2450 3350 2450 2900
 Connection ~ 2450 2900
 Wire Wire Line
@@ -1109,9 +1060,6 @@ Connection ~ 2550 2850
 Wire Wire Line
 	2650 3350 2650 2800
 Connection ~ 2650 2800
-Wire Wire Line
-	2750 3350 2750 2750
-Connection ~ 2750 2750
 $Comp
 L power:GND #PWR0103
 U 1 1 5FA8A5D4
@@ -1205,8 +1153,6 @@ Connection ~ 8900 4150
 Wire Wire Line
 	9000 4150 9000 4100
 Wire Wire Line
-	2750 2750 4200 2750
-Wire Wire Line
 	650  3850 650  3300
 Connection ~ 650  3850
 $Comp
@@ -1241,16 +1187,7 @@ Wire Wire Line
 	3200 4700 3200 4500
 NoConn ~ 3900 4350
 Wire Wire Line
-	650  3300 1150 3300
-Wire Wire Line
-	2850 2700 4100 2700
-Wire Wire Line
-	950  3350 950  3200
-Wire Wire Line
-	950  3200 2850 3200
-Wire Wire Line
-	2850 3200 2850 2700
-Connection ~ 2850 2700
+	650  3300 950  3300
 Wire Wire Line
 	2550 4500 2750 4500
 Wire Wire Line
@@ -1328,4 +1265,70 @@ Wire Wire Line
 	7450 3200 7700 3200
 Wire Wire Line
 	2950 6950 2950 7100
+Wire Wire Line
+	5000 2600 5000 3100
+Wire Wire Line
+	2050 3100 5000 3100
+Wire Wire Line
+	4900 3050 4900 2600
+Wire Wire Line
+	2150 3050 4900 3050
+Wire Wire Line
+	4800 3000 4800 2600
+Wire Wire Line
+	2250 3000 4800 3000
+Wire Wire Line
+	4700 2950 4700 2600
+Wire Wire Line
+	2350 2950 4700 2950
+Wire Wire Line
+	4600 2900 4600 2600
+Wire Wire Line
+	2450 2900 4600 2900
+Wire Wire Line
+	4500 2850 4500 2600
+Wire Wire Line
+	2550 2850 4500 2850
+Wire Wire Line
+	4400 2800 4400 2600
+Wire Wire Line
+	2650 2800 4400 2800
+Wire Wire Line
+	4300 2750 4300 2600
+Wire Wire Line
+	2750 2750 4300 2750
+Wire Wire Line
+	4200 2700 4200 2600
+Wire Wire Line
+	2850 2700 4200 2700
+Wire Wire Line
+	4100 2650 4100 2600
+Wire Wire Line
+	2950 2650 4100 2650
+Wire Wire Line
+	3750 2600 3750 2500
+Wire Wire Line
+	3750 2600 4000 2600
+Wire Wire Line
+	950  3350 950  3300
+Connection ~ 950  3300
+Wire Wire Line
+	950  3300 1150 3300
+$Comp
+L power:GND #PWR?
+U 1 1 5FCBE6A8
+P 2800 3350
+F 0 "#PWR?" H 2800 3100 50  0001 C CNN
+F 1 "GND" V 2805 3222 50  0000 R CNN
+F 2 "" H 2800 3350 50  0001 C CNN
+F 3 "" H 2800 3350 50  0001 C CNN
+	1    2800 3350
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	2750 3350 2800 3350
+Text Label 3900 3200 3    50   ~ 0
+A7
+Wire Wire Line
+	3900 3350 3900 3200
 $EndSCHEMATC

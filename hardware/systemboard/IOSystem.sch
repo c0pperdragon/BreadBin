@@ -389,13 +389,6 @@ Connection ~ 4650 6850
 Wire Wire Line
 	3900 6350 4250 6350
 Wire Wire Line
-	1950 800  1950 1100
-Wire Wire Line
-	3050 1100 1950 1100
-Connection ~ 1950 1100
-Wire Wire Line
-	1950 1100 1950 1650
-Wire Wire Line
 	3050 1650 1950 1650
 Wire Wire Line
 	3050 1850 1100 1850
@@ -1031,21 +1024,21 @@ Wire Wire Line
 	2150 1000 2150 800 
 Wire Wire Line
 	2050 1000 2050 800 
-Text Label 5850 3050 1    50   ~ 0
-A7
-Text Label 5750 3050 1    50   ~ 0
+Text Label 5250 4550 1    50   ~ 0
+A23
+Text Label 5950 3050 1    50   ~ 0
 A8
-Text Label 5650 3050 1    50   ~ 0
+Text Label 5850 3050 1    50   ~ 0
 A9
-Text Label 5550 3050 1    50   ~ 0
+Text Label 5750 3050 1    50   ~ 0
 A10
-Text Label 5450 3050 1    50   ~ 0
+Text Label 5650 3050 1    50   ~ 0
 A11
-Text Label 5350 3050 1    50   ~ 0
+Text Label 5550 3050 1    50   ~ 0
 A12
-Text Label 5250 3050 1    50   ~ 0
+Text Label 5450 3050 1    50   ~ 0
 A13
-Text Label 5950 4550 1    50   ~ 0
+Text Label 5350 3050 1    50   ~ 0
 A14
 Wire Wire Line
 	5850 3050 5850 2850
@@ -1063,19 +1056,19 @@ Wire Wire Line
 	5250 3050 5250 2850
 Wire Wire Line
 	5950 4550 5950 4350
-Text Label 5850 4550 1    50   ~ 0
+Text Label 5250 3050 1    50   ~ 0
 A15
-Text Label 5750 4550 1    50   ~ 0
+Text Label 5950 4550 1    50   ~ 0
 A16
-Text Label 5650 4550 1    50   ~ 0
+Text Label 5850 4550 1    50   ~ 0
 A17
-Text Label 5550 4550 1    50   ~ 0
+Text Label 5750 4550 1    50   ~ 0
 A18
-Text Label 5450 4550 1    50   ~ 0
+Text Label 5650 4550 1    50   ~ 0
 A19
-Text Label 5350 4550 1    50   ~ 0
+Text Label 5550 4550 1    50   ~ 0
 A20
-Text Label 5250 4550 1    50   ~ 0
+Text Label 5450 4550 1    50   ~ 0
 A21
 Wire Wire Line
 	5850 4550 5850 4350
@@ -2381,7 +2374,6 @@ Wire Wire Line
 Connection ~ 1100 1850
 Wire Wire Line
 	1100 1850 1100 850 
-Connection ~ 1950 1650
 Wire Wire Line
 	1300 2650 1300 2700
 Wire Wire Line
@@ -2408,31 +2400,18 @@ Wire Wire Line
 Wire Wire Line
 	950  4950 950  4800
 $Comp
-L power:GND #PWR0176
-U 1 1 61477D3C
-P 1650 4900
-F 0 "#PWR0176" H 1650 4650 50  0001 C CNN
-F 1 "GND" H 1655 4727 50  0000 C CNN
-F 2 "" H 1650 4900 50  0001 C CNN
-F 3 "" H 1650 4900 50  0001 C CNN
-	1    1650 4900
-	1    0    0    -1  
-$EndComp
-$Comp
 L power:+5V #PWR0177
 U 1 1 61477DA9
-P 1450 4850
-F 0 "#PWR0177" H 1450 4700 50  0001 C CNN
-F 1 "+5V" H 1465 5023 50  0000 C CNN
-F 2 "" H 1450 4850 50  0001 C CNN
-F 3 "" H 1450 4850 50  0001 C CNN
-	1    1450 4850
+P 1450 4950
+F 0 "#PWR0177" H 1450 4800 50  0001 C CNN
+F 1 "+5V" H 1465 5123 50  0000 C CNN
+F 2 "" H 1450 4950 50  0001 C CNN
+F 3 "" H 1450 4950 50  0001 C CNN
+	1    1450 4950
 	-1   0    0    1   
 $EndComp
-Wire Wire Line
-	1450 4850 1450 4800
-Text Label 5950 3050 1    50   ~ 0
-A6
+Text Label 5350 4550 1    50   ~ 0
+A22
 Wire Wire Line
 	5950 3050 5950 2850
 $Comp
@@ -2449,16 +2428,39 @@ F 3 "http://www.nxp.com/documents/data_sheet/74HC_HCT04.pdf" H 1950 2250 50  000
 	0    1    1    0   
 $EndComp
 Wire Wire Line
+	9050 3800 9050 3750
+Text HLabel 1850 800  1    50   Input ~ 0
+A7
+Text HLabel 1750 800  1    50   Input ~ 0
+A8
+Wire Wire Line
+	1750 1100 1750 800 
+Wire Wire Line
+	1750 1100 3050 1100
+Wire Wire Line
+	1750 1100 1750 1650
+Connection ~ 1750 1100
+Wire Wire Line
 	1950 1650 1950 1950
 Wire Wire Line
-	1650 4900 1650 4850
+	1950 1650 1750 1650
+Connection ~ 1950 1650
+Text Label 1950 1000 1    50   ~ 0
+A6
+Text Label 1850 1000 1    50   ~ 0
+A7
 Wire Wire Line
-	1650 4850 1550 4850
-Connection ~ 1650 4850
+	1850 1000 1850 800 
 Wire Wire Line
-	1650 4850 1650 4800
+	1950 1000 1950 800 
+Text Label 1550 4950 1    50   ~ 0
+A22
+Text Label 1650 4950 1    50   ~ 0
+A23
 Wire Wire Line
-	1550 4850 1550 4800
+	1450 4800 1450 4950
 Wire Wire Line
-	9050 3800 9050 3750
+	1550 4800 1550 4950
+Wire Wire Line
+	1650 4950 1650 4800
 $EndSCHEMATC
