@@ -73,6 +73,7 @@ DELAY:
     BGE R2 R0 DELAY
     ADD R3 R0
     BGE R3 R0 DELAY
+    
     ; increment RAM-based counter and show on output ports
     SET R0 ^COUNTER
     DP R0
