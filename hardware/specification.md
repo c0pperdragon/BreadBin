@@ -18,16 +18,16 @@ Results of divisions are always rounded down. Division by 0 is just defined to g
 
 The CPU contains the following registers:
 
-..*    R0, R1, R2, R3 (8 bits each):  
+* R0, R1, R2, R3 (8 bits each):  
         General purpose registers. In the instruction format, the registers are encoded with
         two bits each
-..*    DP (8 bit): 
+* DP (8 bit): 
         Data page register. All read and write accesses to the main memory are done with
         one of the data registers holding the lower 8 bits of the memory address. The higher
         8 bits are always taken from DP.
-..*    PC (16 bit):
+* PC (16 bit):
         Address of the next instruction to be fetched.
-..*    IR (8 bit):
+* IR (8 bit):
         Instruction register. The content for this register will always be fetched
         from the memory location at PC in the instruction fetch stage. It is not explicitely
         accessible by the program.
