@@ -14,6 +14,19 @@ def findany(str, patterns):
             first = pos
     return first
 
+def areaisused(buffer, start, len):
+    for i in range(start,start+len):
+        if buffer[i] != None:
+            return True
+    return False
+
+def findfreearea(buffer, start, len):
+    while buffer[start+len-1] != None:
+        start = start+len;
+    while areaisused(buffer, start ,len):
+        start = start+1
+    return start;
+
 def tokenize(line):
     # strip comments and uppercase everything
     comment = line.find(";")
@@ -65,10 +78,10 @@ def reg(tokens, tidx, bitpos):
     else:
         raise AssemblerException("Invalid register name");
 
-def op(identifiers, generate, tokens, tidx, bitlen):
+def op(identifiers, finalpass, tokens, tidx, bitlen):
     if tidx >= len(tokens):
         raise AssemblerException("Missing operand")
-    elif not generate:
+    elif not finalpass:
         return 0
     else:
         value = evaluate(identifiers, tokens[tidx])
@@ -77,16 +90,17 @@ def op(identifiers, generate, tokens, tidx, bitlen):
         else:
             return value
 
-def branchtarget(identifiers, generate, tokens, tidx, pc):
+def branchtarget(identifiers, finalpass, tokens, tidx, pc):
     if tidx >= len(tokens):
         raise AssemblerException("Missing branch target")
-    elif not generate:
+    elif not finalpass:
         return 0
     else:
-        pagestart = pc - (pc & 0xff)
+        pagestart = pc+2;
+        pagestart = pagestart - (pagestart & 0xff)
         value = evaluate(identifiers, tokens[tidx])
         if value<pagestart or value>pagestart+255:
-            raise AssemblerException("Branch target outside current page")
+            raise AssemblerException("Branch target unreachable")
         else:
             return value & 0xff
 
@@ -105,23 +119,23 @@ def printlisting(startaddress, bytes, line):
             x.append(line)
         print ("".join(x))
 
-def processline(identifiers, generate, tokens, codeaddress):
+def processline(identifiers, finalpass, tokens, codeaddress, outbuffer):
     I = identifiers
-    G = generate
+    G = finalpass
     T = tokens
     pc = codeaddress[1]
     bytes = []
     if len(tokens)==0:
         pass
     elif len(tokens)>=2 and tokens[1]==":":
-        if not generate:
+        if not finalpass:
             id = tokens[0]
             if id in identifiers:
                 raise AssemblerException("May not redefine '"+id+"'")
             else:
                 identifiers[id] = pc
     elif len(tokens)>=3 and tokens[1]=='=':
-        if not generate:
+        if not finalpass:
             id = tokens[0]
             value = evaluate(I,tokens[2])
             if id in identifiers:
@@ -133,6 +147,14 @@ def processline(identifiers, generate, tokens, codeaddress):
     elif len(tokens)==3 and tokens[0]=="ORG":
         codeaddress[0] = evaluate(identifiers, tokens[1])
         codeaddress[1] = evaluate(identifiers, tokens[2])
+    elif len(tokens)==2 and tokens[0]=="AREA":
+        codeaddress[0] = codeaddress[1] = findfreearea(
+            outbuffer, evaluate(identifiers, tokens[1]),
+            1)
+    elif len(tokens)==3 and tokens[0]=="AREA":
+        codeaddress[0] = codeaddress[1] = findfreearea(
+            outbuffer, evaluate(identifiers, tokens[1]),
+            evaluate(identifiers, tokens[2]))
     elif tokens[0]=="BYTE":
         for idx in range(1,len(tokens)):
             bytes.append(op(I,G,T, idx, 8))
@@ -170,6 +192,28 @@ def processline(identifiers, generate, tokens, codeaddress):
         bytes = [ 0xC0 | reg(T, 1, 0) | reg(T, 2, 2) ]
     elif tokens[0]=="ST":
         bytes = [ 0xD0 | reg(T, 1, 0) | reg(T, 2, 2) ]
+    elif tokens[0]=="CALL":
+        address = op(I,G,T, 1, 16)
+        raddr = pc + 14
+        bytes = [
+            0xB0, (raddr&0xff),               # SET R0 .raddr
+            0xD0 | (0<<0) | (3<<2),           # ST R0 R3
+            0xB0 | (1<<0), 1,                 # SET R1 1
+            0x10 | (1<<0) | (3<<2),           # ADD R1 R3
+            0xB0, (raddr>>8),                 # SET R0 ^raddr
+            0xD0 | (0<<0) | (1<<2),           # ST  R0 R1
+            0xB0 | (0<<0), (address&0xff),    # SET R0 .address
+            0xB0 | (1<<0), (address>>8),      # SET R1 ^address
+            0x90 | (0<<0) | (1<<2)            # JMP R0 R1
+        ]
+    elif tokens[0]=="RETURN":
+        bytes = [
+            0xC0 | (0<<0) | (3<<2),           # LD R0 R3
+            0xB0 | (1<<0), 1,                 # SET R1 1
+            0x10 | (1<<0) | (3<<2),           # ADD R1 R3
+            0xC0 | (1<<0) | (1<<2),           # LD R1 R1
+            0x90 | (0<<0) | (1<<2)            # JMP R0 R1
+        ]
     else:
         raise AssemblerException("Unknown instruction "+tokens[0])     
 
@@ -177,28 +221,34 @@ def processline(identifiers, generate, tokens, codeaddress):
     codeaddress[1] += len(bytes)
     return bytes
 
-def process(identifiers, sourcefile, outbuffer):
-    generate = bool(outbuffer)
+def process(identifiers, sourcefile, codeaddress, outbuffer, finalpass):
     src = open(sourcefile, "r")
-    codeaddress = [0, 0]
     linenumber = 1
     numerrors = 0
     for rawline in src:
         line = rawline.rstrip()
-        try:
-            tokens = tokenize(line)
-            romaddress = codeaddress[0]
-            bytes = processline(identifiers, generate, tokens, codeaddress)
-            if generate:
-                printlisting(romaddress, bytes, line)
+        body = line.lstrip()
+        if body.startswith("include") or body.startswith("INCLUDE"):
+            process(identifiers,body[7:].lstrip(),codeaddress,outbuffer,finalpass)
+        else:
+            try:
+                tokens = tokenize(line)
+                romaddress = codeaddress[0]
+                bytes = processline(identifiers, finalpass, tokens,
+                                    codeaddress,outbuffer)
+                if finalpass:
+                    if areaisused(outbuffer, romaddress, len(bytes)):
+                        raise AssemblerException("Overlapping ranges")
+                    printlisting(romaddress, bytes, line)
                 outbuffer[romaddress:romaddress+len(bytes)] = bytes
-        except AssemblerException as e:
-            print(sourcefile+":"+str(linenumber)+" "+str(e),file=sys.stderr)
-            numerrors += 1
+            except AssemblerException as e:
+                print(sourcefile+":"+str(linenumber)+" "+str(e),file=sys.stderr)
+                numerrors += 1
         linenumber += 1
     src.close()
     if numerrors>0:
         raise AssemblerException("Encountered "+str(numerrors)+" errors")
+
 
 def formatwithchecksum(record):
     line = ":"
@@ -230,9 +280,10 @@ def printhexfile(hexfile, buffer):
 def asm(sourcefile,hexfile):
     try:
         identifiers = { }
-        process(identifiers, sourcefile, None)
         rom = [None]*65536
-        process(identifiers, sourcefile, rom)
+        process(identifiers, sourcefile, [0, 0], rom, False)
+        rom = [None]*65536
+        process(identifiers, sourcefile, [0, 0], rom, True)
         printhexfile(hexfile, rom)
     except AssemblerException as e:
         print (e,file=sys.stderr) 
