@@ -26,7 +26,7 @@ COPYLOOP1:
     ; can not be identical 
     ORG $0080 $0280 
 COPYROUTINE2:
-    SET R3 $08 ; loop counter: high byte of target address  
+    SET R3 $03 ; loop counter: high byte of target address  
 COPYLOOP2:    
     ; set up the extension memory page address 
     SET R0 1

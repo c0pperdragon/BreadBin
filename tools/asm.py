@@ -214,6 +214,37 @@ def processline(identifiers, finalpass, tokens, codeaddress, outbuffer):
             0xC0 | (1<<0) | (1<<2),           # LD R1 R1
             0x90 | (0<<0) | (1<<2)            # JMP R0 R1
         ]
+    elif tokens[0]=="INVOKE":
+        address = op(I,G,T, 1, 16)
+        raddr = pc + 9
+        bytes = [
+            0xB0 | (2<<0), (raddr&0xff),      # SET R2 .raddr
+            0xB0 | (3<<0), (raddr>>8),        # SET R3 ^raddr
+            0xB0 | (0<<0), (address&0xff),    # SET R0 .address
+            0xB0 | (1<<0), (address>>8),      # SER R1 ^address
+            0x90 | (0<<0) | (1<<2)            # JMP R0 R1
+        ]
+    elif tokens[0]=="LOAD":
+        num = len(tokens)-2
+        address = op(I,G,T, 1+num, 16)
+        bytes = []
+        for i in range(num):
+            r = reg(T,1+i,0)
+            bytes.extend([
+                0xB0 | r, (address+i+1)&0xff,  # SET <r> .address+i
+                0xC0 | r | (r<<2)              # LD <r> <r>
+            ])
+    elif tokens[0]=="STORE":
+        num = len(tokens)-2
+        address = op(I,G,T, 1+num, 16)
+        bytes = []
+        for i in range(num):
+            r = reg(T,1+i,0)
+            bytes.extend([
+                0xB0 | (0<<0), (address+i+1)&0xff,  # SET R0 .address+i
+                0xD0 | r | (0<<2)                   # LD <r> R0
+            ])
+        
     else:
         raise AssemblerException("Unknown instruction "+tokens[0])     
 
