@@ -117,7 +117,7 @@ SERIAL_WRITEBIT:
     DP R0
     ; wait loop 
     SET R1 1
-    SET R0 80   ; should give approximately 38400 baud
+    SET R0 65   ; should give approximately 38400 baud
 SERIAL_DELAY:
     SUB R0 R1
     BGE R0 R1 SERIAL_DELAY

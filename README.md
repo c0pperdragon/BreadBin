@@ -20,8 +20,7 @@ gave me any trouble.
 When using this kind of setup it is important to also use a matching logic family of chips. 74AC, 74ACT, 74LVC or 
 others have a very fast switching characteristics. This is great for many applications but in a large build with
 long and unshielded cables, their brutally steep signal edges wreck havoc with signal integritiy.
-So I settled for the moderately fast and well-behaved 74HC logic ICs together with only a very view 74AC parts to speed
-up some critical paths.
+So I settled for the moderately fast and well-behaved 74HC logic ICs.
 
 ## Speed
 

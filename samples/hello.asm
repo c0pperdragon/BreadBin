@@ -21,5 +21,16 @@ MAIN:
     STORE R2 SERIAL_LENGTH
     INVOKE SERIAL_WRITEDATA
     
-DONE:
-    BRA DONE
+    SET R0 1
+    SET R1 0
+    SET R2 0
+    SET R3 50
+DELAY:    
+    SUB R1 R0
+    BGE R1 R0 DELAY
+    SUB R2 R0
+    BGE R2 R0 DELAY    
+    SUB R3 R0
+    BGE R3 R0 DELAY
+        
+    BRA MAIN
