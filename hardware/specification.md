@@ -84,8 +84,10 @@ Digits denoted with R are reserved and should be set to 0 for upward compatibili
         Jump to the location specified by the register xx (low bits) and the register yy
         (high bits)
 
-    1010yyRR             DP yy
+    1010yyR0             DP yy
         Transfer content of register yy into the data page register.
+    1010iii1             DP iii
+        Transfer and immediate value (3 bit) to the data page register.
 
     1011RRxx immediate   SET xx immediate
         Two-byte instruction. Take the byte after the opcode and store in register xx.
@@ -97,6 +99,6 @@ Digits denoted with R are reserved and should be set to 0 for upward compatibili
         Transfer content of register xx to the memory location pointed to by register yy. The high 8 bits
         of the address are taken from DP.
 
-    1110xxyy 
-    1111xxyy
-        Unused opcodes with undefined effect.
+    1110yyxx 
+    1111yyxx
+        Unused opcodes with unspecified effect.

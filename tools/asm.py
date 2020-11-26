@@ -185,35 +185,16 @@ def processline(identifiers, finalpass, tokens, codeaddress, outbuffer):
     elif tokens[0]=="JMP":
         bytes = [ 0x90 | reg(T, 1, 0) | reg(T, 2, 2) ]
     elif tokens[0]=="DP":
-        bytes = [ 0xA0 | reg(T, 1, 2) ]
+        if len(tokens)>1 and tokens[1] in ["R0","R1","R2","R3"]:
+            bytes = [ 0xA0 | reg(T, 1, 2) ]
+        else:
+            bytes = [ 0xA1 | (op(I,G,T, 1, 3)<<1) ]
     elif tokens[0]=="SET":
         bytes = [ 0xB0 | reg(T, 1, 0) , op(I,G,T, 2, 8) ]
     elif tokens[0]=="LD":
         bytes = [ 0xC0 | reg(T, 1, 0) | reg(T, 2, 2) ]
     elif tokens[0]=="ST":
         bytes = [ 0xD0 | reg(T, 1, 0) | reg(T, 2, 2) ]
-    elif tokens[0]=="CALL":
-        address = op(I,G,T, 1, 16)
-        raddr = pc + 14
-        bytes = [
-            0xB0, (raddr&0xff),               # SET R0 .raddr
-            0xD0 | (0<<0) | (3<<2),           # ST R0 R3
-            0xB0 | (1<<0), 1,                 # SET R1 1
-            0x10 | (1<<0) | (3<<2),           # ADD R1 R3
-            0xB0, (raddr>>8),                 # SET R0 ^raddr
-            0xD0 | (0<<0) | (1<<2),           # ST  R0 R1
-            0xB0 | (0<<0), (address&0xff),    # SET R0 .address
-            0xB0 | (1<<0), (address>>8),      # SET R1 ^address
-            0x90 | (0<<0) | (1<<2)            # JMP R0 R1
-        ]
-    elif tokens[0]=="RETURN":
-        bytes = [
-            0xC0 | (0<<0) | (3<<2),           # LD R0 R3
-            0xB0 | (1<<0), 1,                 # SET R1 1
-            0x10 | (1<<0) | (3<<2),           # ADD R1 R3
-            0xC0 | (1<<0) | (1<<2),           # LD R1 R1
-            0x90 | (0<<0) | (1<<2)            # JMP R0 R1
-        ]
     elif tokens[0]=="INVOKE":
         address = op(I,G,T, 1, 16)
         raddr = pc + 9

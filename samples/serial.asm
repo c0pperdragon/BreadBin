@@ -30,8 +30,7 @@ SERIAL_DATALOOP:
     ADD R1 R3
     DP R2
     LD R3 R1
-    SET R0 2
-    DP R0
+    DP 2
     
     STORE R3 SERIAL_BYTE
     INVOKE SERIAL_WRITEBYTE
@@ -108,13 +107,11 @@ SERIAL_WRITEBIT:
     SET R1 $FE
     OR R1 R0
     ; address output register port 3
-    SET R0 1
-    DP R0
+    DP 1
     SET R0 3
     ST R1 R0
     ; switch back to stack
-    SET R0 2
-    DP R0
+    DP 2
     ; wait loop 
     SET R1 1
     SET R0 65   ; should give approximately 38400 baud
