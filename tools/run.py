@@ -7,8 +7,10 @@ class Board:
         self.ram = [0]*(1<<16)
         self.xram = [0]*(1<<19)
         self.rom = rom
-        self.xaddrlo = 0;
-        self.xaddrhi = 0;
+        self.xaddrlo = 0
+        self.xaddrhi = 0
+        self.uartcounter = -1
+        self.uartdata = 0
     def write(self,address,value):
         if address>=512:
             self.ram[address] = value
@@ -23,7 +25,17 @@ class Board:
         elif address==257:
             self.xaddrhi = value;
         elif address==259:  # out port 3
-            print(format(value, "b").zfill(8)) 
+            if self.uartcounter<0:
+                if (value&1)==0:
+                    self.uartcounter=0
+                    self.uartdata=0
+            else:
+                self.uartdata |= (value&1)<<self.uartcounter
+                if self.uartcounter<7:
+                    self.uartcounter+=1
+                else:
+                    print(chr(self.uartdata),end='')
+                    self.uartcounter=-1
     def read(self,address):
         if address>=512:
             return self.ram[address]
@@ -66,7 +78,7 @@ def execute(board,steps,show):
 
     for i in range(steps):
 
-        # instrution fetch
+        # instruction fetch
         opcode = board.read(pc)
         if i>=steps-show:
             print ("PC:",format(pc,"x").zfill(4),
@@ -78,48 +90,64 @@ def execute(board,steps,show):
         instruction = opcode>>4
         pc = (pc+1) & 0xffff
 
-        # execute        
-        if instruction == 0:    # GT
-            if reg[x]>reg[y]:
-                reg[x] = 1
+        # execute
+        if instruction<=7:
+            if instruction<=3:
+                if instruction<=1:
+                    if instruction == 0:    # GT
+                        if reg[x]>reg[y]:
+                            reg[x] = 1
+                        else:
+                            reg[x] = 0
+                    else:                   # ADD
+                            reg[x] = (reg[x]+reg[y])&0xff
+                else:
+                    if instruction == 2:    # SUB
+                        reg[x] = (reg[x]+256-reg[y])&0xff
+                    else:                   # MUL
+                        reg[x] = (reg[x]*reg[y])&0xff
             else:
-                reg[x] = 0
-        elif instruction == 1:  # ADD
-            reg[x] = (reg[x]+reg[y])&0xff
-        elif instruction == 2:  # SUB
-            reg[x] = (reg[x]+256-reg[y])&0xff
-        elif instruction == 3:  # MUL
-            reg[x] = (reg[x]*reg[y])&0xff
-        elif instruction == 4:  # DIV
-            if reg[y]==0:
-                reg[x]=0
+                if instruction<=5:
+                    if instruction == 4:    # DIV
+                        if reg[y]==0:
+                            reg[x]=0
+                        else:
+                            reg[x] = int(reg[x]/reg[y])
+                    else:                   # AND
+                        reg[x] = reg[x] & reg[y]
+                else:
+                    if instruction == 6:    # OR
+                        reg[x] = reg[x] | reg[y]
+                    else:                   # XOR
+                        reg[x] = reg[x] ^ reg[y]
+        else:
+            if instruction<=11:
+                if instruction<=9:
+                    if instruction==8:      # BLE
+                        operand = board.read(pc)
+                        pc = (pc+1) & 0xffff
+                        if reg[x]<=reg[y]:
+                            pc = (pc & 0xff00) | operand
+                    else:                   # JMP
+                        pc = reg[x] | (reg[y]<<8)
+                else:
+                    if instruction == 10:   # DP
+                        if (x & 1) == 0:
+                            dp = reg[y]
+                        else:
+                            dp = (y << 1) | (x>>1)
+                    else:                   # SET
+                        operand = board.read(pc)
+                        pc = (pc+1) & 0xffff
+                        reg[x] = operand
             else:
-                reg[x] = int(reg[x]/reg[y])
-        elif instruction == 5:  # AND
-            reg[x] = reg[x] & reg[y]
-        elif instruction == 6:  # OR
-            reg[x] = reg[x] | reg[y]
-        elif instruction == 7:  # XOR
-            reg[x] = reg[x] ^ reg[y]
-        elif instruction == 8:  # BLE
-            operand = board.read(pc)
-            pc = (pc+1) & 0xffff
-            if reg[x]<=reg[y]:
-                pc = (pc & 0xff00) | operand
-        elif instruction == 9:  # JMP
-            pc = reg[x] | (reg[y]<<8)
-        elif instruction == 10: # DP
-            dp = reg[y]
-        elif instruction == 11: # SET
-            operand = board.read(pc)
-            pc = (pc+1) & 0xffff
-            reg[x] = operand
-        elif instruction == 12: # LD
-            reg[x] = board.read(reg[y] | (dp<<8))
-        elif instruction == 13: # ST
-            board.write (reg[y] | (dp<<8), reg[x])
-        
-    print ("END")
+                if instruction<=13:
+                    if instruction == 12:   # LD
+                        reg[x] = board.read(reg[y] | (dp<<8))
+                    else:                   # ST
+                        board.write (reg[y] | (dp<<8), reg[x])
+                else:
+                    pass
 
         
 def run(hexfile, steps,show):
@@ -129,7 +157,7 @@ def run(hexfile, steps,show):
 #    print(board.ram[0:1000])
 
 if len(sys.argv)>1:
-    steps = 1000
+    steps = 10000000
     show = 0
     if len(sys.argv)>2:
         steps = int(sys.argv[2])

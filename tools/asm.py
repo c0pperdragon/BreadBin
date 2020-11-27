@@ -125,15 +125,19 @@ def processline(identifiers, finalpass, tokens, codeaddress, outbuffer):
     T = tokens
     pc = codeaddress[1]
     bytes = []
-    if len(tokens)==0:
-        pass
-    elif len(tokens)>=2 and tokens[1]==":":
+
+    if len(tokens)>=2 and tokens[1]==":":
         if not finalpass:
             id = tokens[0]
             if id in identifiers:
                 raise AssemblerException("May not redefine '"+id+"'")
             else:
                 identifiers[id] = pc
+        tokens.pop(0)
+        tokens.pop(0)
+        
+    if len(tokens)==0:
+        pass
     elif len(tokens)>=3 and tokens[1]=='=':
         if not finalpass:
             id = tokens[0]
@@ -195,6 +199,13 @@ def processline(identifiers, finalpass, tokens, codeaddress, outbuffer):
         bytes = [ 0xC0 | reg(T, 1, 0) | reg(T, 2, 2) ]
     elif tokens[0]=="ST":
         bytes = [ 0xD0 | reg(T, 1, 0) | reg(T, 2, 2) ]
+    elif tokens[0]=="GOTO":
+        address = op(I,G,T, 1, 16)
+        bytes = [
+            0xB0 | (0<<0), (address&0xff),    # SET R0 .address
+            0xB0 | (1<<0), (address>>8),      # SER R1 ^address
+            0x90 | (0<<0) | (1<<2)            # JMP R0 R1
+        ]        
     elif tokens[0]=="INVOKE":
         address = op(I,G,T, 1, 16)
         raddr = pc + 9
@@ -207,23 +218,27 @@ def processline(identifiers, finalpass, tokens, codeaddress, outbuffer):
         ]
     elif tokens[0]=="LOAD":
         num = len(tokens)-2
-        address = op(I,G,T, 1+num, 16)
-        bytes = []
+        address = op(I,G,T, 1+num, 11)
+        bytes = [
+            0xA1 | ((address>>8)<<1)
+        ]
         for i in range(num):
             r = reg(T,1+i,0)
             bytes.extend([
-                0xB0 | r, (address+i+1)&0xff,  # SET <r> .address+i
-                0xC0 | r | (r<<2)              # LD <r> <r>
+                0xB0 | r, (address+i)&0xff,   # SET <r> .address+i
+                0xC0 | r | (r<<2)             # LD <r> <r>
             ])
     elif tokens[0]=="STORE":
         num = len(tokens)-2
-        address = op(I,G,T, 1+num, 16)
-        bytes = []
+        address = op(I,G,T, 1+num, 11)
+        bytes = [
+            0xA1 | ((address>>8)<<1)
+        ]
         for i in range(num):
             r = reg(T,1+i,0)
             bytes.extend([
-                0xB0 | (0<<0), (address+i+1)&0xff,  # SET R0 .address+i
-                0xD0 | r | (0<<2)                   # LD <r> R0
+                0xB0 | (0<<0), (address+i)&0xff,  # SET R0 .address+i
+                0xD0 | r | (0<<2)                 # LD <r> R0
             ])
         
     else:
