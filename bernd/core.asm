@@ -8,7 +8,7 @@ PORT2     = $0102
 PORT3     = $0103
 
 ; -------- universally usable variables and call parameters -----------------
-    AREA DATA 10
+    AREA DATA 8
 L0: BYTE 0
 L1: BYTE 0
 L2: BYTE 0
@@ -68,59 +68,156 @@ INNERLOOP2:
     GOTO MAIN
 
 ; ------------------------------ Serial communication -----------------------
+   
+    ; This subsystem implements a bit-banged UART communication.
+    ; Communication is done with 115200 baud using flow control with RTS/CTS.
+    ; With a 10Mhz CPU clock, transmission of one serial bit takes 86.8 cycles
+    ; (using 87 cycles is also OK)    
+    ; The serial port is wired up like this:
+    ;   TX  out port 3, bit 0
+    ;   RX  in port 3, bit 0
+    ;   RTS out port 3, bit 1
+    ;   CTS in port 3, bit 1
 
-    SERIALSTARTBITDELAY = 70
-    SERIALBITDELAY = 65
-
-    ; - Write one byte to the serial port
+    ; - Write one byte to the serial port. May block execution if hardware flow
+    ;   control blocks transmission.
     ; param L0 ... value to write
     ; local L1 ... counter)
     AREA CODE 100
     
-SEND:
+TRANSMIT:
+    ; wait until partner can accept data (CTS is low)
+    LOAD R1 PORT3
+    SET R0 $02
+    AND R1 R0
+    BGE R1 R0 TRANSMIT
+
     ; counter for bits, including stop bit
     SET R1 9
     STORE R1 L1
     
     ; start bit
     SET R1 $FE 
-    STORE R1 PORT3
+    SET R0 .PORT3
+    DP ^PORT3
+    ST R1 R0
     ; do delay
     SET R1 1
-    SET R0 SERIALSTARTBITDELAY
-SEND_DELAYLOOP1:
+    SET R0 10
+TRANSMIT_DELAYLOOP1:
     SUB R0 R1
-    BGE R0 R1 SEND_DELAYLOOP1:    
+    BGE R0 R1 TRANSMIT_DELAYLOOP1
 
-SEND_WRITELOOP:
+TRANSMIT_WRITELOOP:
     ; send next bit
-    LOAD R1 L0
+    SET R0 .L0
+    DP ^L0
+    LD R1 R0
     SET R0 $FE
     OR R1 R0
-    STORE R1 PORT3
+    SET R0 .PORT3
+    DP ^PORT3
+    ST R1 R0
     ; do delay
     SET R1 1
-    SET R0 SERIALBITDELAY
-SEND_DELAYLOOP2:
+    SET R0 10
+TRANSMIT_DELAYLOOP2:
     SUB R0 R1
-    BGE R0 R1 SEND_DELAYLOOP2:    
+    BGE R0 R1 TRANSMIT_DELAYLOOP2
     ; shift bits to right, filling with 1-bits
-    LOAD R1 L0
+    SET R0 .L0
+    DP ^L0
+    LD R1 R0
     SET R0 2
     DIV R1 R0
     SET R0 $80
     OR R1 R0
-    STORE R1 L0
+    SET R0 .L0
+    DP ^L0
+    ST R1 R0
     ; decrement counter and loop
-    LOAD R1 L1
+    SET R0 .L1
+    DP ^L1
+    LD R1 R0
     SET R0 1
     SUB R1 R0
-    STORE R1 L1
+    SET R0 .L1
+    DP ^L1
+    ST R1 R0
     SET R0 1
-    BGE R1 R0 SEND_WRITELOOP
+    BGE R1 R0 TRANSMIT_WRITELOOP
 
     JMP R2 R3
 
+    
+    ; - Read one byte of data from the serial port. This procedure blocks until
+    ; one byte is available. It will use the hardware flow control signals to make
+    ; the partner only send data if the program is actively listening.
+    ; return R1 .. the byte received 
+    ; local L0,L1 return address
+    AREA CODE 100
+    
+RECEIVE:
+    ; keep return address
+    STORE R2 R3 L0
+
+    ; prepeare for quick access 
+    SET R3 $01  ; mask for bit 0
+    ; signal to partner that data can be accepted (RTS low)
+    DP ^PORT3
+    SET R1 .PORT3
+    SET R0 $FD
+    ST  R0 R1
+    ; wait until detecting the start bit (low signal on RX)
+RECEIVE_WAITFORSTART:
+    LD R0 R1
+    AND R0 R3
+    BGE R0 R3 RECEIVE_WAITFORSTART
+    ; immediately turn off the RTS line, so partner will not send another byte
+    SET R0 $FF
+    ST R0 R1
+    
+    ; do delay to get into the middle of the first data bit
+    SET R1 1
+    SET R0 10
+RECEIVE_DELAYLOOP1:
+    SUB R0 R1
+    BGE R0 R1 RECEIVE_DELAYLOOP1:    
+
+    ZERO R2  ; accumulated bits
+    SET R3 8 ; bit counter
+RECEIVE_BITLOOP:
+    ; read input bit and move to bit 7 of R1
+    SET R0 .PORT3
+    DP ^PORT3
+    LD R1 R0
+    SET R0 1
+    AND R1 R0
+    SET R0 128
+    MUL R1 R0
+    ; shift R2 and insert new bit
+    SET R0 2
+    DIV R2 R0
+    OR R2 R1
+    ; do delay to get to the next bit (data or stop bit)
+    SET R1 1
+    SET R0 10
+RECEIVE_DELAYLOOP2:
+    SUB R0 R1
+    BGE R0 R1 RECEIVE_DELAYLOOP2:    
+    ; continue for necessary amount of bits
+    SET R0 1
+    SUB R3 R0
+    BGE R3 R0 RECEIVE_BITLOOP
+    
+    ; transfer R2 to R1 as return value
+    AND R1 R2
+    OR R1 R2
+    ; retrieve return address and finish
+    LOAD R2 R3 L0
+    JMP R2 R3
+    
+    
 ; ------------------------- Various tools ----------------------------------
 
    ; - Delay for given number of milliseconds

@@ -21,9 +21,13 @@ def areaisused(buffer, start, len):
     return False
 
 def findfreearea(buffer, start, len):
+    if len>255:
+        raise AssemblerException("Can not support area size greater than 255")
+    # quick search for some empty area
     while buffer[start+len-1] != None:
         start = start+len;
-    while areaisused(buffer, start ,len):
+    # search for empty space not crossing page boundaries 
+    while (start>>8) != ((start+len-1)>>8) or areaisused(buffer, start ,len):
         start = start+1
     return start;
 

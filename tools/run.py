@@ -9,8 +9,11 @@ class Board:
         self.rom = rom
         self.xaddrlo = 0
         self.xaddrhi = 0
-        self.uartcounter = -1
-        self.uartdata = 0
+        self.uarttxcounter = -1
+        self.uarttxdata = 0
+        self.uartrxdata = 0
+        self.uartrxcounter = -1
+        self.inputbuffer = []
     def write(self,address,value):
         if address>=512:
             self.ram[address] = value
@@ -25,17 +28,23 @@ class Board:
         elif address==257:
             self.xaddrhi = value;
         elif address==259:  # out port 3
-            if self.uartcounter<0:
+            if self.uartrxcounter<0 and (value&0x02)==0:
+                while len(self.inputbuffer)<1:
+                    for c in input()+'\n':
+                        self.inputbuffer.append(ord(c))
+                self.uartrxcounter=8;
+                self.uartrxdata = self.inputbuffer.pop(0)<<1
+            elif self.uarttxcounter<0:
                 if (value&1)==0:
-                    self.uartcounter=0
-                    self.uartdata=0
+                    self.uarttxcounter=0
+                    self.uarttxdata=0
             else:
-                self.uartdata |= (value&1)<<self.uartcounter
-                if self.uartcounter<7:
-                    self.uartcounter+=1
+                self.uarttxdata |= (value&1)<<self.uarttxcounter
+                if self.uarttxcounter<7:
+                    self.uarttxcounter+=1
                 else:
-                    print(chr(self.uartdata),end='')
-                    self.uartcounter=-1
+                    print(chr(self.uarttxdata),end='',flush=True)                    
+                    self.uarttxcounter=-1
     def read(self,address):
         if address>=512:
             return self.ram[address]
@@ -45,6 +54,14 @@ class Board:
                 return self.rom[xaddress]
             elif xaddress<(1<<20):
                 return self.xram[xadrdress-(1<<19)]
+        elif address==259: # in port 3
+            if self.uartrxcounter<0:
+                return 0; # 0xFD   # CTS is low
+            else:
+                rv = 0xFC | (self.uartrxdata & 1)  # CTS is low, bit 0 is data
+                self.uartrxdata = self.uartrxdata>>1
+                self.uartrxcounter-=1
+                return rv
         else:
             return 0;
         
