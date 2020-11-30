@@ -203,6 +203,8 @@ def processline(identifiers, finalpass, tokens, codeaddress, outbuffer):
         bytes = [ 0xC0 | reg(T, 1, 0) | reg(T, 2, 2) ]
     elif tokens[0]=="ST":
         bytes = [ 0xD0 | reg(T, 1, 0) | reg(T, 2, 2) ]
+    elif tokens[0]=="NOP":
+        bytes = [ 0x50 ]
     elif tokens[0]=="GOTO":
         address = op(I,G,T, 1, 16)
         bytes = [
@@ -224,7 +226,7 @@ def processline(identifiers, finalpass, tokens, codeaddress, outbuffer):
         num = len(tokens)-2
         address = op(I,G,T, 1+num, 11)
         bytes = [
-            0xA1 | ((address>>8)<<1)
+            0xA1 | ((address>>8)<<1)          # DP ^address
         ]
         for i in range(num):
             r = reg(T,1+i,0)
@@ -236,7 +238,7 @@ def processline(identifiers, finalpass, tokens, codeaddress, outbuffer):
         num = len(tokens)-2
         address = op(I,G,T, 1+num, 11)
         bytes = [
-            0xA1 | ((address>>8)<<1)
+            0xA1 | ((address>>8)<<1)              # DP ^address
         ]
         for i in range(num):
             r = reg(T,1+i,0)

@@ -9,7 +9,7 @@ MAIN_CTR:
     
     AREA CODE 100
 MESSAGE:
-    BYTE 69 99 104 111 32 116 101 115 116 10 0
+    BYTE 69 99 104 111 32 116 101 115 116 13 10 0
     
 MAIN:
     SET R1 0
@@ -36,8 +36,24 @@ TEXTLOOP:
     BRA TEXTLOOP
 
 ECHOING:    
-    ; copy from incomming to outgoing
+    ; receive input
     INVOKE RECEIVE
+    ; debug: write to port 2
+    STORE R1 PORT2
+    ; replace CR with CR-LF
+    SET R0 13
+    XOR R0 R1
+    SET R3 1
+    BGE R0 R3 UNCHANGED
+    SET R1 13
+    STORE R1 L0
+    INVOKE TRANSMIT
+    SET R1 10
+    STORE R1 L0
+    INVOKE TRANSMIT
+    BRA ECHOING
+    ; don't change other characters
+UNCHANGED:
     STORE R1 L0
     INVOKE TRANSMIT
     BRA ECHOING

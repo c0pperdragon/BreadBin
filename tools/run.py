@@ -56,7 +56,7 @@ class Board:
                 return self.xram[xadrdress-(1<<19)]
         elif address==259: # in port 3
             if self.uartrxcounter<0:
-                return 0; # 0xFD   # CTS is low
+                return 0xFD   # CTS is low
             else:
                 rv = 0xFC | (self.uartrxdata & 1)  # CTS is low, bit 0 is data
                 self.uartrxdata = self.uartrxdata>>1
