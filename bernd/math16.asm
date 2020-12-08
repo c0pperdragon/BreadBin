@@ -46,54 +46,84 @@ SUB16:
     LOAD R2 R3 L4
     JMP R2 R3
 
-; -- Multiply a 16-bit value with a 4-bit value
+; -- Multiply a 16-bit value with a 8-bit value
 ;  input: L0 low byte of first operand
 ;         L1 high byte of first operand
-;         L2 second operand (only 4 bit)
+;         L2 second operand 
 ;  output: L0 low byte of result
 ;          L1 high byte of operand
+;  The most diffcult part of the computation is to compute the high byte
+;  of the product of the low bytes. This is done by splitting the numbers to
+;  4-bit digits and manually do the multiplication matrix.
+;  L0 = A B    L2 = C D   
     AREA CODE 100
-MUL164:
+MUL168:
     STORE R2 R3 L4
-
-    LOAD R3 L2
+    
+    ; Compute the high byte of the low-byte multiplications
+    LOAD R3 L0
     SET R0 15
-    AND R3 R0    ; keep second operand in R3
+    AND R3 R0   ; B
+    LOAD R2 L2
+    AND R2 R0   ; D
+    MUL R3 R2   ; B*D
+    SET R0 16
+    DIV R3 R0   ; overflow to digit 1  
     
-    LOAD R2 L0   ; compute the carry from low to high byte
-    SET R1 16
-    AND R2 R1
-    MUL R2 R3
-    DIV R2 R1    ;    the carry from low nybble to high nybble
-    LOAD R0 L0   ;  
-    DIV R0 R1    ;    bring high nybble to low position  
-    MUL R0 R3    ;    multiply this nybble  
-    ADD R0 R2    ;    add carry from low nybble
-    DIV R0 R1    ;    normalize the total carry of low byte (now in R0)
+    LOAD R2 L0
+    SET R0 15
+    AND R2 R0   ; B
+    LOAD R1 L2
+    SET R0 16
+    DIV R1 R0   ; C
+    MUL R2 R1   ; B*C
+    ADD R3 R2   ; collect digit 1&2
 
-    LOAD R1 L1   ; compute high byte and add carry
-    MUL R1 R3
-    ADD R1 R0
-    STORE R1 L1
+    LOAD R2 L0
+    SET R0 16
+    DIV R2 R0   ; A
+    LOAD R1 L2
+    SET R0 15
+    AND R1 R0   ; D
+    MUL R2 R1   ; A*D
+    ADD R3 R2   ; collect digit 1&2
+    GT R2 R3    ; overflow to digit 3
+    SET R0 16
+    DIV R3 R0   ; start with columns 2&3
+    MUL R2 R0   ; adjust overflow to fit digit 2&3
+    ADD R3 R2   ; join from the overflow
     
-    LOAD R1 L0    ; compute low byte (easy)
-    MUL R1 R3
+    LOAD R2 L0
+    SET R0 16
+    DIV R2 R0   ; A
+    LOAD R1 L2
+    DIV R1 R0   ; C
+    MUL R2 R1   ; A*C
+    ADD R3 R2   ; complete column 2&3
+    ; we have the high byte of low byte multiplication now in R3
+    
+    ; complete the high byte of the result
+    LOAD R1 L1
+    LOAD R2 L2
+    MUL R2 R1
+    ADD R3 R2
+    STOrE R3 L1
+    
+    ; compute low byte of result (easy)
+    LOAD R1 L0
+    LOAD R2 L2
+    MUL R1 R2
     STORE R1 L0
     
     LOAD R2 R3 L4
     JMP R2 R3
     
-
-
-    AREA DATA 8
+    
+    AREA DATA 3
 MUL16_RET:
     BYTE 0 0
-MUL16_A:
-    BYTE 0 0
-MUL16_B:
-    BYTE 0 0
-MUL16_X:
-    BYTE 0 0
+MUL16_VX:
+    BYTE 0
 
 ; -- Multiply two 16-bit values
 ;  input: L0 low byte of first operand
@@ -105,73 +135,18 @@ MUL16_X:
     AREA CODE 100
 MUL16:
     STORE R2 R3 MUL16_RET
-    
-    LOAD R2 R3 L0
-    STORE R2 R3 MUL16_A
-    LOAD R2 R3 L2
-    STORE R2 R3 MUL16_B
-    
-    ; 4. row in multiplication matrix (operand 2 is already there)
-    CALL MUL164    
-    LOAD R2 R3 L0
-    STORE R2 R3 MUL16_X
-    
-    ; 3. row in matrix    
-        ; shift first operand
-    LOAD R2 R3 MUL16_A
-    SET R0 16
-    MUL R3 R0
-    COPY R1 R2
-    MUL R2 R0
-    DIV R1 R0
-    ADD R3 R1
-    STORE R2 R3 L0
-        ; take correct 4 bits from second operand
-    LOAD R2 R3 MUL16_B
-    SET R0 16
-    DIV R2 R0
-    STORE R2 L2
-    ; multiply row and add to total result
-    CALL MUL164
-    LOAD R2 R3 MUL16_X
-    STORE R2 R3 L2
-    CALL ADD16
-    LOAD R2 R3 L0
-    STORE R2 R3 MUL16_X
 
-    ; 2. row in matrix    
-        ; shift first operand
-    LOAD R2 R3 MUL16_A
-    ZERO R3
-    STORE R3 R2 L0
-        ; take correct 4 bits from second operand
-    LOAD R2 R3 MUL16_B
-    STORE R3 L2
-    ; multiply row and add to total result
-    CALL MUL164
-    LOAD R2 R3 MUL16_X
-    STORE R2 R3 L2
-    CALL ADD16
-    LOAD R2 R3 L0
-    STORE R2 R3 MUL16_X
+    LOAD R2 L0      ; calculate first row of multiplication matrix
+    LOAD R3 L3
+    MUL R2 R3
+    STORE R2 MUL16_VX
 
-    ; 1. row in matrix    
-        ; shift first operand
-    LOAD R2 R3 MUL16_A
-    ZERO R3
-    SET R0 16
-    MUL R2 R0
-    STORE R3 R2 L0
-        ; take correct 4 bits from second operand
-    LOAD R2 R3 MUL16_B
-    SET R0 16
-    DIV R3 R0
-    STORE R3 L2
-    ; multiply row and add to total result
-    CALL MUL164
-    LOAD R2 R3 MUL16_X
-    STORE R2 R3 L2
-    CALL ADD16
+    CALL MUL168     ; calculate second row of multiplication matrix
+    
+    LOAD R2 MUL16_VX  ; join rows
+    LOAD R3 L1
+    ADD R3 R2
+    STORE R3 L1
     
     LOAD R2 R3 MUL16_RET
     JMP R2 R3

@@ -35,8 +35,8 @@ MAIN:
     
     CALL PRINTNEWLINE
     
-    SET R2 .5000
-    SET R3 ^5000
+    SET R2 .20000
+    SET R3 ^20000
     STORE R2 R3 L0
     SET R2 .17323
     SET R3 ^17323
