@@ -21,8 +21,8 @@ def areaisused(buffer, start, len):
     return False
 
 def findfreearea(buffer, start, len):
-    if len>255:
-        raise AssemblerException("Can not support area size greater than 255")
+    if len>256:
+        raise AssemblerException("Can not support area size greater than 256")
     # quick search for some empty area
     while buffer[start+len-1] != None:
         start = start+len;
@@ -205,6 +205,11 @@ def processline(identifiers, finalpass, tokens, codeaddress, outbuffer):
         bytes = [ 0xD0 | reg(T, 1, 0) | reg(T, 2, 2) ]
     elif tokens[0]=="NOP":
         bytes = [ 0x50 ]
+    elif tokens[0]=="COPY":
+        bytes = [
+            0x50 | reg(T, 1, 0) | reg(T, 2, 2),        # AND
+            0x60 | reg(T, 1, 0) | reg(T, 2, 2)         # OR
+        ]
     elif tokens[0]=="GOTO":
         address = op(I,G,T, 1, 16)
         bytes = [
@@ -212,7 +217,7 @@ def processline(identifiers, finalpass, tokens, codeaddress, outbuffer):
             0xB0 | (1<<0), (address>>8),      # SER R1 ^address
             0x90 | (0<<0) | (1<<2)            # JMP R0 R1
         ]        
-    elif tokens[0]=="INVOKE":
+    elif tokens[0]=="CALL":
         address = op(I,G,T, 1, 16)
         raddr = pc + 9
         bytes = [
@@ -272,7 +277,7 @@ def process(identifiers, sourcefile, codeaddress, outbuffer, finalpass):
                 if finalpass:
                     if areaisused(outbuffer, romaddress, len(bytes)):
                         raise AssemblerException("Overlapping ranges")
-                    printlisting(romaddress, bytes, line)
+#                    printlisting(romaddress, bytes, line)
                 outbuffer[romaddress:romaddress+len(bytes)] = bytes
             except AssemblerException as e:
                 print(sourcefile+":"+str(linenumber)+" "+str(e),file=sys.stderr)
