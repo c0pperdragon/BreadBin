@@ -86,6 +86,8 @@ def readhexfile(hexfile):
     return rom
 
 def execute(board,steps,show):
+    tracing = False
+    
     # dummy start values
     dp = 88
     reg = [47,11,8,15]   
@@ -94,10 +96,12 @@ def execute(board,steps,show):
     xmemptr = 0
 
     for i in range(steps):
+        if pc==show:
+            tracing = True
 
         # instruction fetch
         opcode = board.read(pc)
-        if i>=steps-show:
+        if tracing:  # i>=steps-show:
             print ("PC:",format(pc,"x").zfill(4),
                    "DP:",dp,
                    "REG:",reg,
@@ -175,7 +179,7 @@ def run(hexfile, steps,show):
 
 if len(sys.argv)>1:
     steps = 10000000
-    show = 0
+    show = -1
     if len(sys.argv)>2:
         steps = int(sys.argv[2])
     if len(sys.argv)>3:

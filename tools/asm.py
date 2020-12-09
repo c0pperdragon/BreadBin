@@ -108,7 +108,7 @@ def branchtarget(identifiers, finalpass, tokens, tidx, pc):
         else:
             return value & 0xff
 
-def printlisting(startaddress, bytes, line):
+def printlisting(lst,startaddress, bytes, line):
     perpart = 4
     numparts = (max(len(bytes),1) +perpart-1) // perpart
     for i in range(numparts):
@@ -121,7 +121,7 @@ def printlisting(startaddress, bytes, line):
         if i==0:
             x.append(" ")
             x.append(line)
-        print ("".join(x))
+        print ("".join(x), file=lst)
 
 def processline(identifiers, finalpass, tokens, codeaddress, outbuffer):
     I = identifiers
@@ -259,7 +259,7 @@ def processline(identifiers, finalpass, tokens, codeaddress, outbuffer):
     codeaddress[1] += len(bytes)
     return bytes
 
-def process(identifiers, sourcefile, codeaddress, outbuffer, finalpass):
+def process(identifiers, sourcefile, codeaddress, outbuffer, finalpass, lst):
     src = open(sourcefile, "r")
     linenumber = 1
     numerrors = 0
@@ -267,7 +267,7 @@ def process(identifiers, sourcefile, codeaddress, outbuffer, finalpass):
         line = rawline.rstrip()
         body = line.lstrip()
         if body.startswith("include") or body.startswith("INCLUDE"):
-            process(identifiers,body[7:].lstrip(),codeaddress,outbuffer,finalpass)
+            process(identifiers,body[7:].lstrip(),codeaddress,outbuffer,finalpass,lst)
         else:
             try:
                 tokens = tokenize(line)
@@ -277,7 +277,7 @@ def process(identifiers, sourcefile, codeaddress, outbuffer, finalpass):
                 if finalpass:
                     if areaisused(outbuffer, romaddress, len(bytes)):
                         raise AssemblerException("Overlapping ranges")
-#                    printlisting(romaddress, bytes, line)
+                    printlisting(lst,romaddress, bytes, line)
                 outbuffer[romaddress:romaddress+len(bytes)] = bytes
             except AssemblerException as e:
                 print(sourcefile+":"+str(linenumber)+" "+str(e),file=sys.stderr)
@@ -315,18 +315,22 @@ def printhexfile(hexfile, buffer):
     print(formatwithchecksum([0x00,0x00,0x00,0x01]), file=dest)                
     dest.close()
         
-def asm(sourcefile,hexfile):
+def asm(sourcefile,hexfile,listfile):
     try:
         identifiers = { }
         rom = [None]*65536
-        process(identifiers, sourcefile, [0, 0], rom, False)
+        process(identifiers, sourcefile, [0, 0], rom, False, None)
         rom = [None]*65536
-        process(identifiers, sourcefile, [0, 0], rom, True)
+
+        lst = open(listfile, "w")
+        process(identifiers, sourcefile, [0, 0], rom, True, lst)
+        lst.close()
+        
         printhexfile(hexfile, rom)
     except AssemblerException as e:
         print (e,file=sys.stderr) 
 
 if len(sys.argv)>=2: 
-    asm(sys.argv[1]+".asm",sys.argv[1]+".hex")
+    asm(sys.argv[1]+".asm",sys.argv[1]+".hex",sys.argv[1]+".lst")
 else:
     print("No filename given to assemble",file=sys.stderr)

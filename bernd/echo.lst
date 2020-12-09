@@ -1,0 +1,869 @@
+0000              ; ------ Memory layout and hardware registers   -----------------------------
+0000              
+0000              DATA      = $0200
+0000              CODE      = $0800
+0000              XDATAPAGE = $0100
+0000              XDATABANK = $0101
+0000              PORT2     = $0102
+0000              PORT3     = $0103
+0000              
+0000              ; -------- universally usable variables and call parameters -----------------
+0000                  AREA DATA 8
+0200 00           L0: BYTE 0
+0201 00           L1: BYTE 0
+0202 00           L2: BYTE 0
+0203 00           L3: BYTE 0
+0204 00           L4: BYTE 0
+0205 00           L5: BYTE 0
+0206 00           L6: BYTE 0
+0207 00           L7: BYTE 0
+0208              
+0208              
+0208              ; ------ Startup code to copy program from ROM to RAM and start it ----------
+0208              
+0208                  ; at first action init output ports to idle level
+0208                  ORG $0000
+0000              
+0000 b1 ff            SET R1 $FF
+0002 a3 b0 02 d1      STORE R1 PORT2
+0006 a3 b0 03 d1      STORE R1 PORT3
+000a              
+000a                  ; copy ROM page 0 containing the second copy loop to RAM page 2
+000a 7f               ZERO R3    ; loop counter
+000b              COPYLOOP1:
+000b a1               DP 0
+000c cd               LD R1 R3
+000d a5               DP 2
+000e dd               ST R1 R3
+000f b0 01            SET R0 1
+0011 13               ADD R3 R0
+0012 8c 0b            BGE R3 R0 COPYLOOP1
+0014              
+0014 b0 80 b1 02      GOTO COPYROUTINE2
+0018 94          
+0019              
+0019                  ; second copy loop: this code is executed from RAM so it can
+0019                  ; switch ROM banks.
+0019                  ; in order for itself to be copied from page 0, its own ROM location
+0019                  ; and execution address can not be identical
+0019                  ORG $0080 $0280
+0080              
+0080              COPYROUTINE2:
+0080 b3 03            SET R3 $03 ; loop counter: high byte of target address
+0082              COPYLOOP2:
+0082                  ; set up the extension memory page address
+0082 a3 b0 00 d3      STORE R3 XDATAPAGE
+0086                  ; copy a whole page in one loop
+0086 7a               ZERO R2   ; loop counter for low byte target address
+0087              INNERLOOP2:
+0087 a1               DP 0
+0088 c9               LD R1 R2
+0089 ac               DP R3
+008a d9               ST R1 R2
+008b b0 01            SET R0 1
+008d 12               ADD R2 R0
+008e 88 87            BGE R2 R0 INNERLOOP2
+0090 13               ADD R3 R0
+0091 8c 82            BGE R3 R0 COPYLOOP2
+0093              
+0093                  ; init some global data
+0093 75               ZERO R1
+0094 a5 b0 08 d1      STORE R1 RECEIVE_BUFFERFILL
+0098 a5 b0 09 d1      STORE R1 RECEIVE_BUFFERUSED
+009c b0 0a b1 0c      GOTO MAIN
+00a0 94          
+00a1              
+00a1              ; ------------------------------ Serial communication -----------------------
+00a1              
+00a1                  ; This subsystem implements a bit-banged UART communication.
+00a1                  ; Communication is done with 115200 baud using flow control with RTS/CTS.
+00a1                  ; With a 10MHz CPU clock, transmission of one serial bit takes 86.8 cycles
+00a1                  ; (using 87 cycles is also OK)
+00a1                  ; The serial port is wired up like this:
+00a1                  ;   TX  out port 3, bit 0
+00a1                  ;   RX  in port 3, bit 0
+00a1                  ;   RTS out port 3, bit 1
+00a1                  ;   CTS in port 3, bit 1
+00a1              
+00a1                  ; - Write one byte to the serial port. May block execution if hardware flow
+00a1                  ;   control blocks transmission.
+00a1                  ; param L0 ... value to write
+00a1                  ; local L1 ... counter)
+00a1                  AREA CODE 100
+0800              
+0800              TRANSMIT:
+0800                  ; wait until partner can accept data (CTS is low)
+0800 a3 b1 03 c5      LOAD R1 PORT3
+0804 b0 02            SET R0 $02
+0806 51               AND R1 R0
+0807 84 00            BGE R1 R0 TRANSMIT
+0809              
+0809                  ; counter for bits, including stop bit
+0809 b1 09            SET R1 9
+080b a5 b0 01 d1      STORE R1 L1
+080f              
+080f                  ; start bit
+080f b1 fe            SET R1 $FE
+0811 b0 03            SET R0 .PORT3
+0813 a3               DP ^PORT3
+0814 d1               ST R1 R0                                 ;       0
+0815                  ; do delay
+0815 b1 01            SET R1 1                                 ; 2     2
+0817 b0 17            SET R0 23                                ; 2     4
+0819              TRANSMIT_DELAYLOOP1:
+0819 24               SUB R0 R1                            ; 1
+081a 81 19            BGE R0 R1 TRANSMIT_DELAYLOOP1        ; 2
+081c                                                           ; 23*3 73
+081c              TRANSMIT_WRITELOOP:
+081c                  ; send next bit
+081c b0 00            SET R0 .L0                               ; 2    75
+081e a5               DP ^L0                                   ; 1    76
+081f c1               LD R1 R0                                 ; 2    78
+0820 b0 fe            SET R0 $FE                               ; 2    80
+0822 61               OR R1 R0                                 ; 1    81
+0823 b0 03            SET R0 .PORT3                            ; 2    83
+0825 a3               DP ^PORT3                                ; 1    84
+0826 d1               ST R1 R0                                 ; 3    87 = 0
+0827                  ; do delay
+0827 b1 01            SET R1 1                                 ; 2     2
+0829 b0 0c            SET R0 12                                ; 2     4
+082b              TRANSMIT_DELAYLOOP2:
+082b 24               SUB R0 R1                            ; 1
+082c 81 2b            BGE R0 R1 TRANSMIT_DELAYLOOP2        ; 2
+082e                                                           ; 12*3 40
+082e                  ; shift bits to right, filling with 1s
+082e b0 00            SET R0 .L0                               ; 2    42
+0830 a5               DP ^L0                                   ; 1    43
+0831 c1               LD R1 R0                                 ; 2    45
+0832 b0 02            SET R0 2                                 ; 2    47
+0834 41               DIV R1 R0                                ; 1    48
+0835 b0 80            SET R0 $80                               ; 2    50
+0837 61               OR R1 R0                                 ; 1    51
+0838 b0 00            SET R0 .L0                               ; 2    53
+083a a5               DP ^L0                                   ; 1    54
+083b d1               ST R1 R0                                 ; 2    56
+083c                  ; decrement counter and loop
+083c b0 01            SET R0 .L1                               ; 2    58
+083e a5               DP ^L1                                   ; 1    59
+083f c1               LD R1 R0                                 ; 2    61
+0840 b0 01            SET R0 1                                 ; 2    63
+0842 21               SUB R1 R0                                ; 1    64
+0843 b0 01            SET R0 .L1                               ; 2    66
+0845 a5               DP ^L1                                   ; 1    67
+0846 d1               ST R1 R0                                 ; 2    69
+0847 b0 01            SET R0 1                                 ; 2    71
+0849 84 1c            BGE R1 R0 TRANSMIT_WRITELOOP             ; 2    73
+084b              
+084b 9e               JMP R2 R3
+084c              
+084c              
+084c                  ; - Read one byte of data from the serial port. This procedure blocks until
+084c                  ; one byte is available. It will use the hardware flow control signals to make
+084c                  ; the partner only send data if the program is actively listening.
+084c                  ; Because the partner may continue sending a few more bytes even after
+084c                  ; RTS is de-asserted, a small buffer (8 bytes) is kept .
+084c                  ; return R1 .. the byte received
+084c                  ; local L0,L1 return address
+084c              
+084c                  AREA DATA 10
+0208              RECEIVE_BUFFERFILL:
+0208 00               BYTE 0              ; number of bytes still available from previous receives
+0209              RECEIVE_BUFFERUSED:
+0209 00               BYTE 0              ; how many bytes of the buffer area alread consumed
+020a              RECEIVE_BUFFER:
+020a 00 00 00 00      BYTE 0 0 0 0 0 0 0 0  ; the buffer itself
+020e 00 00 00 00 
+0212              
+0212                  AREA CODE 150
+084c              RECEIVE:
+084c                  ; keep return address
+084c a5 b0 00 d2      STORE R2 R3 L0
+0850 b0 01 d3    
+0853              
+0853                  ; check if there is still some data in the buffer
+0853 a5 b2 08 ca      LOAD R2 RECEIVE_BUFFERFILL
+0857 a5 b3 09 cf      LOAD R3 RECEIVE_BUFFERUSED
+085b 8e 75            BGE R3 R2 RECEIVE_FETCHMORE
+085d              
+085d                  ; fetch one byte from the buffer and return to caller
+085d              RECEIVE_USEFROMBUFFER:
+085d a5 b3 09 cf      LOAD R3 RECEIVE_BUFFERUSED
+0861 b0 0a            SET R0 .RECEIVE_BUFFER
+0863 1c               ADD R0 R3
+0864 a5               DP ^RECEIVE_BUFFER
+0865 c1               LD R1 R0
+0866 b0 01            SET R0 1
+0868 13               ADD R3 R0
+0869 a5 b0 09 d3      STORE R3 RECEIVE_BUFFERUSED
+086d a5 b2 00 ca      LOAD R2 R3 L0
+0871 b3 01 cf    
+0874 9e               JMP R2 R3
+0875              
+0875              RECEIVE_FETCHMORE:
+0875                  ; reset buffer
+0875 75               ZERO R1
+0876 a5 b0 08 d1      STORE R1 RECEIVE_BUFFERFILL
+087a a5 b0 09 d1      STORE R1 RECEIVE_BUFFERUSED
+087e                  ; prepeare for quick access
+087e b3 01            SET R3 $01  ; mask for bit 0
+0880                  ; signal to partner that data can be accepted (RTS low)
+0880 a3               DP ^PORT3
+0881 b1 03            SET R1 .PORT3
+0883 b0 fd            SET R0 $FD
+0885 d4               ST  R0 R1
+0886              
+0886                  ; wait until detecting the start bit (low signal on RX)
+0886              RECEIVE_WAITFORSTART:
+0886 c4               LD R0 R1                                    ;     -43
+0887 5c               AND R0 R3                                   ; 1   -42
+0888 83 86            BGE R0 R3 RECEIVE_WAITFORSTART              ; 2   -40
+088a                  ; immediately turn off the RTS line,
+088a                  ; so partner will not send another byte
+088a b0 ff            SET R0 $FF                                  ; 2   -38
+088c d4               ST R0 R1                                    ; 3   -35
+088d              
+088d                  ; do delay to get into the middle
+088d                  ; of the first data bit
+088d b1 01            SET R1 1                                    ; 2   -33
+088f b0 24            SET R0 36                                   ; 2   -31
+0891              RECEIVE_DELAYLOOP1:
+0891 24               SUB R0 R1                               ; 1
+0892 81 91            BGE R0 R1 RECEIVE_DELAYLOOP1:           ; 2
+0894                                                              ; 36*3 77
+0894 50               NOP                                         ; 1    78
+0895              RECEIVE_READBITS:
+0895 7a               ZERO R2  ; accumulated bits                 ; 1    79
+0896 b3 08            SET R3 8 ; bit counter                      ; 2    81
+0898              RECEIVE_BITLOOP:
+0898                  ; read input bit and move to bit 7 of R1
+0898 b0 03            SET R0 .PORT3                               ; 2    83
+089a a3               DP ^PORT3                                   ; 1    84
+089b              
+089b c1               LD R1 R0                                    ; 3    87 = 0
+089c b0 01            SET R0 1                                    ; 2     2
+089e 51               AND R1 R0                                   ; 1     3
+089f b0 80            SET R0 128                                  ; 2     5
+08a1 31               MUL R1 R0                                   ; 1     6
+08a2                  ; shift R2 and insert new bit
+08a2 b0 02            SET R0 2                                    ; 2     8
+08a4 42               DIV R2 R0                                   ; 1     9
+08a5 66               OR R2 R1                                    ; 1    10
+08a6                  ; do delay to get to the next bit
+08a6                  ; (data or stop bit)
+08a6 b1 01            SET R1 1                                    ; 2    12
+08a8 b0 15            SET R0 21                                   ; 2    14
+08aa              RECEIVE_DELAYLOOP2:
+08aa 24               SUB R0 R1                               ; 1
+08ab 81 aa            BGE R0 R1 RECEIVE_DELAYLOOP2:           ; 2
+08ad                                                              ; 21*3 77
+08ad                  ; continue for necessary amount of bits
+08ad b0 01            SET R0 1                                    ; 2    79
+08af 23               SUB R3 R0                                   ; 1    80
+08b0 8c 98            BGE R3 R0 RECEIVE_BITLOOP                   ; 2    82
+08b2              
+08b2                  ; add received data to buffer
+08b2 a5 b3 08 cf      LOAD R3 RECEIVE_BUFFERFILL                  ; 5
+08b6 b0 0a            SET R0 .RECEIVE_BUFFER                      ; 2
+08b8 1c               ADD R0 R3                                   ; 1
+08b9 a5               DP ^RECEIVE_BUFFER                          ; 1
+08ba d2               ST R2 R0                                    ; 2
+08bb b0 01            SET R0 1                                    ; 2
+08bd 13               ADD R3 R0                                   ; 1
+08be a5 b0 08 d3      STORE R3 RECEIVE_BUFFERFILL                 ; 5
+08c2              
+08c2                  ; prevent buffer from overflow
+08c2 b0 08            SET R0 8                                    ; 2
+08c4 8c 5d            BGE R3 R0 RECEIVE_USEFROMBUFFER             ; 2
+08c6              
+08c6                  ; wait some additional time to see if the partner
+08c6                  ; sends more data. synchronize to start bit
+08c6 b3 01            SET R3 $01 ; mask for bit 0, (just a 1)     ; 2
+08c8 b2 32            SET R2 50  ; maximum time to wait           ; 2
+08ca a3               DP ^PORT3                                   ; 1
+08cb b1 03            SET R1 .PORT3                               ; 2
+08cd              RECEIVE_WAITFORRESTART:
+08cd 2e               SUB R2 R3                                   ; 1
+08ce 8e 5d            BLE R2 R3 RECEIVE_USEFROMBUFFER ; stop      ; 2
+08d0 c4               LD R0 R1                                    ; 3
+08d1 5c               AND R0 R3                                   ; 1   -44
+08d2 83 cd            BGE R0 R3 RECEIVE_WAITFORRESTART            ; 2   -42
+08d4              
+08d4                  ; new start bit found.
+08d4                  ; wait until reaching middle of data
+08d4 b1 01            SET R1 1                                    ; 2   -40
+08d6 b0 26            SET R0 38                                   ; 2   -38
+08d8              RECEIVE_DELAYLOOP3:
+08d8 24               SUB R0 R1                               ; 1
+08d9 81 d8            BGE R0 R1 RECEIVE_DELAYLOOP3:           ; 2   3*38 76
+08db              
+08db 80 95            BRA RECEIVE_READBITS                        ; 2    78
+08dd              
+08dd              
+08dd              ; ------------------------- Various tools ----------------------------------
+08dd              
+08dd                 ; - Delay for given number of milliseconds
+08dd                  ; param L0 ... milliseconds
+08dd                  AREA CODE 100
+0900              
+0900              DELAY:
+0900                  ; keep return address
+0900 a5 b0 02 d2      STORE R2 R3 L2
+0904 b0 03 d3    
+0907              DELAY_OUTER:
+0907                  ; simple loop to delay 1 millisecond
+0907 b0 01            SET R0 1
+0909 b1 00            SET R1 0
+090b b2 0c            SET R2 12
+090d              DELAY_INNER:
+090d 21               SUB R1 R0
+090e 84 0d            BGE R1 R0 DELAY_INNER
+0910 22               SUB R2 R0
+0911 88 0d            BGE R2 R0 DELAY_INNER
+0913                  ; subtract 1 millisecond
+0913 a5 b1 00 c5      LOAD R1 L0
+0917 b0 01            SET R0 1
+0919 21               SUB R1 R0
+091a a5 b0 00 d1      STORE R1 L0
+091e b0 01            SET R0 1
+0920 84 07            BGE R1 R0 DELAY_OUTER
+0922                  ; retrieve return address
+0922 a5 b2 02 ca      LOAD R2 R3 L2
+0926 b3 03 cf    
+0929 9e               JMP R2 R3
+092a              
+092a              ; ------ various print routines (strings, numbers, etc) --------------------------
+092a              
+092a                  AREA CODE 30
+08dd              PRINTNEWLINE_CRLF:
+08dd 0d 0a 00         BYTE 13 10 0
+08e0                  ; --- Write a line break (ascii 13 10) to the serial port
+08e0              PRINTNEWLINE:
+08e0 b1 dd            SET R1 .PRINTNEWLINE_CRLF
+08e2 a5 b0 00 d1      STORE R1 L0
+08e6 b1 08            SET R1 ^PRINTNEWLINE_CRLF
+08e8 a5 b0 01 d1      STORE R1 L1
+08ec b0 2a b1 09      GOTO PRINT
+08f0 94          
+08f1              
+08f1              
+08f1                  AREA DATA 4
+0212              PRINT_RETADDR:
+0212 00 00            BYTE 0 0
+0214              PRINT_PTR:
+0214 00 00            BYTE 0 0
+0216              
+0216                  ; --- Write a null-terminated string to the serial port.
+0216                  ; param L0 ... low byte of pointer to string
+0216                  ; param L1 ... high byte of pointer to string
+0216                  AREA CODE 40
+092a              PRINT:
+092a a5 b0 12 d2      STORE R2 R3 PRINT_RETADDR
+092e b0 13 d3    
+0931              
+0931 a5 b2 00 ca      LOAD R2 R3 L0
+0935 b3 01 cf    
+0938 a5 b0 14 d2      STORE R2 R3 PRINT_PTR
+093c b0 15 d3    
+093f              PRINT_LOOP:
+093f a5 b2 14 ca      LOAD R2 R3 PRINT_PTR
+0943 b3 15 cf    
+0946 ac               DP R3
+0947 c9               LD R1 R2
+0948 70               ZERO R0
+0949 81 6e            BLE R1 R0 PRINT_DONE
+094b              
+094b a5 b0 00 d1      STORE R1 L0
+094f b2 58 b3 09      CALL TRANSMIT
+0953 b0 00 b1 08 
+0957 94          
+0958              
+0958 a5 b2 14 ca      LOAD R2 R3 PRINT_PTR
+095c b3 15 cf    
+095f b0 01            SET R0 1
+0961 12               ADD R2 R0
+0962 88 65            BGE R2 R0 PRINT_NOOVERFLOW
+0964 13               ADD R3 R0
+0965              PRINT_NOOVERFLOW:
+0965 a5 b0 14 d2      STORE R2 R3 PRINT_PTR
+0969 b0 15 d3    
+096c 80 3f            BRA PRINT_LOOP
+096e              
+096e              PRINT_DONE:
+096e a5 b2 12 ca      LOAD R2 R3 PRINT_RETADDR
+0972 b3 13 cf    
+0975 9e               JMP R2 R3
+0976              
+0976                  AREA CODE 20
+0976                  ; ---- Write a single number (0 - 15) as a hex digit
+0976                  ; param L0: the number to write
+0976              PRINTDIGIT:
+0976 a5 b1 00 c5      LOAD R1 L0
+097a b0 09            SET R0 9
+097c 81 81            BLE R1 R0 PRINTDIGIT_ISDECIMAL
+097e b0 07            SET R0 7   ; gap between '9' and 'A' in ASCII
+0980 11               ADD R1 R0
+0981              PRINTDIGIT_ISDECIMAL:
+0981 b0 30            SET R0 48  ; ASCII '0'
+0983 11               ADD R1 R0
+0984 a5 b0 00 d1      STORE R1 L0
+0988 b0 00 b1 08      GOTO TRANSMIT  ; - tail call
+098c 94          
+098d              
+098d              
+098d                  AREA CODE
+08f1                  ; --- Write decimal representation of an 8-bit unsigned number to the serial port.
+08f1                  ; param L0 ... the number
+08f1              PRINT8:
+08f1 75               ZERO R1
+08f2 a5 b0 01 d1      STORE R1 L1
+08f6 b0 8d b1 09      GOTO PRINT16  ; tail call
+08fa 94          
+08fb              
+08fb              
+08fb                  AREA DATA 4
+0216              PRINT16_RETADDR:
+0216 00 00            BYTE 0 0
+0218              PRINT16_LOW:
+0218 00               BYTE 0
+0219              PRINT16_HIGH:
+0219 00               BYTE 0
+021a              
+021a                  AREA CODE 50
+098d                  ; --- Write decimal representation of a 16-bit signed number to the serial port.
+098d                  ; param L0 ... low byte
+098d                  ; param L1 ... high byte
+098d              PRINT16:
+098d a5 b0 16 d2      STORE R2 R3 PRINT16_RETADDR
+0991 b0 17 d3    
+0994 a5 b2 00 ca      LOAD R2 R3 L0
+0998 b3 01 cf    
+099b a5 b0 18 d2      STORE R2 R3 PRINT16_LOW
+099f b0 19 d3    
+09a2              
+09a2 b0 10            SET R0 16
+09a4 43               DIV R3 R0
+09a5 a5 b0 00 d3      STORE R3 L0
+09a9 b2 b2 b3 09      CALL PRINTDIGIT
+09ad b0 76 b1 09 
+09b1 94          
+09b2              
+09b2 a5 b3 19 cf      LOAD R3 PRINT16_HIGH
+09b6 b0 0f            SET R0 $0f
+09b8 53               AND R3 R0
+09b9 a5 b0 00 d3      STORE R3 L0
+09bd b2 c6 b3 09      CALL PRINTDIGIT
+09c1 b0 76 b1 09 
+09c5 94          
+09c6              
+09c6 a5 b3 18 cf      LOAD R3 PRINT16_LOW
+09ca b0 10            SET R0 16
+09cc 43               DIV R3 R0
+09cd a5 b0 00 d3      STORE R3 L0
+09d1 b2 da b3 09      CALL PRINTDIGIT
+09d5 b0 76 b1 09 
+09d9 94          
+09da              
+09da a5 b3 18 cf      LOAD R3 PRINT16_LOW
+09de b0 0f            SET R0 $0f
+09e0 53               AND R3 R0
+09e1 a5 b0 00 d3      STORE R3 L0
+09e5              
+09e5 a5 b2 16 ca      LOAD R2 R3 PRINT16_RETADDR
+09e9 b3 17 cf    
+09ec b0 76 b1 09      GOTO PRINTDIGIT   ; tail call
+09f0 94          
+09f1              ; ----------- various routines for unsigned 16-bit mathematics ----------------------
+09f1              
+09f1              ;  -- Add two 16 bit values
+09f1              ;  input: L0 low byte of first operand
+09f1              ;         L1 high byte of first operand
+09f1              ;         L2 low byte of second operand
+09f1              ;         L3 high byte of second operand
+09f1              ;  output: L0 low byte of sum
+09f1              ;          L1 high byte of sum
+09f1                  AREA CODE 30
+0a00              ADD16:
+0a00 a5 b0 04 d2      STORE R2 R3 L4
+0a04 b0 05 d3    
+0a07              
+0a07 a5 b2 00 ca      LOAD R2 R3 L0
+0a0b b3 01 cf    
+0a0e a5 b0 02 c0      LOAD R0 R1 L2
+0a12 b1 03 c5    
+0a15 17               ADD R3 R1
+0a16 12               ADD R2 R0
+0a17 08               GT R0 R2  ; overflow detection
+0a18 13               ADD R3 R0 ; carry
+0a19 a5 b0 00 d2      STORE R2 R3 L0
+0a1d b0 01 d3    
+0a20              
+0a20 a5 b2 04 ca      LOAD R2 R3 L4
+0a24 b3 05 cf    
+0a27 9e               JMP R2 R3
+0a28              
+0a28              ;  -- Subtract two 16 bit values
+0a28              ;  input: L0 low byte of first operand
+0a28              ;         L1 high byte of first operand
+0a28              ;         L2 low byte of second operand
+0a28              ;         L3 high byte of second operand
+0a28              ;  output: L0 low byte of sum
+0a28              ;          L1 high byte of sum
+0a28                  AREA CODE 50
+0a28              SUB16:
+0a28 a5 b0 04 d2      STORE R2 R3 L4
+0a2c b0 05 d3    
+0a2f              
+0a2f a5 b2 00 ca      LOAD R2 R3 L0
+0a33 b3 01 cf    
+0a36 a5 b0 02 c0      LOAD R0 R1 L2
+0a3a b1 03 c5    
+0a3d 27               SUB R3 R1
+0a3e 22               SUB R2 R0
+0a3f 59 69            COPY R1 R2
+0a41 a5 b0 00 c0      LOAD R0 L0
+0a45 01               GT R1 R0  ; underflow detection
+0a46 27               SUB R3 R1 ; borrow
+0a47 a5 b0 00 d2      STORE R2 R3 L0
+0a4b b0 01 d3    
+0a4e              
+0a4e a5 b2 04 ca      LOAD R2 R3 L4
+0a52 b3 05 cf    
+0a55 9e               JMP R2 R3
+0a56              
+0a56              ; -- Multiply a 16-bit value with a 8-bit value
+0a56              ;  input: L0 low byte of first operand
+0a56              ;         L1 high byte of first operand
+0a56              ;         L2 second operand
+0a56              ;  output: L0 low byte of result
+0a56              ;          L1 high byte of operand
+0a56              ;  The most diffcult part of the computation is to compute the high byte
+0a56              ;  of the product of the low bytes. This is done by splitting the numbers to
+0a56              ;  4-bit digits and manually do the multiplication matrix.
+0a56              ;  L0 = A B    L2 = C D
+0a56                  AREA CODE 100
+0a56              MUL168:
+0a56 a5 b0 04 d2      STORE R2 R3 L4
+0a5a b0 05 d3    
+0a5d              
+0a5d                  ; Compute the high byte of the low-byte multiplications
+0a5d a5 b3 00 cf      LOAD R3 L0
+0a61 b0 0f            SET R0 15
+0a63 53               AND R3 R0   ; B
+0a64 a5 b2 02 ca      LOAD R2 L2
+0a68 52               AND R2 R0   ; D
+0a69 3b               MUL R3 R2   ; B*D
+0a6a b0 10            SET R0 16
+0a6c 43               DIV R3 R0   ; overflow to digit 1
+0a6d              
+0a6d a5 b2 00 ca      LOAD R2 L0
+0a71 b0 0f            SET R0 15
+0a73 52               AND R2 R0   ; B
+0a74 a5 b1 02 c5      LOAD R1 L2
+0a78 b0 10            SET R0 16
+0a7a 41               DIV R1 R0   ; C
+0a7b 36               MUL R2 R1   ; B*C
+0a7c 1b               ADD R3 R2   ; collect digit 1&2
+0a7d              
+0a7d a5 b2 00 ca      LOAD R2 L0
+0a81 b0 10            SET R0 16
+0a83 42               DIV R2 R0   ; A
+0a84 a5 b1 02 c5      LOAD R1 L2
+0a88 b0 0f            SET R0 15
+0a8a 51               AND R1 R0   ; D
+0a8b 36               MUL R2 R1   ; A*D
+0a8c 1b               ADD R3 R2   ; collect digit 1&2
+0a8d 0e               GT R2 R3    ; overflow to digit 3
+0a8e b0 10            SET R0 16
+0a90 43               DIV R3 R0   ; start with columns 2&3
+0a91 32               MUL R2 R0   ; adjust overflow to fit digit 2&3
+0a92 1b               ADD R3 R2   ; join from the overflow
+0a93              
+0a93 a5 b2 00 ca      LOAD R2 L0
+0a97 b0 10            SET R0 16
+0a99 42               DIV R2 R0   ; A
+0a9a a5 b1 02 c5      LOAD R1 L2
+0a9e 41               DIV R1 R0   ; C
+0a9f 36               MUL R2 R1   ; A*C
+0aa0 1b               ADD R3 R2   ; complete column 2&3
+0aa1                  ; we have the high byte of low byte multiplication now in R3
+0aa1              
+0aa1                  ; complete the high byte of the result
+0aa1 a5 b1 01 c5      LOAD R1 L1
+0aa5 a5 b2 02 ca      LOAD R2 L2
+0aa9 36               MUL R2 R1
+0aaa 1b               ADD R3 R2
+0aab a5 b0 01 d3      STOrE R3 L1
+0aaf              
+0aaf                  ; compute low byte of result (easy)
+0aaf a5 b1 00 c5      LOAD R1 L0
+0ab3 a5 b2 02 ca      LOAD R2 L2
+0ab7 39               MUL R1 R2
+0ab8 a5 b0 00 d1      STORE R1 L0
+0abc              
+0abc a5 b2 04 ca      LOAD R2 R3 L4
+0ac0 b3 05 cf    
+0ac3 9e               JMP R2 R3
+0ac4              
+0ac4              
+0ac4                  AREA DATA 3
+021a              MUL16_RET:
+021a 00 00            BYTE 0 0
+021c              MUL16_VX:
+021c 00               BYTE 0
+021d              
+021d              ; -- Multiply two 16-bit values
+021d              ;  input: L0 low byte of first operand
+021d              ;         L1 high byte of first operand
+021d              ;         L2 low byte of second operand
+021d              ;         L3 high byte of second operand
+021d              ;  output: L0 low byte of result
+021d              ;          L1 high byte of operand
+021d                  AREA CODE 100
+0b00              MUL16:
+0b00 a5 b0 1a d2      STORE R2 R3 MUL16_RET
+0b04 b0 1b d3    
+0b07              
+0b07 a5 b2 00 ca      LOAD R2 L0      ; calculate first row of multiplication matrix
+0b0b a5 b3 03 cf      LOAD R3 L3
+0b0f 3e               MUL R2 R3
+0b10 a5 b0 1c d2      STORE R2 MUL16_VX
+0b14              
+0b14 b2 1d b3 0b      CALL MUL168     ; calculate second row of multiplication matrix
+0b18 b0 56 b1 0a 
+0b1c 94          
+0b1d              
+0b1d a5 b2 1c ca      LOAD R2 MUL16_VX  ; join rows
+0b21 a5 b3 01 cf      LOAD R3 L1
+0b25 1b               ADD R3 R2
+0b26 a5 b0 01 d3      STORE R3 L1
+0b2a              
+0b2a a5 b2 1a ca      LOAD R2 R3 MUL16_RET
+0b2e b3 1b cf    
+0b31 9e               JMP R2 R3
+0b32              
+0b32              
+0b32              
+0b32              ; -- Divide a 16-bit vaulue by an 8-bit value
+0b32              ;  input: L0 low byte of first operand
+0b32              ;         L1 high byte of first operand
+0b32              ;         L2 second operand (divisor)
+0b32              ;  output: L0 low byte of result
+0b32              ;          L1 high byte of operand
+0b32                  AREA CODE 200
+0b32              DIV168:
+0b32                  ; check if first operand <= 255
+0b32 a5 b1 01 c5      LOAD R1 L1
+0b36 b0 01            SET R0 1
+0b38 84 48            BGE R1 R0 DIV168_FULL
+0b3a                  ; use built-in operation
+0b3a a5 b1 00 c5      LOAD R1 L0
+0b3e a5 b0 02 c0      LOAD R0 L2
+0b42 41               DIV R1 R0
+0b43 a5 b0 00 d1      STORE R1 L0
+0b47 9e               JMP R2 R3
+0b48              
+0b48                  ; full operation
+0b48              DIV168_FULL:
+0b48 a5 b0 04 d2      STORE R2 R3 L4
+0b4c b0 05 d3    
+0b4f              
+0b4f                  ; high byte of the result can be created with built in operation
+0b4f a5 b1 01 c5      LOAD R1 L1
+0b53 a5 b2 02 ca      LOAD R2 L2
+0b57 57 67            COPY R3 R1
+0b59 49               DIV R1 R2
+0b5a a5 b0 01 d1      STORE R1 L1
+0b5e 39               MUL R1 R2
+0b5f 27               SUB R3 R1    ; remainder
+0b60              
+0b60                  ; process the low byte bit by bit doing a full division algorithm
+0b60                  ;  R3 ... current remainder
+0b60                  ;  R2 ... active bit counter (running from $80 to $01)
+0b60                  ;  R1 ... low result byte
+0b60 b2 80            SET R2 $80
+0b62 75               ZERO R1
+0b63              DIV168_LOOP:
+0b63                  ; decide if the remainder can be shifted without overflow
+0b63 b0 80            SET R0 128
+0b65 8c 7e            BGE R3 R0 DIV168_BIGREMAINDER
+0b67                  ; shift remainder and bring in next bit
+0b67 b0 02            SET R0 2
+0b69 33               MUL R3 R0
+0b6a a5 b0 00 c0      LOAD R0 L0
+0b6e 58               AND R0 R2
+0b6f 82 73            BGE R0 R2 DIV168_BRING_1
+0b71 80 76            BRA DIV168_CHECKFIT
+0b73                  ; get next bit from second operand
+0b73              DIV168_BRING_1:
+0b73 b0 01            SET R0 1
+0b75 63               OR R3 R0
+0b76                  ; test if divisor fits into extended remainder
+0b76              DIV168_CHECKFIT:
+0b76 a5 b0 02 c0      LOAD R0 L2
+0b7a 8c 8d            BGE R3 R0 DIV168_DOSUBTRACT:
+0b7c 80 93            BRA DIV168_ENDOFLOOP
+0b7e                  ; in case the remainder is >=128 the divisor will
+0b7e                  ; surely fit after shifting, so just shift and add bit
+0b7e                  ; and no need to do any fit test
+0b7e              DIV168_BIGREMAINDER:
+0b7e b0 02            SET R0 2
+0b80 33               MUL R3 R0
+0b81 a5 b0 00 c0      LOAD R0 L0
+0b85 58               AND R0 R2
+0b86 82 8a            BGE R0 R2 DIV168_BRING_1_NOCHECK:
+0b88 80 8d            BRA DIV168_DOSUBTRACT
+0b8a              DIV168_BRING_1_NOCHECK:
+0b8a b0 01            SET R0 1
+0b8c 63               OR R3 R0
+0b8d                  ; if divisor fits, subtract it and use a 1 digit in result
+0b8d              DIV168_DOSUBTRACT:
+0b8d a5 b0 02 c0      LOAD R0 L2
+0b91 23               SUB R3 R0
+0b92 69               OR R1 R2
+0b93                  ; progress bit counter
+0b93              DIV168_ENDOFLOOP:
+0b93 b0 02            SET R0 2
+0b95 42               DIV R2 R0
+0b96 b0 01            SET R0 1
+0b98 88 63            BGE R2 R0 DIV168_LOOP
+0b9a              
+0b9a                  ; store result and return
+0b9a a5 b0 00 d1      STORE R1 L0
+0b9e a5 b2 04 ca      LOAD R2 R3 L4
+0ba2 b3 05 cf    
+0ba5 9e               JMP R2 R3
+0ba6              
+0ba6                  ; Short test program to write a prompt to the serial port and then
+0ba6                  ; echo all incomming bytes back
+0ba6              
+0ba6                  AREA CODE 256
+0c00              MESSAGE:
+0c00 45 63 68 6f      BYTE 69 99 104 111 32 116 101 115 116 0
+0c04 20 74 65 73 
+0c08 74 00       
+0c0a              
+0c0a              MAIN:
+0c0a b2 11            SET R2 $11
+0c0c b3 47            SET R3 $47
+0c0e a5 b0 00 d2      STORE R2 R3 L0
+0c12 b0 01 d3    
+0c15 b2 1e b3 0c      CALL PRINT16
+0c19 b0 8d b1 09 
+0c1d 94          
+0c1e              
+0c1e b2 9f            SET R2 $9F
+0c20 b3 10            SET R3 $10
+0c22 a5 b0 00 d2      STORE R2 R3 L0
+0c26 b0 01 d3    
+0c29 b2 cb            SET R2 $CB
+0c2b b3 10            SET R3 $10
+0c2d a5 b0 02 d2      STORE R2 R3 L2
+0c31 b0 03 d3    
+0c34 b2 3d b3 0c      CALL ADD16
+0c38 b0 00 b1 0a 
+0c3c 94          
+0c3d b2 46 b3 0c      CALL PRINT16
+0c41 b0 8d b1 09 
+0c45 94          
+0c46              
+0c46 b2 9f            SET R2 $9F
+0c48 b3 10            SET R3 $10
+0c4a a5 b0 00 d2      STORE R2 R3 L0
+0c4e b0 01 d3    
+0c51 b2 cb            SET R2 $CB
+0c53 b3 10            SET R3 $10
+0c55 a5 b0 02 d2      STORE R2 R3 L2
+0c59 b0 03 d3    
+0c5c b2 65 b3 0c      CALL SUB16
+0c60 b0 28 b1 0a 
+0c64 94          
+0c65 b2 6e b3 0c      CALL PRINT16
+0c69 b0 8d b1 09 
+0c6d 94          
+0c6e              
+0c6e b2 77 b3 0c      CALL PRINTNEWLINE
+0c72 b0 e0 b1 08 
+0c76 94          
+0c77              
+0c77 b2 20            SET R2 .20000
+0c79 b3 4e            SET R3 ^20000
+0c7b a5 b0 00 d2      STORE R2 R3 L0
+0c7f b0 01 d3    
+0c82 b2 ab            SET R2 .17323
+0c84 b3 43            SET R3 ^17323
+0c86 a5 b0 02 d2      STORE R2 R3 L2
+0c8a b0 03 d3    
+0c8d b2 96 b3 0c      CALL MUL16
+0c91 b0 00 b1 0b 
+0c95 94          
+0c96 b2 9f b3 0c      CALL PRINT16
+0c9a b0 8d b1 09 
+0c9e 94          
+0c9f b2 a8 b3 0c      CALL PRINTNEWLINE
+0ca3 b0 e0 b1 08 
+0ca7 94          
+0ca8              
+0ca8 b2 40            SET R2 .40000
+0caa b3 9c            SET R3 ^40000
+0cac a5 b0 00 d2      STORE R2 R3 L0
+0cb0 b0 01 d3    
+0cb3 b2 03            SET R2 3
+0cb5 a5 b0 02 d2      STORE R2 L2
+0cb9 b2 c2 b3 0c      CALL DIV168
+0cbd b0 32 b1 0b 
+0cc1 94          
+0cc2 b2 cb b3 0c      CALL PRINT16
+0cc6 b0 8d b1 09 
+0cca 94          
+0ccb b2 d4 b3 0c      CALL PRINTNEWLINE
+0ccf b0 e0 b1 08 
+0cd3 94          
+0cd4              
+0cd4 b2 00            SET R2 .MESSAGE
+0cd6 b3 0c            SET R3 ^MESSAGE
+0cd8 a5 b0 00 d2      STORE R2 R3 L0
+0cdc b0 01 d3    
+0cdf b2 e8 b3 0c      CALL PRINT
+0ce3 b0 2a b1 09 
+0ce7 94          
+0ce8              
+0ce8 b2 f1 b3 0c      CALL PRINTNEWLINE
+0cec b0 e0 b1 08 
+0cf0 94          
+0cf1              
+0cf1 b0 00 b1 0d      GOTO ECHOING
+0cf5 94          
+0cf6              
+0cf6              
+0cf6                  AREA CODE 100
+0d00              ECHOING:
+0d00                  ; receive input
+0d00 b2 09 b3 0d      CALL RECEIVE
+0d04 b0 4c b1 08 
+0d08 94          
+0d09                  ; debug: write to port 2
+0d09 a3 b0 02 d1      STORE R1 PORT2
+0d0d                  ; replace CR with CR-LF
+0d0d b0 0d            SET R0 13
+0d0f 74               XOR R0 R1
+0d10 b3 01            SET R3 1
+0d12 83 34            BGE R0 R3 UNCHANGED
+0d14 b1 0d            SET R1 13
+0d16 a5 b0 00 d1      STORE R1 L0
+0d1a b2 23 b3 0d      CALL TRANSMIT
+0d1e b0 00 b1 08 
+0d22 94          
+0d23 b1 0a            SET R1 10
+0d25 a5 b0 00 d1      STORE R1 L0
+0d29 b2 32 b3 0d      CALL TRANSMIT
+0d2d b0 00 b1 08 
+0d31 94          
+0d32 80 00            BRA ECHOING
+0d34                  ; don't change other characters
+0d34              UNCHANGED:
+0d34 a5 b0 00 d1      STORE R1 L0
+0d38 b2 41 b3 0d      CALL TRANSMIT
+0d3c b0 00 b1 08 
+0d40 94          
+0d41 80 00            BRA ECHOING
+0d43              

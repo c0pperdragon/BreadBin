@@ -150,3 +150,93 @@ MUL16:
     
     LOAD R2 R3 MUL16_RET
     JMP R2 R3
+
+    
+
+; -- Divide a 16-bit vaulue by an 8-bit value
+;  input: L0 low byte of first operand
+;         L1 high byte of first operand
+;         L2 second operand (divisor)
+;  output: L0 low byte of result
+;          L1 high byte of operand
+    AREA CODE 200
+DIV168:
+    ; check if first operand <= 255 
+    LOAD R1 L1
+    SET R0 1
+    BGE R1 R0 DIV168_FULL
+    ; use built-in operation
+    LOAD R1 L0
+    LOAD R0 L2
+    DIV R1 R0
+    STORE R1 L0
+    JMP R2 R3
+    
+    ; full operation
+DIV168_FULL:    
+    STORE R2 R3 L4
+
+    ; high byte of the result can be created with built in operation
+    LOAD R1 L1
+    LOAD R2 L2
+    COPY R3 R1
+    DIV R1 R2
+    STORE R1 L1
+    MUL R1 R2
+    SUB R3 R1    ; remainder
+
+    ; process the low byte bit by bit doing a full division algorithm
+    ;  R3 ... current remainder
+    ;  R2 ... active bit counter (running from $80 to $01)
+    ;  R1 ... low result byte
+    SET R2 $80
+    ZERO R1
+DIV168_LOOP:
+    ; decide if the remainder can be shifted without overflow
+    SET R0 128
+    BGE R3 R0 DIV168_BIGREMAINDER    
+    ; shift remainder and bring in next bit
+    SET R0 2
+    MUL R3 R0
+    LOAD R0 L0
+    AND R0 R2
+    BGE R0 R2 DIV168_BRING_1
+    BRA DIV168_CHECKFIT
+    ; get next bit from second operand
+DIV168_BRING_1:
+    SET R0 1
+    OR R3 R0
+    ; test if divisor fits into extended remainder
+DIV168_CHECKFIT:
+    LOAD R0 L2
+    BGE R3 R0 DIV168_DOSUBTRACT:
+    BRA DIV168_ENDOFLOOP
+    ; in case the remainder is >=128 the divisor will
+    ; surely fit after shifting, so just shift and add bit
+    ; and no need to do any fit test
+DIV168_BIGREMAINDER:    
+    SET R0 2
+    MUL R3 R0
+    LOAD R0 L0
+    AND R0 R2
+    BGE R0 R2 DIV168_BRING_1_NOCHECK:
+    BRA DIV168_DOSUBTRACT
+DIV168_BRING_1_NOCHECK:
+    SET R0 1
+    OR R3 R0
+    ; if divisor fits, subtract it and use a 1 digit in result
+DIV168_DOSUBTRACT:
+    LOAD R0 L2
+    SUB R3 R0
+    OR R1 R2
+    ; progress bit counter
+DIV168_ENDOFLOOP:
+    SET R0 2
+    DIV R2 R0
+    SET R0 1
+    BGE R2 R0 DIV168_LOOP
+    
+    ; store result and return
+    STORE R1 L0
+    LOAD R2 R3 L4
+    JMP R2 R3
