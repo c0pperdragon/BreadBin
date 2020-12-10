@@ -259,7 +259,11 @@ def processline(identifiers, finalpass, tokens, codeaddress, outbuffer):
     codeaddress[1] += len(bytes)
     return bytes
 
-def process(identifiers, sourcefile, codeaddress, outbuffer, finalpass, lst):
+def process(identifiers, sourcefile, alreadyloaded, codeaddress, outbuffer, finalpass, lst):
+    if sourcefile in alreadyloaded:
+        return
+    else:
+        alreadyloaded.append(sourcefile)
     src = open(sourcefile, "r")
     linenumber = 1
     numerrors = 0
@@ -267,7 +271,7 @@ def process(identifiers, sourcefile, codeaddress, outbuffer, finalpass, lst):
         line = rawline.rstrip()
         body = line.lstrip()
         if body.startswith("include") or body.startswith("INCLUDE"):
-            process(identifiers,body[7:].lstrip(),codeaddress,outbuffer,finalpass,lst)
+            process(identifiers,body[7:].lstrip(),alreadyloaded,codeaddress,outbuffer,finalpass,lst)
         else:
             try:
                 tokens = tokenize(line)
@@ -319,11 +323,11 @@ def asm(sourcefile,hexfile,listfile):
     try:
         identifiers = { }
         rom = [None]*65536
-        process(identifiers, sourcefile, [0, 0], rom, False, None)
+        process(identifiers, sourcefile, [], [0, 0], rom, False, None)
         rom = [None]*65536
 
         lst = open(listfile, "w")
-        process(identifiers, sourcefile, [0, 0], rom, True, lst)
+        process(identifiers, sourcefile, [], [0, 0], rom, True, lst)
         lst.close()
         
         printhexfile(hexfile, rom)

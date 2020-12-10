@@ -70,7 +70,7 @@
 0093 75               ZERO R1
 0094 a5 b0 08 d1      STORE R1 RECEIVE_BUFFERFILL
 0098 a5 b0 09 d1      STORE R1 RECEIVE_BUFFERUSED
-009c b0 0a b1 0c      GOTO MAIN
+009c b0 00 b1 0c      GOTO MAIN
 00a0 94          
 00a1              
 00a1              ; ------------------------------ Serial communication -----------------------
@@ -828,142 +828,141 @@
 0bf8 b0 e2 b1 08      GOTO PRINTDIGIT   ; tail call
 0bfc 94          
 0bfd              
-0bfd                  ; Short test program to write a prompt to the serial port and then
-0bfd                  ; echo all incomming bytes back
-0bfd              
-0bfd                  AREA CODE 256
-0c00              MESSAGE:
-0c00 45 63 68 6f      BYTE 69 99 104 111 32 116 101 115 116 0
-0c04 20 74 65 73 
-0c08 74 00       
-0c0a              
-0c0a              MAIN:
-0c0a b2 11            SET R2 $11
-0c0c b3 47            SET R3 $47
-0c0e a5 b0 00 d2      STORE R2 R3 L0
-0c12 b0 01 d3    
-0c15 b2 1e b3 0c      CALL PRINT16
-0c19 b0 14 b1 0b 
-0c1d 94          
-0c1e b2 27 b3 0c      CALL PRINTSPACE
-0c22 b0 ee b1 09 
-0c26 94          
-0c27              
-0c27 b2 9f            SET R2 $9F
-0c29 b3 10            SET R3 $10
-0c2b a5 b0 00 d2      STORE R2 R3 L0
-0c2f b0 01 d3    
-0c32 b2 cb            SET R2 $CB
-0c34 b3 10            SET R3 $10
-0c36 a5 b0 02 d2      STORE R2 R3 L2
-0c3a b0 03 d3    
-0c3d b2 46 b3 0c      CALL ADD16
-0c41 b0 2a b1 09 
-0c45 94          
-0c46 b2 4f b3 0c      CALL PRINT16
-0c4a b0 14 b1 0b 
-0c4e 94          
-0c4f b2 58 b3 0c      CALL PRINTSPACE
-0c53 b0 ee b1 09 
-0c57 94          
-0c58              
-0c58 b2 9f            SET R2 $9F
-0c5a b3 10            SET R3 $10
-0c5c a5 b0 00 d2      STORE R2 R3 L0
-0c60 b0 01 d3    
-0c63 b2 cb            SET R2 $CB
-0c65 b3 10            SET R3 $10
-0c67 a5 b0 02 d2      STORE R2 R3 L2
-0c6b b0 03 d3    
-0c6e b2 77 b3 0c      CALL SUB16
-0c72 b0 52 b1 09 
-0c76 94          
-0c77 b2 80 b3 0c      CALL PRINT16
-0c7b b0 14 b1 0b 
-0c7f 94          
-0c80 b2 89 b3 0c      CALL PRINTNEWLINE
-0c84 b0 03 b1 0b 
-0c88 94          
-0c89              
-0c89 b2 20            SET R2 .20000
-0c8b b3 4e            SET R3 ^20000
-0c8d a5 b0 00 d2      STORE R2 R3 L0
-0c91 b0 01 d3    
-0c94 b2 ab            SET R2 .17323
-0c96 b3 43            SET R3 ^17323
-0c98 a5 b0 02 d2      STORE R2 R3 L2
-0c9c b0 03 d3    
-0c9f b2 a8 b3 0c      CALL MUL16
-0ca3 b0 00 b1 0a 
-0ca7 94          
-0ca8 b2 b1 b3 0c      CALL PRINTHEX
-0cac b0 99 b1 0b 
-0cb0 94          
-0cb1 b2 ba b3 0c      CALL PRINTNEWLINE
-0cb5 b0 03 b1 0b 
-0cb9 94          
-0cba              
-0cba b2 40            SET R2 .40000
-0cbc b3 9c            SET R3 ^40000
-0cbe a5 b0 00 d2      STORE R2 R3 L0
-0cc2 b0 01 d3    
-0cc5 b2 03            SET R2 3
-0cc7 a5 b0 02 d2      STORE R2 L2
-0ccb b2 d4 b3 0c      CALL DIV168
-0ccf b0 32 b1 0a 
-0cd3 94          
-0cd4 b2 dd b3 0c      CALL PRINTHEX
-0cd8 b0 99 b1 0b 
-0cdc 94          
-0cdd b2 e6 b3 0c      CALL PRINTNEWLINE
-0ce1 b0 03 b1 0b 
-0ce5 94          
-0ce6              
-0ce6 b2 00            SET R2 .MESSAGE
-0ce8 b3 0c            SET R3 ^MESSAGE
-0cea a5 b0 00 d2      STORE R2 R3 L0
-0cee b0 01 d3    
-0cf1 b2 fa b3 0c      CALL PRINTSTRING
-0cf5 b0 a6 b1 0a 
-0cf9 94          
-0cfa              
-0cfa b2 03 b3 0d      CALL PRINTNEWLINE
-0cfe b0 03 b1 0b 
-0d02 94          
-0d03              
-0d03 b0 08 b1 0d      GOTO ECHOING
-0d07 94          
-0d08              
-0d08              
-0d08                  AREA CODE 100
-0d08              ECHOING:
-0d08                  ; receive input
-0d08 b2 11 b3 0d      CALL RECEIVE
-0d0c b0 4c b1 08 
-0d10 94          
-0d11                  ; debug: write to port 2
-0d11 a3 b0 02 d1      STORE R1 PORT2
-0d15                  ; replace CR with CR-LF
-0d15 b0 0d            SET R0 13
-0d17 74               XOR R0 R1
-0d18 b3 01            SET R3 1
-0d1a 83 3c            BGE R0 R3 UNCHANGED
-0d1c b1 0d            SET R1 13
-0d1e a5 b0 00 d1      STORE R1 L0
-0d22 b2 2b b3 0d      CALL TRANSMIT
-0d26 b0 00 b1 08 
-0d2a 94          
-0d2b b1 0a            SET R1 10
-0d2d a5 b0 00 d1      STORE R1 L0
-0d31 b2 3a b3 0d      CALL TRANSMIT
-0d35 b0 00 b1 08 
-0d39 94          
-0d3a 80 08            BRA ECHOING
-0d3c                  ; don't change other characters
-0d3c              UNCHANGED:
-0d3c a5 b0 00 d1      STORE R1 L0
-0d40 b2 49 b3 0d      CALL TRANSMIT
-0d44 b0 00 b1 08 
-0d48 94          
-0d49 80 08            BRA ECHOING
-0d4b              
+0bfd                  AREA DATA 3
+0228 00 00        P:  BYTE 0 0
+022a 00           TMP: BYTE 0
+022b              
+022b                  ; Test program that implements the sieve of erathostenes prime number calculator.
+022b                  ; This uses the RAM at external memory bank 8 to memorize the found non-primes.
+022b                  AREA CODE 256
+0c00              MAIN:
+0c00                  ; set up external RAM bank to use in program
+0c00 b1 08            SET R1 8
+0c02 a3 b0 01 d1      STORE R1 XDATABANK
+0c06              
+0c06                  ; clear the prime number flags
+0c06 7f               ZERO R3 0
+0c07 7a               ZERO R2 0
+0c08              CLEARLOOP:
+0c08 a3 b0 00 d3      STORE R3 XDATAPAGE
+0c0c 70               ZERO R0
+0c0d b1 01            SET R1 1
+0c0f a1               DP 0
+0c10              CLEARLOOP2:
+0c10 d8               ST R0 R2
+0c11 16               ADD R2 R1
+0c12 89 10            BGE R2 R1 CLEARLOOP2
+0c14 17               ADD R3 R1
+0c15 8d 08            BGE R3 R1 CLEARLOOP
+0c17              
+0c17 b2 20 b3 0c      CALL PRINTNEWLINE
+0c1b b0 03 b1 0b 
+0c1f 94          
+0c20 b0 00 b1 0d      GOTO MAIN2
+0c24 94          
+0c25              
+0c25                  AREA CODE 256
+0d00              MAIN2:
+0d00                  ; loop from 2 to 255
+0d00 b2 02            SET R2 2
+0d02 b3 00            SET R3 0
+0d04 a5 b0 28 d2      STORE R2 R3 P
+0d08 b0 29 d3    
+0d0b              PRIMELOOP:
+0d0b                  ; check if this numbers was marked. If not, this is a prime
+0d0b a5 b2 28 ca      LOAD R2 R3 P
+0d0f b3 29 cf    
+0d12 a3 b0 00 d3      STORE R3 XDATAPAGE
+0d16 a1               DP 0
+0d17 c9               LD R1 R2
+0d18 b0 01            SET R0 1
+0d1a 84 8d            BGE R1 R0 FINDNEXT
+0d1c                  ; print the prime number
+0d1c a5 b2 28 ca      LOAD R2 R3 P
+0d20 b3 29 cf    
+0d23 a5 b0 00 d2      STORE R2 R3 L0
+0d27 b0 01 d3    
+0d2a b2 33 b3 0d      CALL PRINT16
+0d2e b0 14 b1 0b 
+0d32 94          
+0d33 b2 3c b3 0d      CALL PRINTSPACE
+0d37 b0 ee b1 09 
+0d3b 94          
+0d3c                  ; loop to mark all multiplies
+0d3c a5 b2 28 ca      LOAD R2 R3 P
+0d40 b3 29 cf    
+0d43 a5 b0 00 d2      STORE R2 R3 L0    ; use L0/L1 as loop counter
+0d47 b0 01 d3    
+0d4a              MARKLOOP:
+0d4a                  ; go to next multiple
+0d4a a5 b2 00 ca      LOAD R2 R3 L0
+0d4e b3 01 cf    
+0d51 a5 b0 2a d3      STORE R3 TMP
+0d55 a5 b2 28 ca      LOAD R2 R3 P
+0d59 b3 29 cf    
+0d5c a5 b0 02 d2      STORE R2 R3 L2
+0d60 b0 03 d3    
+0d63 b2 6c b3 0d      CALL ADD16
+0d67 b0 2a b1 09 
+0d6b 94          
+0d6c                  ; test if overflowing
+0d6c a5 b2 00 ca      LOAD R2 R3 L0
+0d70 b3 01 cf    
+0d73 a5 b1 2a c5      LOAD R1 TMP
+0d77 0d               GT R1 R3  ; if previous is bigger, this was overflow
+0d78 b0 01            SET R0 1
+0d7a 84 8d            BGE R1 R0 FINDNEXT
+0d7c                  ; mark the multiple
+0d7c a5 b2 00 ca      LOAD R2 R3 L0
+0d80 b3 01 cf    
+0d83 a3 b0 00 d3      STORE R3 XDATAPAGE
+0d87 a1               DP 0
+0d88 b0 01            SET R0 1
+0d8a d8               ST R0 R2
+0d8b 80 4a            BRA MARKLOOP
+0d8d              FINDNEXT:
+0d8d                  ; increment the counter until reaching >255
+0d8d a5 b2 28 ca      LOAD R2 P
+0d91 b0 01            SET R0 1
+0d93 12               ADD R2 R0
+0d94 82 9c            BLE R2 R0 PRINTLOOP
+0d96 a5 b0 28 d2      STORE R2 P
+0d9a 80 0b            BRA PRIMELOOP
+0d9c              
+0d9c                  ; after running the sieve, print all further primes
+0d9c              PRINTLOOP:
+0d9c                  ; check if this numbers was marked. If not, this is a prime
+0d9c a5 b2 28 ca      LOAD R2 R3 P
+0da0 b3 29 cf    
+0da3 a3 b0 00 d3      STORE R3 XDATAPAGE
+0da7 a1               DP 0
+0da8 c9               LD R1 R2
+0da9 b0 01            SET R0 1
+0dab 84 cd            BGE R1 R0 NOTPRIME
+0dad                  ; print the prime number
+0dad a5 b2 28 ca      LOAD R2 R3 P
+0db1 b3 29 cf    
+0db4 a5 b0 00 d2      STORE R2 R3 L0
+0db8 b0 01 d3    
+0dbb b2 c4 b3 0d      CALL PRINT16
+0dbf b0 14 b1 0b 
+0dc3 94          
+0dc4 b2 cd b3 0d      CALL PRINTSPACE
+0dc8 b0 ee b1 09 
+0dcc 94          
+0dcd              NOTPRIME:
+0dcd                  ; increment P until overflow
+0dcd a5 b2 28 ca      LOAD R2 R3 P
+0dd1 b3 29 cf    
+0dd4 b1 01            SET R1 1
+0dd6 16               ADD R2 R1
+0dd7 a5 b0 28 d2      STORE R2 P
+0ddb 89 9c            BGE R2 R1 PRINTLOOP
+0ddd 17               ADD R3 R1
+0dde a5 b0 28 d2      STORE R2 R3 P
+0de2 b0 29 d3    
+0de5 8d 9c            BGE R3 R1 PRINTLOOP
+0de7              
+0de7              OVER:
+0de7 80 e7            BRA OVER
+0de9              

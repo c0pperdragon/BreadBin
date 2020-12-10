@@ -7,7 +7,7 @@
 ;         L3 high byte of second operand
 ;  output: L0 low byte of sum
 ;          L1 high byte of sum
-    AREA CODE 30
+    AREA CODE 40
 ADD16:
     STORE R2 R3 L4
 

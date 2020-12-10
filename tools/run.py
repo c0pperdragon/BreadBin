@@ -53,7 +53,7 @@ class Board:
             if xaddress<(1<<19):
                 return self.rom[xaddress]
             elif xaddress<(1<<20):
-                return self.xram[xadrdress-(1<<19)]
+                return self.xram[xaddress-(1<<19)]
         elif address==259: # in port 3
             if self.uartrxcounter<0:
                 return 0xFD   # CTS is low
@@ -183,7 +183,7 @@ if len(sys.argv)>1:
     if len(sys.argv)>2:
         steps = int(sys.argv[2])
     if len(sys.argv)>3:
-        show = int(sys.argv[3])
+        show = int(sys.argv[3],16)
     run(sys.argv[1]+".hex",steps,show)
 else:
     print("No .hex filename given to run",file=sys.stderr)
