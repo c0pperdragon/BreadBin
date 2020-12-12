@@ -1,11 +1,11 @@
-# BreadBin emulator.  ROM definition as Intel HEX format.
+# BreadBin emulator.  ROM definition as Intel HEX format. 
 
 import sys
 
 class Board:
     def __init__(self, rom):
-        self.ram = [0]*(1<<16)
-        self.xram = [0]*(1<<19)
+        self.ram = [255]*(1<<16)
+        self.xram = [255]*(1<<19)
         self.rom = rom
         self.xaddrlo = 0
         self.xaddrhi = 0
@@ -74,7 +74,7 @@ def hextobytes(line):
     return b        
     
 def readhexfile(hexfile):
-    rom = [0]*(1<<19)
+    rom = [255]*(1<<19)
     hex = open(hexfile, "r")
     for line in hex:
         b = hextobytes(line.strip())

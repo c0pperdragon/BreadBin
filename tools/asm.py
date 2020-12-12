@@ -36,8 +36,6 @@ def tokenize(line):
     comment = line.find(";")
     if comment>=0:
         line = line[0:comment]
-    # uppercase everything - rely on pythons definiton of "upper"
-    line = line.upper()
     # break appart on white space and additionally seperate out ':' or '=' 
     tokens = []
     for token in line.split():
@@ -56,6 +54,8 @@ def evaluate(identifiers, s):
     try:
         if s in identifiers:
             return identifiers[s]
+        elif len(s)>2 and s[0]=="'":
+            return ord(s[1])
         elif len(s)>0 and s[0]=='.': 
             return evaluate(identifiers, s[1:]) & 0xff
         elif len(s)>0 and s[0]=='^': 
@@ -127,7 +127,7 @@ def processline(identifiers, finalpass, tokens, codeaddress, outbuffer):
     I = identifiers
     G = finalpass
     T = tokens
-    pc = codeaddress[1]
+    pc = codeaddress[0]
     bytes = []
 
     if len(tokens)>=2 and tokens[1]==":":
@@ -151,21 +151,17 @@ def processline(identifiers, finalpass, tokens, codeaddress, outbuffer):
             else:
                 identifiers[id] = value
     elif len(tokens)==2 and tokens[0]=="ORG":
-        codeaddress[0] = codeaddress[1] = evaluate(identifiers, tokens[1])
-    elif len(tokens)==3 and tokens[0]=="ORG":
         codeaddress[0] = evaluate(identifiers, tokens[1])
-        codeaddress[1] = evaluate(identifiers, tokens[2])
     elif len(tokens)==2 and tokens[0]=="AREA":
-        codeaddress[0] = codeaddress[1] = findfreearea(
-            outbuffer, evaluate(identifiers, tokens[1]),
-            1)
+        codeaddress[0] = findfreearea(outbuffer, evaluate(identifiers, tokens[1]),1)
     elif len(tokens)==3 and tokens[0]=="AREA":
-        codeaddress[0] = codeaddress[1] = findfreearea(
-            outbuffer, evaluate(identifiers, tokens[1]),
+        codeaddress[0] = findfreearea(outbuffer, evaluate(identifiers, tokens[1]),
             evaluate(identifiers, tokens[2]))
     elif tokens[0]=="BYTE":
         for idx in range(1,len(tokens)):
             bytes.append(op(I,G,T, idx, 8))
+    elif len(tokens)==3 and tokens[0]=="DUPLICATE":
+        bytes = [0] * op(I,G,T, 2, 8)
     elif tokens[0]=="GT":
         bytes = [ 0x00 | reg(T, 1, 0) | reg(T, 2, 2) ]
     elif tokens[0]=="ADD":
@@ -256,7 +252,6 @@ def processline(identifiers, finalpass, tokens, codeaddress, outbuffer):
         raise AssemblerException("Unknown instruction "+tokens[0])     
 
     codeaddress[0] += len(bytes)
-    codeaddress[1] += len(bytes)
     return bytes
 
 def process(identifiers, sourcefile, alreadyloaded, codeaddress, outbuffer, finalpass, lst):
@@ -276,9 +271,11 @@ def process(identifiers, sourcefile, alreadyloaded, codeaddress, outbuffer, fina
             try:
                 tokens = tokenize(line)
                 romaddress = codeaddress[0]
-                bytes = processline(identifiers, finalpass, tokens,
-                                    codeaddress,outbuffer)
+                bytes = processline(identifiers, finalpass, tokens, codeaddress,outbuffer)
                 if finalpass:
+                    if len(tokens)==3 and tokens[0]=="DUPLICATE":
+                        frm = op(identifiers, True, tokens, 1, 16)
+                        bytes = [0 if x==None else x for x in outbuffer[frm:frm+len(bytes)]]
                     if areaisused(outbuffer, romaddress, len(bytes)):
                         raise AssemblerException("Overlapping ranges")
                     printlisting(lst,romaddress, bytes, line)
@@ -323,11 +320,11 @@ def asm(sourcefile,hexfile,listfile):
     try:
         identifiers = { }
         rom = [None]*65536
-        process(identifiers, sourcefile, [], [0, 0], rom, False, None)
+        process(identifiers, sourcefile, [], [0], rom, False, None)
         rom = [None]*65536
 
         lst = open(listfile, "w")
-        process(identifiers, sourcefile, [], [0, 0], rom, True, lst)
+        process(identifiers, sourcefile, [], [0], rom, True, lst)
         lst.close()
         
         printhexfile(hexfile, rom)

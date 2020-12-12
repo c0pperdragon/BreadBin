@@ -107,7 +107,7 @@ MUL168:
     LOAD R2 L2
     MUL R2 R1
     ADD R3 R2
-    STOrE R3 L1
+    STORE R3 L1
     
     ; compute low byte of result (easy)
     LOAD R1 L0

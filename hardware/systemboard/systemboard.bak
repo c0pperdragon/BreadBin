@@ -802,7 +802,7 @@ F 3 "" H 9400 4150 50  0001 C CNN
 	-1   0    0    1   
 $EndComp
 Text Label 9200 4450 1    50   ~ 0
-IORD#
+IO#
 Wire Wire Line
 	9400 4100 9400 4150
 Text Label 6450 6750 1    50   ~ 0
@@ -1338,4 +1338,6 @@ Text Label 3800 4500 3    50   ~ 0
 A8
 Wire Wire Line
 	3800 4750 3800 4500
+Text Label 2750 4450 1    50   ~ 0
+IO#
 $EndSCHEMATC

@@ -21,34 +21,35 @@ L7: BYTE 0
 
 ; ------ Startup code to copy program from ROM to RAM and start it ----------
     
-    ; at first action init output ports to idle level
+    ; Very small bootstrap to be executed from ROM
     ORG $0000
+    ; copy the second copy routine to RAM
+    SET R1 $80 ; source address in page 0
+    ZERO R2    ; target address in code page
+    SET R3 ^CODE ; target page 
+BOOTSTRAPLOOP:
+    DP 0
+    LD R0 R1
+    DP R3
+    ST R0 R2
+    SET R0 1
+    ADD R1 R0
+    ADD R2 R0
+    BGE R1 R0 BOOTSTRAPLOOP    
+    GOTO COPYROUTINE2   
     
+    ; second copy loop: this code is already executed from RAM so it can 
+    ; switch ROM banks. It will initialize everything including its own program code,
+    ; but this does no harm as it is already in place
+    ORG CODE 
+
+COPYROUTINE2:
+    ; before doing more copying init the output port registers
     SET R1 $FF
     STORE R1 PORT2
     STORE R1 PORT3
-       
-    ; copy ROM page 0 containing the second copy loop to RAM page 2
-    ZERO R3    ; loop counter
-COPYLOOP1:
-    DP 0
-    LD R1 R3
-    DP 2
-    ST R1 R3
-    SET R0 1
-    ADD R3 R0
-    BGE R3 R0 COPYLOOP1
     
-    GOTO COPYROUTINE2   
-    
-    ; second copy loop: this code is executed from RAM so it can 
-    ; switch ROM banks. 
-    ; in order for itself to be copied from page 0, its own ROM location 
-    ; and execution address can not be identical 
-    ORG $0080 $0280 
-
-COPYROUTINE2:
-    SET R3 $03 ; loop counter: high byte of target address  
+    SET R3 $02 ; loop counter: high byte of target address  
 COPYLOOP2:    
     ; set up the extension memory page address 
     STORE R3 XDATAPAGE
@@ -65,12 +66,9 @@ INNERLOOP2:
     ADD R3 R0
     BGE R3 R0 COPYLOOP2
 
-    ; init some global data
-    ZERO R1
-    STORE R1 RECEIVE_BUFFERFILL
-    STORE R1 RECEIVE_BUFFERUSED
+    ; start user program
     GOTO MAIN
-
+        
 ; ------------------------------ Serial communication -----------------------
    
     ; This subsystem implements a bit-banged UART communication.
@@ -111,46 +109,46 @@ TRANSMIT:
 TRANSMIT_DELAYLOOP1:                        
     SUB R0 R1                            ; 1 
     BGE R0 R1 TRANSMIT_DELAYLOOP1        ; 2 
-                                             ; 23*3 73
+                                             ; 23*3 73 = -14
 TRANSMIT_WRITELOOP:
     ; send next bit
-    SET R0 .L0                               ; 2    75
-    DP ^L0                                   ; 1    76
-    LD R1 R0                                 ; 2    78
-    SET R0 $FE                               ; 2    80
-    OR R1 R0                                 ; 1    81
-    SET R0 .PORT3                            ; 2    83
-    DP ^PORT3                                ; 1    84
-    ST R1 R0                                 ; 3    87 = 0
+    SET R0 .L0                               ; 2   -12
+    DP ^L0                                   ; 1   -11
+    LD R1 R0                                 ; 2    -9
+    SET R0 $FE                               ; 2    -7
+    OR R1 R0                                 ; 1    -6
+    SET R0 .PORT3                            ; 2    -4
+    DP ^PORT3                                ; 1    -3
+    ST R1 R0                                 ; 3     0
     ; do delay
     SET R1 1                                 ; 2     2
     SET R0 12                                ; 2     4
 TRANSMIT_DELAYLOOP2:
     SUB R0 R1                            ; 1        
     BGE R0 R1 TRANSMIT_DELAYLOOP2        ; 2
-                                             ; 12*3 40
+                                             ; 12*3 44 = -43
     ; shift bits to right, filling with 1s
-    SET R0 .L0                               ; 2    42
-    DP ^L0                                   ; 1    43
-    LD R1 R0                                 ; 2    45
-    SET R0 2                                 ; 2    47
-    DIV R1 R0                                ; 1    48
-    SET R0 $80                               ; 2    50
-    OR R1 R0                                 ; 1    51
-    SET R0 .L0                               ; 2    53
-    DP ^L0                                   ; 1    54
-    ST R1 R0                                 ; 2    56
+    SET R0 .L0                               ; 2   -43
+    DP ^L0                                   ; 1   -42
+    LD R1 R0                                 ; 2   -40
+    SET R0 2                                 ; 2   -38
+    DIV R1 R0                                ; 1   -37
+    SET R0 $80                               ; 2   -35
+    OR R1 R0                                 ; 1   -34
+    SET R0 .L0                               ; 2   -32
+    DP ^L0                                   ; 1   -31
+    ST R1 R0                                 ; 2   -29
     ; decrement counter and loop
-    SET R0 .L1                               ; 2    58
-    DP ^L1                                   ; 1    59
-    LD R1 R0                                 ; 2    61
-    SET R0 1                                 ; 2    63
-    SUB R1 R0                                ; 1    64
-    SET R0 .L1                               ; 2    66
-    DP ^L1                                   ; 1    67
-    ST R1 R0                                 ; 2    69
-    SET R0 1                                 ; 2    71
-    BGE R1 R0 TRANSMIT_WRITELOOP             ; 2    73
+    SET R0 .L1                               ; 2   -27
+    DP ^L1                                   ; 1   -26
+    LD R1 R0                                 ; 2   -25
+    SET R0 1                                 ; 2   -23
+    SUB R1 R0                                ; 1   -22
+    SET R0 .L1                               ; 2   -21 
+    DP ^L1                                   ; 1   -20
+    ST R1 R0                                 ; 2   -18
+    SET R0 1                                 ; 2   -16
+    BGE R1 R0 TRANSMIT_WRITELOOP             ; 2   -14
 
     JMP R2 R3
 
@@ -324,3 +322,9 @@ DELAY_INNER:
     LOAD R2 R3 L2
     JMP R2 R3
     
+
+; ------------ Bootstrapping --------------------------------------------------------- 
+    ; store a duplicate of the very low portion of the code to PAGE 0 also,
+    ; so it can be accessed by the first copy loop
+    ORG $0080
+    DUPLICATE CODE 128
