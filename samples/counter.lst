@@ -1,0 +1,69 @@
+0000              ; Demo program to drive an 8-bit led display that is directly hooked up to the TX line.
+0000              
+0000                  ORG $0000
+0000              
+0000                  ; Define RAM locations
+0000                  ZERO = 0
+0000                  ONE = 1
+0000                  COUNTER = 2
+0000              
+0000                  ; Set up constant values:
+0000 80               A ZERO
+0001 a0               B ZERO
+0002 67               OP EOR
+0003 00               SET ZERO
+0004 64               OP DIV
+0005 01               SET ONE
+0006              
+0006                  ; Init variables
+0006 80               A ZERO
+0007 a0               B ZERO
+0008 65               OP AND
+0009 02               SET COUNTER
+000a              
+000a 60 60 60 60  LOOP:
+000e 60 60       
+0010                  ; write counter to LED display
+0010 42               OUT COUNTER
+0011              
+0011                  ; delay loop
+0011 80               A ZERO
+0012 a0               B ZERO
+0013 65               OP AND
+0014 1e               SET 30
+0015 1f               SET 31
+0016 60 60        DELAY:
+0018 9e               A 30
+0019 a1               B ONE
+001a 61               OP ADD
+001b 1e               SET 30
+001c 80               A ZERO
+001d be               B 30
+001e c0               BEQ DONE1
+001f a0               B ZERO
+0020 c0               BEQ DELAY
+0021 60               NOP
+0022 60 60 60 60  DONE1:
+0026 60 60       
+0028 9f               A 31
+0029 a1               B ONE
+002a 61               OP ADD
+002b 1f               SET 31
+002c 81               A ONE
+002d bf               B 31
+002e c0               BEQ DONE2
+002f a0               B ZERO
+0030 c0               BEQ DELAY
+0031 60               NOP
+0032 60 60 60 60  DONE2:
+0036 60 60       
+0038              
+0038                  ; increment counter and continue endless loop
+0038 82               A COUNTER
+0039 a1               B ONE
+003a 61               OP ADD
+003b 02               SET COUNTER
+003c 80               A ZERO
+003d a0               B ZERO
+003e c0               BEQ LOOP
+003f 60               NOP

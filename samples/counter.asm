@@ -1,27 +1,66 @@
-; Short 24-bit counter demo program.
-; Couting is done in the registers which have their own LEDs, so no
-; additional output is needed.
-; The code is specifially crafted to avoid the SET and LD instructions which
-; are on the critical path for the signal timing. Maybe this allows a faster clock.
+; Demo program to drive an 8-bit led display that is directly hooked up to the TX line.
 
     ORG $0000     
     
-    ; Zero out the counters
-    XOR R0 R0
-    XOR R1 R1
-    XOR R2 R2
-    ; Need to get a valid number 1 into a register. As ALU operations alone can not 
-    ; create any non-0 number from all 0es, lets try to somehow bring at least 
-    ; anything into R3 (even if it is mangled). This can then be 
-    ; turned into a valid 1.
-    SET R3 255
-    GT R3 R0
+    ; Define RAM locations
+    ZERO = 0
+    ONE = 1
+    COUNTER = 2
 
-    ; Keep couting, propagate carries
+    ; Set up constant values:
+    A ZERO
+    B ZERO
+    OP EOR
+    SET ZERO
+    OP DIV    
+    SET ONE
+
+    ; Init variables
+    A ZERO
+    B ZERO
+    OP AND
+    SET COUNTER
+
 LOOP:
-    ADD R0 R3
-    BGE R0 R3 LOOP
-    ADD R1 R3
-    BGE R1 R3 LOOP
-    ADD R2 R3
-    BRA LOOP
+    ; write counter to LED display
+    OUT COUNTER
+
+    ; delay loop
+    A ZERO
+    B ZERO
+    OP AND
+    SET 30
+    SET 31
+DELAY:
+    A 30
+    B ONE
+    OP ADD
+    SET 30
+    A ZERO
+    B 30
+    BEQ DONE1
+    B ZERO
+    BEQ DELAY
+    NOP
+DONE1:
+    A 31
+    B ONE
+    OP ADD
+    SET 31
+    A ONE
+    B 31
+    BEQ DONE2
+    B ZERO
+    BEQ DELAY
+    NOP
+DONE2:
+
+    ; increment counter and continue endless loop
+    A COUNTER
+    B ONE
+    OP ADD
+    SET COUNTER
+    A ZERO
+    B ZERO
+    BEQ LOOP
+    NOP 

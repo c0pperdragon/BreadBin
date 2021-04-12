@@ -417,12 +417,12 @@ Wire Wire Line
 $Comp
 L power:GND #PWR0111
 U 1 1 60B11EFF
-P 8550 3900
-F 0 "#PWR0111" H 8550 3650 50  0001 C CNN
-F 1 "GND" V 8550 3700 50  0000 C CNN
-F 2 "" H 8550 3900 50  0001 C CNN
-F 3 "" H 8550 3900 50  0001 C CNN
-	1    8550 3900
+P 8550 3850
+F 0 "#PWR0111" H 8550 3600 50  0001 C CNN
+F 1 "GND" V 8550 3650 50  0000 C CNN
+F 2 "" H 8550 3850 50  0001 C CNN
+F 3 "" H 8550 3850 50  0001 C CNN
+	1    8550 3850
 	0    1    1    0   
 $EndComp
 $Comp
@@ -437,12 +437,8 @@ F 3 "" H 8850 4000 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 Wire Wire Line
-	8600 3900 8700 3900
-Wire Wire Line
-	8700 3900 8700 3850
-Wire Wire Line
-	8600 3900 8600 3850
-Connection ~ 8600 3900
+	8600 3850 8700 3850
+Connection ~ 8600 3850
 $Comp
 L 74xx:74LS163 UCTR?
 U 1 1 60B6AD4F
@@ -482,12 +478,6 @@ F 3 "http://www.ti.com/lit/gpn/sn74LS377" H 7700 4300 50  0001 C CNN
 	1    7700 4300
 	1    0    0    1   
 $EndComp
-Wire Wire Line
-	9100 3900 9100 3850
-Wire Wire Line
-	9100 3900 9200 3900
-Wire Wire Line
-	9200 3900 9200 3850
 Wire Wire Line
 	9800 4500 9800 3850
 Wire Wire Line
@@ -1447,15 +1437,12 @@ Wire Wire Line
 Wire Wire Line
 	9300 3850 9300 4050
 Wire Wire Line
-	8550 3900 8600 3900
+	8550 3850 8600 3850
 Wire Wire Line
 	8850 4000 8900 4000
 Wire Wire Line
 	8900 3850 8900 4000
-Wire Wire Line
-	8700 3900 9100 3900
-Connection ~ 8700 3900
-Connection ~ 9100 3900
+Connection ~ 8700 3850
 Wire Wire Line
 	7650 3500 7700 3500
 $Comp
@@ -2194,7 +2181,15 @@ Wire Wire Line
 	2500 950  2500 1050
 Connection ~ 2500 950 
 Text Label 3850 1750 2    50   ~ 0
-RESET2
+RES2
 Wire Wire Line
 	3600 1750 3850 1750
+Text Label 8950 3950 0    50   ~ 0
+RES2
+Wire Wire Line
+	8950 3950 9200 3950
+Wire Wire Line
+	9200 3850 9200 3950
+Wire Wire Line
+	8700 3850 9100 3850
 $EndSCHEMATC

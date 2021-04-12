@@ -2,10 +2,10 @@
 
 def op(o,a,b):
     if o==0:
-        if a>b:                        # MAX
-            return a
+        if a+b>255:                    # OVL
+            return 1
         else:
-            return b
+            return 0
     elif o==1:                         # ADD
         return (a+b) & 0xff            
     elif o==2:                         # SUB

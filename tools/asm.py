@@ -68,20 +68,6 @@ def evaluate(identifiers, s):
     except ValueError as e:
         raise AssemblerException("Can not parse number "+s)
 
-def reg(tokens, tidx, bitpos):
-    if tidx >= len(tokens):
-        raise AssemblerException("Missing register specifier")
-    if tokens[tidx]=="R0":
-        return 0 << bitpos;
-    elif tokens[tidx]=="R1":
-        return 1 << bitpos;
-    elif tokens[tidx]=="R2":
-        return 2 << bitpos;
-    elif tokens[tidx]=="R3":
-        return 3 << bitpos
-    else:
-        raise AssemblerException("Invalid register name");
-
 def op(identifiers, finalpass, tokens, tidx, bitlen):
     if tidx >= len(tokens):
         raise AssemblerException("Missing operand")
@@ -93,6 +79,29 @@ def op(identifiers, finalpass, tokens, tidx, bitlen):
             raise AssemblerException("Operand exceeds range")
         else:
             return value
+
+def operator(tokens, tidx):
+    if tidx >= len(tokens):
+        raise AssemblerException("Missing operator")
+    o = tokens[tidx];
+    if o=='OVL':
+        return 0;
+    elif o=='ADD':
+        return 1;
+    elif o=='SUB':
+        return 2;
+    elif o=='MUL':
+        return 3;
+    elif o=='DIV':
+        return 4;
+    elif o=='AND':
+        return 5;
+    elif o=='OR':
+        return 6;
+    elif o=='EOR':
+        return 7;
+    else:
+        raise AssemblerException("Unknown operator")
 
 def branchtarget(identifiers, finalpass, tokens, tidx, pc):
     if tidx >= len(tokens):
@@ -131,12 +140,14 @@ def processline(identifiers, finalpass, tokens, codeaddress, outbuffer):
     bytes = []
 
     if len(tokens)>=2 and tokens[1]==":":
+        pad = (8-(pc%8))%8
+        bytes = [0x60] * pad
         if not finalpass:
             id = tokens[0]
             if id in identifiers:
                 raise AssemblerException("May not redefine '"+id+"'")
             else:
-                identifiers[id] = pc
+                identifiers[id] = pc+pad
         tokens.pop(0)
         tokens.pop(0)
         
@@ -152,101 +163,30 @@ def processline(identifiers, finalpass, tokens, codeaddress, outbuffer):
                 identifiers[id] = value
     elif len(tokens)==2 and tokens[0]=="ORG":
         codeaddress[0] = evaluate(identifiers, tokens[1])
-    elif len(tokens)==2 and tokens[0]=="AREA":
-        codeaddress[0] = findfreearea(outbuffer, evaluate(identifiers, tokens[1]),1)
-    elif len(tokens)==3 and tokens[0]=="AREA":
-        codeaddress[0] = findfreearea(outbuffer, evaluate(identifiers, tokens[1]),
-            evaluate(identifiers, tokens[2]))
-    elif tokens[0]=="BYTE":
-        for idx in range(1,len(tokens)):
-            bytes.append(op(I,G,T, idx, 8))
-    elif len(tokens)==3 and tokens[0]=="DUPLICATE":
-        bytes = [0] * op(I,G,T, 2, 8)
-    elif tokens[0]=="GT":
-        bytes = [ 0x00 | reg(T, 1, 0) | reg(T, 2, 2) ]
-    elif tokens[0]=="ADD":
-        bytes = [ 0x10 | reg(T, 1, 0) | reg(T, 2, 2) ]
-    elif tokens[0]=="SUB":
-        bytes = [ 0x20 | reg(T, 1, 0) | reg(T, 2, 2) ]
-    elif tokens[0]=="MUL":
-        bytes = [ 0x30 | reg(T, 1, 0) | reg(T, 2, 2) ]
-    elif tokens[0]=="DIV":
-        bytes = [ 0x40 | reg(T, 1, 0) | reg(T, 2, 2)]
-    elif tokens[0]=="AND":
-        bytes = [ 0x50 | reg(T, 1, 0) | reg(T, 2, 2) ]
-    elif tokens[0]=="OR":
-        bytes = [ 0x60 | reg(T, 1, 0) | reg(T, 2, 2) ]
-    elif tokens[0]=="XOR":
-        bytes = [ 0x70 | reg(T, 1, 0) | reg(T, 2, 2) ]
-    elif tokens[0]=="ZERO":
-        bytes = [ 0x70 | reg(T, 1, 0) | reg(T, 1, 2) ]
-    elif tokens[0]=="BLE":
-        bytes = [ 0x80 | reg(T, 1, 0) | reg(T, 2, 2) , branchtarget(I,G,T, 3, pc) ]
-    elif tokens[0]=="BGE":
-        bytes = [ 0x80 | reg(T, 1, 2) | reg(T, 2, 0) , branchtarget(I,G,T, 3, pc) ]
-    elif tokens[0]=="BRA":
-        bytes = [ 0x80 , branchtarget(I,G,T, 1, pc) ]
-    elif tokens[0]=="JMP":
-        bytes = [ 0x90 | reg(T, 1, 0) | reg(T, 2, 2) ]
-    elif tokens[0]=="DP":
-        if len(tokens)>1 and tokens[1] in ["R0","R1","R2","R3"]:
-            bytes = [ 0xA0 | reg(T, 1, 2) ]
-        else:
-            bytes = [ 0xA1 | (op(I,G,T, 1, 3)<<1) ]
+
     elif tokens[0]=="SET":
-        bytes = [ 0xB0 | reg(T, 1, 0) , op(I,G,T, 2, 8) ]
-    elif tokens[0]=="LD":
-        bytes = [ 0xC0 | reg(T, 1, 0) | reg(T, 2, 2) ]
-    elif tokens[0]=="ST":
-        bytes = [ 0xD0 | reg(T, 1, 0) | reg(T, 2, 2) ]
+        bytes = [ 0x00 | op(I,G,T, 1, 5) ]
+    elif tokens[0]=="IN":
+        bytes = [ 0x20 | op(I,G,T, 1, 5) ]
+    elif tokens[0]=="OUT":
+        bytes = [ 0x40 | op(I,G,T, 1, 5) ]
+    elif tokens[0]=="OP":
+        bytes = [ 0x60 | operator(T, 1) ]
+    elif tokens[0]=="A":
+        bytes = [ 0x80 | op(I,G,T, 1, 5) ]
+    elif tokens[0]=="B":
+        bytes = [ 0xA0 | op(I,G,T, 1, 5) ]
+    elif tokens[0]=="BEQ":
+        addr = op(I,G,T, 1, 16)
+        if (addr//256) != (pc//256):
+            raise AssemblerException("Branch target out of scope")
+        if (addr%8) !=0:
+            raise AssemblerException("Missaligned branch target")
+        bytes = [ 0xC0 | addr%8]
+    elif tokens[0]=="JMP":
+        bytes = [ 0xE0 | op(I,G,T, 1, 5) ]
     elif tokens[0]=="NOP":
-        bytes = [ 0x50 ]
-    elif tokens[0]=="COPY":
-        bytes = [
-            0x50 | reg(T, 1, 0) | reg(T, 2, 2),        # AND
-            0x60 | reg(T, 1, 0) | reg(T, 2, 2)         # OR
-        ]
-    elif tokens[0]=="GOTO":
-        address = op(I,G,T, 1, 16)
-        bytes = [
-            0xB0 | (0<<0), (address&0xff),    # SET R0 .address
-            0xB0 | (1<<0), (address>>8),      # SER R1 ^address
-            0x90 | (0<<0) | (1<<2)            # JMP R0 R1
-        ]        
-    elif tokens[0]=="CALL":
-        address = op(I,G,T, 1, 16)
-        raddr = pc + 9
-        bytes = [
-            0xB0 | (2<<0), (raddr&0xff),      # SET R2 .raddr
-            0xB0 | (3<<0), (raddr>>8),        # SET R3 ^raddr
-            0xB0 | (0<<0), (address&0xff),    # SET R0 .address
-            0xB0 | (1<<0), (address>>8),      # SER R1 ^address
-            0x90 | (0<<0) | (1<<2)            # JMP R0 R1
-        ]
-    elif tokens[0]=="LOAD":
-        num = len(tokens)-2
-        address = op(I,G,T, 1+num, 11)
-        bytes = [
-            0xA1 | ((address>>8)<<1)          # DP ^address
-        ]
-        for i in range(num):
-            r = reg(T,1+i,0)
-            bytes.extend([
-                0xB0 | r, (address+i)&0xff,   # SET <r> .address+i
-                0xC0 | r | (r<<2)             # LD <r> <r>
-            ])
-    elif tokens[0]=="STORE":
-        num = len(tokens)-2
-        address = op(I,G,T, 1+num, 11)
-        bytes = [
-            0xA1 | ((address>>8)<<1)              # DP ^address
-        ]
-        for i in range(num):
-            r = reg(T,1+i,0)
-            bytes.extend([
-                0xB0 | (0<<0), (address+i)&0xff,  # SET R0 .address+i
-                0xD0 | r | (0<<2)                 # LD <r> R0
-            ])
+        bytes = [ 0x60 | 0 ]
         
     else:
         raise AssemblerException("Unknown instruction "+tokens[0])     

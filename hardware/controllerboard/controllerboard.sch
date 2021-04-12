@@ -1389,10 +1389,8 @@ Text Label 2400 800  0    50   ~ 0
 CLK
 Wire Wire Line
 	2000 1050 2100 1050
-Text Label 3850 1650 2    50   ~ 0
+Text Label 3850 1750 2    50   ~ 0
 RESET
-Wire Wire Line
-	3600 1650 3850 1650
 $Comp
 L 74xx:74HC74 URES1
 U 3 1 63A2E37D
@@ -2180,16 +2178,18 @@ Wire Wire Line
 Wire Wire Line
 	2500 950  2500 1050
 Connection ~ 2500 950 
-Text Label 3850 1750 2    50   ~ 0
-RES2
 Wire Wire Line
 	3600 1750 3850 1750
-Text Label 8950 3950 0    50   ~ 0
-RES2
-Wire Wire Line
-	8950 3950 9200 3950
-Wire Wire Line
-	9200 3850 9200 3950
 Wire Wire Line
 	8700 3850 9100 3850
+NoConn ~ 3600 1650
+NoConn ~ 3600 1550
+NoConn ~ 3600 1450
+NoConn ~ 3600 1350
+NoConn ~ 3600 1250
+NoConn ~ 3600 1150
+NoConn ~ 3600 1000
+Wire Wire Line
+	9200 3850 9100 3850
+Connection ~ 9100 3850
 $EndSCHEMATC

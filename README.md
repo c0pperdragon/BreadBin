@@ -39,13 +39,6 @@ To get the benefit of existing software the bread board computer core is intende
 (specifically the 65C816). This emulated CPU can then interface to some additional RAM and ROM and other
 parts to become a full computer to execute code that was originally written for my OS816 system.
 
-## Memory and IO
-
-The completed machine contains two 8-bit wide input and output ports which are entirely CPU driven. Currently
-only a few bits are in use to implement a simple UART communication link to a text terminal and there is now
-much space for future expansions. I already inserted 3.5MB of static RAM next to the 512K of flash,
-but did not yet wire it up. I will do this step by step when I actually find a use for it.
-
 
 ## Computer case
 
