@@ -47,7 +47,7 @@ DONE1:
     B ONE
     OP ADD
     SET 31
-    A ONE
+    A ZERO
     B 31
     BEQ DONE2
     B ZERO

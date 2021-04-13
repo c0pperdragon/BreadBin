@@ -182,7 +182,7 @@ def processline(identifiers, finalpass, tokens, codeaddress, outbuffer):
             raise AssemblerException("Branch target out of scope")
         if (addr%8) !=0:
             raise AssemblerException("Missaligned branch target")
-        bytes = [ 0xC0 | addr%8]
+        bytes = [ 0xC0 | (addr//8)]
     elif tokens[0]=="JMP":
         bytes = [ 0xE0 | op(I,G,T, 1, 5) ]
     elif tokens[0]=="NOP":

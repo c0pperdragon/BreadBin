@@ -39,9 +39,9 @@
 001b 1e               SET 30
 001c 80               A ZERO
 001d be               B 30
-001e c0               BEQ DONE1
+001e c5               BEQ DONE1
 001f a0               B ZERO
-0020 c0               BEQ DELAY
+0020 c3               BEQ DELAY
 0021 60               NOP
 0022 60 60 60 60  DONE1:
 0026 60 60       
@@ -49,11 +49,11 @@
 0029 a1               B ONE
 002a 61               OP ADD
 002b 1f               SET 31
-002c 81               A ONE
+002c 80               A ZERO
 002d bf               B 31
-002e c0               BEQ DONE2
+002e c7               BEQ DONE2
 002f a0               B ZERO
-0030 c0               BEQ DELAY
+0030 c3               BEQ DELAY
 0031 60               NOP
 0032 60 60 60 60  DONE2:
 0036 60 60       
@@ -65,5 +65,5 @@
 003b 02               SET COUNTER
 003c 80               A ZERO
 003d a0               B ZERO
-003e c0               BEQ LOOP
+003e c2               BEQ LOOP
 003f 60               NOP
