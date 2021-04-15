@@ -5,19 +5,51 @@ import sys
 class Board:
     def __init__(self):
         pass
-#        self.xaddrlo = 0
-#        self.xaddrhi = 0
-#        self.uarttxcounter = -1
-#        self.uarttxdata = 0
-#        self.uartrxdata = 0
-#        self.uartrxcounter = -1
-#        self.inputbuffer = []
 
-    def wr(self,value):
+    def wr(self,address,value):
         print(value,end='\n',flush=True)
         
-    def rd(self):
+    def wr2(self,value):
+        pass
+    
+    def rd(self,address):
         return 0xff
+
+class ByteMachineBoard(Board):
+    def __init__(self, extrarom):
+        Board.__init__(self)
+        self.extraram = [255]*(1<<19)
+        self.extrarom = extrarom
+        self.bank = 0
+        self.rombank = False
+        self.iomode = False
+        
+    def wr(self,address,value):
+        if self.rombank:         # by writing to ROM, switch to IO mode
+            self.iomode = True
+            self.output(value)
+        else:                    # by writing to RAM, switch to RAM mode
+            self.iomode = False
+            self.extraram[self.bank*(1<<16)+address] = value
+        
+    def wr2(self,value):
+        self.bank = value & 0x07
+        self.rombank = (value & 0x80) != 0
+    
+    def rd(self,address):
+        if self.rombank:
+            return self.extrarom[bank*(1<<16)+address]
+        elif self.iomode:
+            return self.input()
+        else:
+            return self.extraram[bank*(1<<16)+address]
+
+    def output(self,value):
+        print(format(value,"08b"),end='\n',flush=True)
+
+    def input(self):
+        return 255
+
 
 def hextobytes(line):
     b = []
@@ -26,17 +58,24 @@ def hextobytes(line):
             b.append(int(line[1+2*i:3+2*i],16))
     return b        
     
-def readhexfile(hexfile):
-    rom = [255]*(1<<19)
-    hex = open(hexfile, "r")
-    for line in hex:
-        b = hextobytes(line.strip())
-        if len(b)>4 and b[3]==0 and len(b)>=b[0]+4:
-            a = b[1]*256 + b[2];
-            for i in range(b[0]):
-                rom[a+i] = b[4+i]
-    hex.close()
-    return rom
+def readromfile(filename):
+    if filename.lower().endswith(".hex"):
+        f = open(filename, "r")
+        rom = [255]*(1<<19)
+        for line in f:
+            b = hextobytes(line.strip())
+            if len(b)>4 and b[3]==0 and len(b)>=b[0]+4:
+                a = b[1]*256 + b[2];
+                for i in range(b[0]):
+                    rom[a+i] = b[4+i]
+        f.close()
+        return rom
+    else:
+        f = open(filename, "rb")
+        rom = f.read(1<<19)
+        f.close()
+        return rom
+        
 
 def execute(board,rom,steps,show):
     tracing = False
@@ -69,7 +108,6 @@ def execute(board,rom,steps,show):
                    "A:",format(a, "x").zfill(2),
                    "B:",format(b, "x").zfill(2),
                    "OP:",format(op, "x").zfill(1) )
-#                   "RAM:",ram)
 
         # execution
         instr = ir & 0xe0
@@ -97,11 +135,12 @@ def execute(board,rom,steps,show):
                 result = a ^ b
             ram[param] = result
         elif instr==0x20:  # IN
-            ram[param] = board.rd()
+            ram[param] = board.rd(b*256+a)
         elif instr==0x40:  # OUT
-            board.wr(ram[param])
+            board.wr(b*256+a,ram[param])
         elif instr==0x60:  # OP
             op = param & 0x07
+            board.wr2(ram[param])
         elif instr==0x80:  # A
             a = ram[param]
         elif instr==0xA0:  # B
@@ -116,20 +155,21 @@ def execute(board,rom,steps,show):
         ir = rom[pc]
         pc = nextpc
 
-        
-def run(hexfile, steps,show):
-    rom = readhexfile(hexfile)
-    board = Board()
-    execute(board,rom,steps,show)
-#    print(board.ram[0:1000])
 
-if len(sys.argv)>1:
-    steps = 10000000
-    show = -1
-    if len(sys.argv)>2:
-        steps = int(sys.argv[2])
-    if len(sys.argv)>3:
-        show = int(sys.argv[3],16)
-    run(sys.argv[1]+".hex",steps,show)
-else:
-    print("No .hex filename given to run",file=sys.stderr)
+
+# decode parameters
+steps = 1000000000
+show = -1
+extra = None
+for i in range(len(sys.argv)-1):
+    if sys.argv[i]=='-steps':
+        steps = int(sys.argv[i+1])
+    elif sys.argv[i]=='-show':
+        show = int(sys.argv[i+1])
+    elif sys.argv[i]=='-extra':
+        extra = sys.argv[i+1]
+
+# execute
+rom = readromfile(sys.argv[len(sys.argv)-1])
+board = Board() if extra==None else ByteMachineBoard(readromfile(extra))
+execute(board,rom,steps,show)

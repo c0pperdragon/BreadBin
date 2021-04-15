@@ -170,6 +170,8 @@ def processline(identifiers, finalpass, tokens, codeaddress, outbuffer):
         bytes = [ 0x20 | op(I,G,T, 1, 5) ]
     elif tokens[0]=="OUT":
         bytes = [ 0x40 | op(I,G,T, 1, 5) ]
+    elif tokens[0]=="OUT2":
+        bytes = [ 0x60 | op(I,G,T, 1, 5) ]
     elif tokens[0]=="OP":
         bytes = [ 0x60 | operator(T, 1) ]
     elif tokens[0]=="A":

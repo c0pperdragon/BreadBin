@@ -1,4 +1,5 @@
-0000              ; Demo program to drive an 8-bit led display that is directly hooked up to the TX line.
+0000              ; Demo program to drive an 8-bit led display that is directly hooked up
+0000              ; to the data bus and the WR line.
 0000              
 0000                  ORG $0000
 0000              
@@ -24,46 +25,54 @@
 000a 60 60 60 60  LOOP:
 000e 60 60       
 0010                  ; write counter to LED display
-0010 42               OUT COUNTER
-0011              
-0011                  ; delay loop
-0011 80               A ZERO
-0012 a0               B ZERO
-0013 65               OP AND
-0014 1e               SET 30
-0015 1f               SET 31
-0016 60 60        DELAY:
-0018 9e               A 30
-0019 a1               B ONE
-001a 61               OP ADD
-001b 1e               SET 30
-001c 80               A ZERO
-001d be               B 30
-001e c5               BEQ DONE1
-001f a0               B ZERO
-0020 c3               BEQ DELAY
-0021 60               NOP
-0022 60 60 60 60  DONE1:
-0026 60 60       
-0028 9f               A 31
-0029 a1               B ONE
-002a 61               OP ADD
-002b 1f               SET 31
-002c 80               A ZERO
-002d bf               B 31
-002e c7               BEQ DONE2
-002f a0               B ZERO
-0030 c3               BEQ DELAY
-0031 60               NOP
-0032 60 60 60 60  DONE2:
-0036 60 60       
-0038              
-0038                  ; increment counter and continue endless loop
-0038 82               A COUNTER
-0039 a1               B ONE
-003a 61               OP ADD
-003b 02               SET COUNTER
-003c 80               A ZERO
-003d a0               B ZERO
-003e c2               BEQ LOOP
-003f 60               NOP
+0010                  ; this needs to work for both the bare controller board,
+0010                  ; as well as for the bytemachine main board
+0010 81               A ONE
+0011 a0               B ZERO
+0012 64               OP DIV
+0013 1f               SET 31  ; createa a 255
+0014 7f               OUT2 31   ; this writes content of mem 31 to bank address
+0015 42               OUT COUNTER
+0016              
+0016                  ; delay loop
+0016 80               A ZERO
+0017 a0               B ZERO
+0018 65               OP AND
+0019 1e               SET 30
+001a 1f               SET 31
+001b 60 60 60 60  DELAY:
+001f 60          
+0020 9e               A 30
+0021 a1               B ONE
+0022 61               OP ADD
+0023 1e               SET 30
+0024 80               A ZERO
+0025 be               B 30
+0026 c6               BEQ DONE1
+0027 a0               B ZERO
+0028 c4               BEQ DELAY
+0029 60               NOP
+002a 60 60 60 60  DONE1:
+002e 60 60       
+0030 9f               A 31
+0031 a1               B ONE
+0032 61               OP ADD
+0033 1f               SET 31
+0034 80               A ZERO
+0035 bf               B 31
+0036 c8               BEQ DONE2
+0037 a0               B ZERO
+0038 c4               BEQ DELAY
+0039 60               NOP
+003a 60 60 60 60  DONE2:
+003e 60 60       
+0040              
+0040                  ; increment counter and continue endless loop
+0040 82               A COUNTER
+0041 a1               B ONE
+0042 61               OP ADD
+0043 02               SET COUNTER
+0044 80               A ZERO
+0045 a0               B ZERO
+0046 c2               BEQ LOOP
+0047 60               NOP

@@ -13,7 +13,7 @@
     B ZERO
     OP EOR
     SET ZERO
-    OP DIV    
+    OP DIV
     SET ONE
 
     ; Init variables
@@ -24,6 +24,13 @@
 
 LOOP:
     ; write counter to LED display
+    ; this needs to work for both the bare controller board,
+    ; as well as for the bytemachine main board
+    A ONE
+    B ZERO
+    OP DIV
+    SET 31  ; createa a 255
+    OUT2 31   ; this writes content of mem 31 to bank address
     OUT COUNTER
 
     ; delay loop
