@@ -1,4 +1,5 @@
-; Demo program to drive an 8-bit led display that is directly hooked up to the TX line.
+; Demo program to drive an 8-bit led display that is directly hooked up 
+; to the data bus and the WR line.
 
     ORG $0000     
     

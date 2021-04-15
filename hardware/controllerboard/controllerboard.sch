@@ -27,7 +27,7 @@ F 3 "~" H 6250 750 50  0001 C CNN
 $EndComp
 Text Label 5450 1150 1    50   ~ 0
 WR#
-Text Label 5550 1150 1    50   ~ 0
+Text Label 5650 1150 1    50   ~ 0
 RD#
 $Comp
 L power:GND #PWR0207
@@ -998,12 +998,12 @@ $EndComp
 $Comp
 L 74xx:74LS32 UOR1
 U 2 1 61E0D57E
-P 4900 1700
-F 0 "UOR1" H 4850 1900 50  0000 C CNN
-F 1 "74HC32" H 5100 1850 50  0000 C CNN
-F 2 "" H 4900 1700 50  0001 C CNN
-F 3 "http://www.ti.com/lit/gpn/sn74LS32" H 4900 1700 50  0001 C CNN
-	2    4900 1700
+P 4900 1250
+F 0 "UOR1" H 4850 1450 50  0000 C CNN
+F 1 "74HC32" H 5100 1400 50  0000 C CNN
+F 2 "" H 4900 1250 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn74LS32" H 4900 1250 50  0001 C CNN
+	2    4900 1250
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
@@ -1018,7 +1018,7 @@ Wire Wire Line
 	4300 1150 4600 1150
 Text Label 4250 900  0    50   ~ 0
 CMDOUT#
-Text Label 4300 1350 0    50   ~ 0
+Text Label 4300 1800 0    50   ~ 0
 CMDIN#
 Wire Wire Line
 	4300 1350 4600 1350
@@ -1532,12 +1532,12 @@ Wire Wire Line
 $Comp
 L 74xx:74LS32 UOR1
 U 4 1 644963BF
-P 4900 1250
-F 0 "UOR1" H 4850 1450 50  0000 C CNN
-F 1 "74HC32" H 5150 1400 50  0000 C CNN
-F 2 "" H 4900 1250 50  0001 C CNN
-F 3 "http://www.ti.com/lit/gpn/sn74LS32" H 4900 1250 50  0001 C CNN
-	4    4900 1250
+P 4900 1700
+F 0 "UOR1" H 4850 1900 50  0000 C CNN
+F 1 "74HC32" H 5150 1850 50  0000 C CNN
+F 2 "" H 4900 1700 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn74LS32" H 4900 1700 50  0001 C CNN
+	4    4900 1700
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
@@ -1611,15 +1611,15 @@ Wire Wire Line
 	5200 1700 5650 1700
 Wire Wire Line
 	5650 1700 5650 950 
-Text Label 5650 1150 1    50   ~ 0
+Text Label 5550 1150 1    50   ~ 0
 WRX#
-Text Label 4300 1800 0    50   ~ 0
+Text Label 4300 1600 0    50   ~ 0
 CLK
 Wire Wire Line
 	4300 1600 4600 1600
 Wire Wire Line
 	4250 900  4600 900 
-Text Label 4300 1600 0    50   ~ 0
+Text Label 4300 1350 0    50   ~ 0
 CMDOP#
 Wire Wire Line
 	4300 1800 4600 1800
@@ -1706,7 +1706,7 @@ L 74xx:74LS574 UIR1
 U 1 1 65502EB2
 P 10400 2100
 F 0 "UIR1" V 10850 1550 50  0000 L CNN
-F 1 "74LS574" V 10750 1500 50  0000 L CNN
+F 1 "74HC574" V 10750 1500 50  0000 L CNN
 F 2 "" H 10400 2100 50  0001 C CNN
 F 3 "http://www.ti.com/lit/gpn/sn74LS574" H 10400 2100 50  0001 C CNN
 	1    10400 2100

@@ -3,68 +3,21 @@
 import sys
 
 class Board:
-    def __init__(self, rom):
-        self.ram = [255]*(1<<16)
-        self.xram = [255]*(1<<19)
-        self.rom = rom
-        self.xaddrlo = 0
-        self.xaddrhi = 0
-        self.uarttxcounter = -1
-        self.uarttxdata = 0
-        self.uartrxdata = 0
-        self.uartrxcounter = -1
-        self.inputbuffer = []
-    def write(self,address,value):
-        if address>=512:
-            self.ram[address] = value
-        elif address<256:
-            xaddress = (self.xaddrhi<<16) | (self.xaddrlo<<8) | address
-            if (xaddress<(1<<19)):
-                pass   # no write to rom
-            else:
-                self.xram[xaddress-(1<<19)] = value
-        elif address==256:
-            self.xaddrlo = value;
-        elif address==257:
-            self.xaddrhi = value;
-        elif address==259:  # out port 3
-            if self.uartrxcounter<0 and (value&0x02)==0:
-                while len(self.inputbuffer)<1:
-                    for c in input()+'\n':
-                        self.inputbuffer.append(ord(c))
-                self.uartrxcounter=8;
-                self.uartrxdata = self.inputbuffer.pop(0)<<1
-            elif self.uarttxcounter<0:
-                if (value&1)==0:
-                    self.uarttxcounter=0
-                    self.uarttxdata=0
-            else:
-                self.uarttxdata |= (value&1)<<self.uarttxcounter
-                if self.uarttxcounter<7:
-                    self.uarttxcounter+=1
-                else:
-                    print(chr(self.uarttxdata),end='',flush=True)                    
-                    self.uarttxcounter=-1
-    def read(self,address):
-        if address>=512:
-            return self.ram[address]
-        elif address<256:
-            xaddress = (self.xaddrhi<<16) | (self.xaddrlo<<8) | address
-            if xaddress<(1<<19):
-                return self.rom[xaddress]
-            elif xaddress<(1<<20):
-                return self.xram[xaddress-(1<<19)]
-        elif address==259: # in port 3
-            if self.uartrxcounter<0:
-                return 0xFD   # CTS is low
-            else:
-                rv = 0xFC | (self.uartrxdata & 1)  # CTS is low, bit 0 is data
-                self.uartrxdata = self.uartrxdata>>1
-                self.uartrxcounter-=1
-                return rv
-        else:
-            return 0;
+    def __init__(self):
+        pass
+#        self.xaddrlo = 0
+#        self.xaddrhi = 0
+#        self.uarttxcounter = -1
+#        self.uarttxdata = 0
+#        self.uartrxdata = 0
+#        self.uartrxcounter = -1
+#        self.inputbuffer = []
+
+    def wr(self,value):
+        print(value,end='\n',flush=True)
         
+    def rd(self):
+        return 0xff
 
 def hextobytes(line):
     b = []
@@ -85,96 +38,89 @@ def readhexfile(hexfile):
     hex.close()
     return rom
 
-def execute(board,steps,show):
+def execute(board,rom,steps,show):
     tracing = False
+
+    # state of the controller, start with dummy values
+    ram = [255]*32
+    a = 47
+    b = 11
+    op = 8
+    ir = 77
+    pc = 55 
     
-    # dummy start values
-    dp = 88
-    reg = [47,11,8,15]   
-    # well-defined start values
+    # start values after reset sequence
+    ir = 0xe0   
     pc = 0
-    xmemptr = 0
+    ram[0] = 0
 
     for i in range(steps):
+        # turn on full tracing at specified code point
         if pc==show:
             tracing = True
 
-        # instruction fetch
-        opcode = board.read(pc)
+        # unless instruction overrides this, the pc just increments
+        nextpc = ((pc+1) & 0x00ff) | (pc&0xff00)
+
+        # basic tracing
         if tracing:  # i>=steps-show:
             print ("PC:",format(pc,"x").zfill(4),
-                   "DP:",dp,
-                   "REG:",reg,
-                   "OP:",format(opcode, "x").zfill(2))
-        x = opcode&0x03
-        y = (opcode>>2)&0x03
-        instruction = opcode>>4
-        pc = (pc+1) & 0xffff
+                   "IR:",format(ir, "x").zfill(2),
+                   "A:",format(a, "x").zfill(2),
+                   "B:",format(b, "x").zfill(2),
+                   "OP:",format(op, "x").zfill(1) )
+#                   "RAM:",ram)
 
-        # execute
-        if instruction<=7:
-            if instruction<=3:
-                if instruction<=1:
-                    if instruction == 0:    # GT
-                        if reg[x]>reg[y]:
-                            reg[x] = 1
-                        else:
-                            reg[x] = 0
-                    else:                   # ADD
-                            reg[x] = (reg[x]+reg[y])&0xff
+        # execution
+        instr = ir & 0xe0
+        param = ir & 0x1f
+        if instr==0x00:  # SET
+            result = 0
+            if op==0:      # OVL
+                result = 1 if a+b>255 else 0
+            elif op==1:    # ADD
+                result = (a+b) & 0xff
+            elif op==2:    # SUB
+                result = (a+256-b) & 0xff
+            elif op==3:    # MUL
+                result = (a*b) & 0xff
+            elif op==4:    # DIV
+                if b==0:
+                    result = 1 if a==0 else 255
                 else:
-                    if instruction == 2:    # SUB
-                        reg[x] = (reg[x]+256-reg[y])&0xff
-                    else:                   # MUL
-                        reg[x] = (reg[x]*reg[y])&0xff
-            else:
-                if instruction<=5:
-                    if instruction == 4:    # DIV
-                        if reg[y]==0:
-                            reg[x]=0
-                        else:
-                            reg[x] = int(reg[x]/reg[y])
-                    else:                   # AND
-                        reg[x] = reg[x] & reg[y]
-                else:
-                    if instruction == 6:    # OR
-                        reg[x] = reg[x] | reg[y]
-                    else:                   # XOR
-                        reg[x] = reg[x] ^ reg[y]
-        else:
-            if instruction<=11:
-                if instruction<=9:
-                    if instruction==8:      # BLE
-                        operand = board.read(pc)
-                        pc = (pc+1) & 0xffff
-                        if reg[x]<=reg[y]:
-                            pc = (pc & 0xff00) | operand
-                    else:                   # JMP
-                        pc = reg[x] | (reg[y]<<8)
-                else:
-                    if instruction == 10:   # DP
-                        if (x & 1) == 0:
-                            dp = reg[y]
-                        else:
-                            dp = (y << 1) | (x>>1)
-                    else:                   # SET
-                        operand = board.read(pc)
-                        pc = (pc+1) & 0xffff
-                        reg[x] = operand
-            else:
-                if instruction<=13:
-                    if instruction == 12:   # LD
-                        reg[x] = board.read(reg[y] | (dp<<8))
-                    else:                   # ST
-                        board.write (reg[y] | (dp<<8), reg[x])
-                else:
-                    pass
+                    result = a // b
+            elif op==5:    # AND
+                result = a & b
+            elif op==6:    # OR
+                result = a | b
+            elif op==7:    # EOR
+                result = a ^ b
+            ram[param] = result
+        elif instr==0x20:  # IN
+            ram[param] = board.rd()
+        elif instr==0x40:  # OUT
+            board.wr(ram[param])
+        elif instr==0x60:  # OP
+            op = param & 0x07
+        elif instr==0x80:  # A
+            a = ram[param]
+        elif instr==0xA0:  # B
+            b = ram[param]
+        elif instr==0xC0:  # BEQ
+            if a==b:
+                nextpc = (pc & 0xff00) | (param<<3)
+        elif instr==0xE0:  # JMP
+            nextpc = ram[param]<<8
+        
+        # fetch instruction and progress program counter
+        ir = rom[pc]
+        pc = nextpc
 
         
 def run(hexfile, steps,show):
     rom = readhexfile(hexfile)
-    board = Board(rom)
-    execute(board,steps,show)
+    board = Board()
+    execute(board,rom,steps,show)
 #    print(board.ram[0:1000])
 
 if len(sys.argv)>1:
