@@ -34,7 +34,7 @@ So I settled for the moderately fast and well-behaved 74HC logic ICs.
 
 ## Software
 
-One of the hardest part of home-made computers is to actually build all the software to make the machine useful.
+One of the hardest parts of home-made computers is to actually build all the software to make the machine useful.
 To get the benefit of existing software the bread board computer core is intended to emulate an existing CPU
 (specifically the 65C816). This emulated CPU can then interface to some additional RAM and ROM and other
 parts to become a full computer to execute code that was originally written for my OS816 system.

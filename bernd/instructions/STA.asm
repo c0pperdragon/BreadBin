@@ -1,0 +1,23 @@
+; ---- STA d
+    ORG $8500
+    FETCHADDRESS_d
+    STORE V0 ALO
+    BRACCU16 STA_d_16bit
+    NEXT
+STA_d_16bit:    
+    INCREMENTADDRESS
+    STORE V0 AHI
+    NEXT
+
+; ---- STA al
+    ORG $8F00
+    FETCHADDRESS_a
+    FETCH TMP4
+    STORE TMP4 ALO
+    BRACCU16 STA_al_16bit
+    NEXT
+STA_al_16bit:    
+    INCREMENTADDRESS
+    STORE TMP4 AHI
+    NEXT
+    
