@@ -13,8 +13,8 @@ MACRO ADC8 destination operand
     B CFLAG
     OP ADD
     SET destination
-    Set NFLAG
-    Set ZFLAG
+    SET NFLAG
+    SET ZFLAG
     OP OVL
     SET TMP1  ; second carry possibility
     A TMP0

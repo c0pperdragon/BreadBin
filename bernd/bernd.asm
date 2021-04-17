@@ -50,7 +50,7 @@ ENDMACRO
 ; After reading data into the position given as target, increase PC 
 ; Intermediate storage: TMP0
 MACRO FETCH target    
-    A PCLOW
+    A PCLO
     B PCHI
     OUT2 PBR
     IN target
@@ -69,7 +69,7 @@ ENDMACRO
 ; Jump to the proper firmware segment. increase PC afterwards.
 ; Intermediate storage: TMP0, TMP1
 MACRO NEXT
-    A PCLOW
+    A PCLO
     B PCHI
     OUT2 PBR
     IN TMP1
@@ -92,7 +92,7 @@ MACRO FETCHADDRESS_d
     B DLO
     OP ADD
     SET ADDRLO
-    OP OLV
+    OP OVL
     SET TMP0
     A DHI
     B TMP0
@@ -108,7 +108,7 @@ MACRO FETCHADDRESS_a_x
     B XLO
     OP ADD
     SET ADDRLO
-    OP OLV
+    OP OVL
     SET TMP0
     A ADDRHI
     B XHI
@@ -131,7 +131,7 @@ MACRO INCREMENTPC
     B V1
     OP ADD
     SET PCLO
-    OP OLV
+    OP OVL
     SET TMP0
     A TMP0
     B PCHI
@@ -153,7 +153,7 @@ MACRO JUMPRELATIVELONG offsetlo offsethi
     A PCHI
     B TMP0
     SET PCHI
-SHORTBRANCH
+ENDMACRO
 
 ; increment the 16-bit value ADDRLO/ADDRHI
 MACRO INCREMENTADDRESS
@@ -161,7 +161,7 @@ MACRO INCREMENTADDRESS
     B V1
     OP ADD
     SET ADDRLO
-    OP OLV
+    OP OVL
     SET TMP0
     A TMP0
     B ADDRHI

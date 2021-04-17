@@ -51,9 +51,9 @@
     B V2
     OP MUL
     SET PCLO  ; $FE
-    A PLOW
+    A PCLO
     SET PCLO  ; $FC
-    A PCLOW
+    A PCLO
     SET PCLO  ; $F8
     ; stack pointer starts at $00FF
     GET V255

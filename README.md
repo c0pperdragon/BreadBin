@@ -47,4 +47,4 @@ the rest of the computer into a matching bread bin. Because the machine will not
 will keep the dust out quite reliably.
 
 ![alt text](gallery/Case.jpg "Generic wooden bread bin")
-
+ 

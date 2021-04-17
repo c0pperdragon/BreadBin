@@ -6,6 +6,21 @@ import sys
 class AssemblerException(Exception):
     pass
 
+class Macro:
+    def __init__(self, arguments):
+        self.arguments = arguments
+        self.lines = [ ]
+
+def replaceall(list, identifiers, values):
+    l2 = []
+    for t in list:
+        if t in identifiers:
+            l2.append(values[identifiers.index(t)])
+        else:
+            l2.append(t)
+    return l2
+    
+
 def findany(str, patterns):
     first = -1
     for p in patterns:
@@ -20,16 +35,6 @@ def areaisused(buffer, start, len):
             return True
     return False
 
-def findfreearea(buffer, start, len):
-    if len>256:
-        raise AssemblerException("Can not support area size greater than 256")
-    # quick search for some empty area
-    while buffer[start+len-1] != None:
-        start = start+len;
-    # search for empty space not crossing page boundaries 
-    while (start>>8) != ((start+len-1)>>8) or areaisused(buffer, start ,len):
-        start = start+1
-    return start;
 
 def tokenize(line):
     # strip comments and uppercase everything
@@ -117,7 +122,7 @@ def branchtarget(identifiers, finalpass, tokens, tidx, pc):
         else:
             return value & 0xff
 
-def printlisting(lst,startaddress, bytes, line):
+def printlisting(lst,startaddress, bytes, tokens):
     perpart = 4
     numparts = (max(len(bytes),1) +perpart-1) // perpart
     for i in range(numparts):
@@ -129,10 +134,10 @@ def printlisting(lst,startaddress, bytes, line):
                 x.append("   ");
         if i==0:
             x.append(" ")
-            x.append(line)
+            x.append(" ".join(tokens))
         print ("".join(x), file=lst)
 
-def processline(identifiers, finalpass, tokens, codeaddress, outbuffer):
+def processline(identifiers, macros, finalpass, tokens, codeaddress, outbuffer,lst):
     I = identifiers
     G = finalpass
     T = tokens
@@ -148,55 +153,71 @@ def processline(identifiers, finalpass, tokens, codeaddress, outbuffer):
                 raise AssemblerException("May not redefine '"+id+"'")
             else:
                 identifiers[id] = pc+pad
-        tokens.pop(0)
-        tokens.pop(0)
+        T = tokens[2:]
         
-    if len(tokens)==0:
+    if len(T)==0:
         pass
-    elif len(tokens)>=3 and tokens[1]=='=':
+    elif len(T)>=3 and T[1]=='=':
         if not finalpass:
-            id = tokens[0]
-            value = evaluate(I,tokens[2])
+            id = T[0]
+            value = evaluate(I,T[2])
             if id in identifiers:
                 raise AssemblerException("May not redefine '"+id+"'")
             else:
                 identifiers[id] = value
-    elif len(tokens)==2 and tokens[0]=="ORG":
-        codeaddress[0] = evaluate(identifiers, tokens[1])
+    elif len(T)==2 and T[0]=="ORG":
+        codeaddress[0] = evaluate(identifiers, T[1])
 
-    elif tokens[0]=="SET":
+    elif T[0]=="SET":
         bytes = [ 0x00 | op(I,G,T, 1, 5) ]
-    elif tokens[0]=="IN":
+    elif T[0]=="IN":
         bytes = [ 0x20 | op(I,G,T, 1, 5) ]
-    elif tokens[0]=="OUT":
+    elif T[0]=="OUT":
         bytes = [ 0x40 | op(I,G,T, 1, 5) ]
-    elif tokens[0]=="OUT2":
+    elif T[0]=="OUT2":
         bytes = [ 0x60 | op(I,G,T, 1, 5) ]
-    elif tokens[0]=="OP":
+    elif T[0]=="OP":
         bytes = [ 0x60 | operator(T, 1) ]
-    elif tokens[0]=="A":
+    elif T[0]=="A":
         bytes = [ 0x80 | op(I,G,T, 1, 5) ]
-    elif tokens[0]=="B":
+    elif T[0]=="B":
         bytes = [ 0xA0 | op(I,G,T, 1, 5) ]
-    elif tokens[0]=="BEQ":
+    elif T[0]=="BEQ":
         addr = op(I,G,T, 1, 16)
-        if (addr//256) != (pc//256):
-            raise AssemblerException("Branch target out of scope")
-        if (addr%8) !=0:
-            raise AssemblerException("Missaligned branch target")
-        bytes = [ 0xC0 | (addr//8)]
-    elif tokens[0]=="JMP":
+        if finalpass:
+            if (addr//256) != (pc//256):
+                raise AssemblerException("Branch target out of scope: "+("{:02x}".format(addr)))
+            if (addr%8) !=0:
+                raise AssemblerException("Missaligned branch target")
+        bytes = [ 0xC0 | ((addr%256)//8)]
+    elif T[0]=="JMP":
         bytes = [ 0xE0 | op(I,G,T, 1, 5) ]
-    elif tokens[0]=="NOP":
+    elif T[0]=="NOP":
         bytes = [ 0x60 | 0 ]
         
+    elif T[0] in macros:
+        m = macros[T[0]]
+        if len(m.arguments) != len(T)-1:
+            raise AssemblerException("Macro expansion with different number of arguments: "+T[0])   
+        else:
+            if finalpass:
+                printlisting(lst,codeaddress[0], bytes, tokens)
+            for l in m.lines:
+                replaced = replaceall(l, m.arguments, T[1:])
+                processline(identifiers,macros,finalpass, replaced,codeaddress,outbuffer,lst)
+            tokens = []
+            
     else:
-        raise AssemblerException("Unknown instruction "+tokens[0])     
+        raise AssemblerException("Unknown instruction "+T[0])     
 
+    if finalpass:
+        if areaisused(outbuffer, codeaddress[0], len(bytes)):
+            raise AssemblerException("Overlapping ranges")
+        outbuffer[codeaddress[0]:codeaddress[0]+len(bytes)] = bytes
+        printlisting(lst,codeaddress[0], bytes, tokens)
     codeaddress[0] += len(bytes)
-    return bytes
 
-def process(identifiers, sourcefile, alreadyloaded, codeaddress, outbuffer, finalpass, lst):
+def process(identifiers, macros, sourcefile, alreadyloaded, codeaddress, outbuffer, finalpass, lst):
     if sourcefile in alreadyloaded:
         return
     else:
@@ -204,24 +225,30 @@ def process(identifiers, sourcefile, alreadyloaded, codeaddress, outbuffer, fina
     src = open(sourcefile, "r")
     linenumber = 1
     numerrors = 0
+    currentmacro = None
     for rawline in src:
         line = rawline.rstrip()
         body = line.lstrip()
         if body.startswith("include") or body.startswith("INCLUDE"):
-            process(identifiers,body[7:].lstrip(),alreadyloaded,codeaddress,outbuffer,finalpass,lst)
+            process(identifiers,macros, body[7:].lstrip(),alreadyloaded,codeaddress,outbuffer,finalpass,lst)
         else:
             try:
                 tokens = tokenize(line)
-                romaddress = codeaddress[0]
-                bytes = processline(identifiers, finalpass, tokens, codeaddress,outbuffer)
-                if finalpass:
-                    if len(tokens)==3 and tokens[0]=="DUPLICATE":
-                        frm = op(identifiers, True, tokens, 1, 16)
-                        bytes = [0 if x==None else x for x in outbuffer[frm:frm+len(bytes)]]
-                    if areaisused(outbuffer, romaddress, len(bytes)):
-                        raise AssemblerException("Overlapping ranges")
-                    printlisting(lst,romaddress, bytes, line)
-                outbuffer[romaddress:romaddress+len(bytes)] = bytes
+                if currentmacro!=None:
+                    if len(tokens)>=1 and tokens[0]=='ENDMACRO':
+                        currentmacro = None
+                    elif not finalpass:
+                        currentmacro.lines.append(tokens)
+                elif len(tokens)>=1 and tokens[0]=='MACRO':
+                    if finalpass:
+                        currentmacro = macros[tokens[1]]
+                    elif tokens[1] in macros:
+                        raise AssemblerException("May not redefine macro'"+tokens[1]+"'")
+                    else:
+                        currentmacro = Macro(tokens[2:])
+                        macros[tokens[1]]=currentmacro 
+                else:
+                    processline(identifiers, macros, finalpass, tokens, codeaddress,outbuffer,lst)
             except AssemblerException as e:
                 print(sourcefile+":"+str(linenumber)+" "+str(e),file=sys.stderr)
                 numerrors += 1
@@ -260,13 +287,15 @@ def printhexfile(hexfile, buffer):
         
 def asm(sourcefile,hexfile,listfile):
     try:
+        print ("PASS 1")
         identifiers = { }
-        rom = [None]*65536
-        process(identifiers, sourcefile, [], [0], rom, False, None)
-        rom = [None]*65536
+        macros = { }
+        process(identifiers, macros, sourcefile, [], [0], None, False, None)
 
+        print ("PASS 2")
+        rom = [None]*65536
         lst = open(listfile, "w")
-        process(identifiers, sourcefile, [], [0], rom, True, lst)
+        process(identifiers, macros, sourcefile, [], [0], rom, True, lst)
         lst.close()
         
         printhexfile(hexfile, rom)
