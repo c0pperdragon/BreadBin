@@ -3,7 +3,7 @@
 MACRO AND8 destination operand
     A destination
     B operand
-    OP ADD
+    OP AND
     SET destination
     SET NFLAG
     SET ZFLAG

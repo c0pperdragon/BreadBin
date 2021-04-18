@@ -1,42 +1,43 @@
 ; BERND - Emulator for the 65c816 CPU running on the Breadboard controller board
 ;
 ; emulated CPU registers
-    ALO = 0
-    AHI = 1
-    DBR = 2
-    DLO = 3
-    DHI = 4
-    XLO = 5
-    XHI = 6
-    YLO = 7
-    YHI = 8
-    PBR = 9
-    PCLO = 10
-    PCHI = 11
+    PCLO = 0
+    PCHI = 1
+    PBR = 2
+    ALO = 3
+    AHI = 4
+    DBR = 5
+    DLO = 6
+    DHI = 7
+    XLO = 8
+    XHI = 9
+    YLO = 10
+    YHI = 11
     SLO = 12
     SHI = 13
-; emulated flags
+; emulated flags (individually addressable)
     CFLAG = 14   ; 1 if carry. 0 otherwise
     NFLAG = 15   ; result of previous alu operation concerning n
     ZFLAG = 16   ; result of previous alu operation converning z
     MFLAG = 17   ; 1 if using 8-bit memory and accu. 0 otherwise
-    XFLAG = 18   ; 1 if using 8-bit x,y flags. 0 otherwise
-; mem holding constant values
-    V0 = 20
-    V1 = 21
-    V2 = 22
-    V128 = 23
-    V255 = 24
-; temporary storage 
-    TMP0 = 25
-    TMP1 = 26
-    TMP2 = 27
-    TMP3 = 28
-    TMP4 = 29
+    XFLAG = 18   ; 1 if using 8-bit x,y. 0 otherwise
 ; temporary address registers
-    ADDRLO = 30
-    ADDRHI = 31
-  
+    ADDRLO = 19
+    ADDRHI = 20
+; temporary storage 
+    TMP0 = 22
+    TMP1 = 23
+    TMP2 = 24
+    TMP3 = 25
+    TMP4 = 26
+; mem holding constant values
+    V1 = 27
+    V2 = 28
+    V128 = 29
+    V255 = 30
+    V0 = 31   ; with mem 31 holding 0, executing a 
+              ; $FF instruction will jump to $0000, 
+              ; instantly resetting the machine
   
   
 ; provide the value on the ALU output for setting
@@ -46,7 +47,7 @@ MACRO GET source
     OP OR
 ENDMACRO  
   
-; Fetch the next operand byte from the program.
+; Fetch the next operand byte of the program.
 ; After reading data into the position given as target, increase PC 
 ; Intermediate storage: TMP0
 MACRO FETCH target    
@@ -86,6 +87,8 @@ MACRO NEXT
 ENDMACRO
 
 ; fetch next byte from program and construct the 16-bit address with DHI/DLO
+; store result in ADDRLO/ADDRHI
+; Intermediate storage: TMP0 
 MACRO FETCHADDRESS_d
     FETCH ADDRLO
     A ADDRLO
@@ -101,6 +104,8 @@ MACRO FETCHADDRESS_d
 ENDMACRO
 
 ; fetch two bytes from program and combine with X to get 16-bit address
+; store result in ADDRLO/ADDRHI
+; Intermediate storage: TMP0 
 MACRO FETCHADDRESS_a_x
     FETCH ADDRLO
     FETCH ADDRHI
@@ -120,12 +125,14 @@ MACRO FETCHADDRESS_a_x
 ENDMACRO
 
 ; fetch two bytes and use as address
+; Intermediate storage: TMP0 
 MACRO FETCHADDRESS_a
     FETCH ADDRLO
     FETCH ADDRHI
 ENDMACRO
 
 ; increment value of program counter
+; Intermediate storage: TMP0 
 MACRO INCREMENTPC
     A PCLO
     B V1
@@ -135,10 +142,12 @@ MACRO INCREMENTPC
     SET TMP0
     A TMP0
     B PCHI
+    OP ADD
     SET PCHI
 ENDMACRO
 
 ; perform relative (16-bit) jump
+; Intermediate storage: TMP0 
 MACRO JUMPRELATIVELONG offsetlo offsethi
     A PCLO
     B offsetlo
@@ -156,6 +165,7 @@ MACRO JUMPRELATIVELONG offsetlo offsethi
 ENDMACRO
 
 ; increment the 16-bit value ADDRLO/ADDRHI
+; Intermediate storage: TMP0 
 MACRO INCREMENTADDRESS
     A ADDRLO
     B V1
@@ -198,6 +208,8 @@ MACRO BRINDEX16 branchtarget
     BEQ branchtarget
 ENDMACRO
 
+; join low and high byte of a 16-bit value to reflect the 
+; zero-ness state of the value (basically doing an OR)
 MACRO COMPUTEZFLAG lo hi
     A lo
     B hi

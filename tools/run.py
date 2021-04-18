@@ -21,29 +21,33 @@ class ByteMachineBoard(Board):
         self.extraram = [255]*(1<<19)
         self.extrarom = extrarom
         self.bank = 0
-        self.rombank = False
         self.iomode = False
         
     def wr(self,address,value):
-        if self.rombank:         # by writing to ROM, switch to IO mode
+        a = (self.bank<<16)+address;
+ #       print(format(a,"06x"),"<-",format(value,"02x"))
+        if (a & 0x800000) !=0:   # by writing to ROM, switch to IO mode
             self.iomode = True
             self.output(value)
-        else:                    # by writing to RAM, switch to RAM mode
+        else:                     # by writing to RAM, switch to RAM mode
             self.iomode = False
-            self.extraram[self.bank*(1<<16)+address] = value
+            self.extraram[a&0x7ffff] = value
         
     def wr2(self,value):
-        self.bank = value & 0x07
-        self.rombank = (value & 0x80) != 0
+        self.bank = value
     
     def rd(self,address):
-        if self.rombank:
-            return self.extrarom[bank*(1<<16)+address]
+        v = 0
+        a = (self.bank<<16)+address;
+        if (a & 0x800000) !=0:   # reading from ROM 
+            v = self.extrarom[a & 0x7ffff]
         elif self.iomode:
-            return self.input()
+            v = self.input()
         else:
-            return self.extraram[bank*(1<<16)+address]
-
+            v = self.extraram[a & 0x7ffff]
+ #       print(format(a,"06x"),"->",format(v,"02x"))
+        return v
+    
     def output(self,value):
         print(format(value,"08b"),end='\n',flush=True)
 
@@ -77,6 +81,12 @@ def readromfile(filename):
         return rom
         
 
+def printableram(ram):
+    l = []
+    for b in ram:
+        l.append(format(b, "x").zfill(2))
+    return " ".join(l)
+
 def execute(board,rom,steps,show):
     tracing = False
 
@@ -93,10 +103,15 @@ def execute(board,rom,steps,show):
     pc = 0
     ram[0] = 0
 
-    for i in range(steps):
+    # only run for the desired number of steps
+    step = 0 if show<0 else -1000000000
+    while step<steps:
         # turn on full tracing at specified code point
-        if pc==show:
+        if pc==show and not tracing:
             tracing = True
+            step = 0    # start counting after reaching trace point
+        else:
+            step = step+1;
 
         # unless instruction overrides this, the pc just increments
         nextpc = ((pc+1) & 0x00ff) | (pc&0xff00)
@@ -107,7 +122,8 @@ def execute(board,rom,steps,show):
                    "IR:",format(ir, "x").zfill(2),
                    "A:",format(a, "x").zfill(2),
                    "B:",format(b, "x").zfill(2),
-                   "OP:",format(op, "x").zfill(1) )
+                   "OP:",format(op, "x").zfill(1),
+                   "M:",printableram(ram))
 
         # execution
         instr = ir & 0xe0
@@ -158,14 +174,14 @@ def execute(board,rom,steps,show):
 
 
 # decode parameters
-steps = 1000000000
+steps = 30
 show = -1
 extra = None
 for i in range(len(sys.argv)-1):
     if sys.argv[i]=='-steps':
         steps = int(sys.argv[i+1])
     elif sys.argv[i]=='-show':
-        show = int(sys.argv[i+1])
+        show = int(sys.argv[i+1],16)
     elif sys.argv[i]=='-extra':
         extra = sys.argv[i+1]
 
@@ -173,3 +189,4 @@ for i in range(len(sys.argv)-1):
 rom = readromfile(sys.argv[len(sys.argv)-1])
 board = Board() if extra==None else ByteMachineBoard(readromfile(extra))
 execute(board,rom,steps,show)
+    

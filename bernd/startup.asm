@@ -1,6 +1,6 @@
 ; ---- STARTUP ----
     ORG $0000
-    ; create constant values from cold start
+    ; create constant values after cold start
     A V0     ; construct a 0
     B V0
     OP EOR
@@ -55,10 +55,10 @@
     SET PCLO  ; $FC
     A PCLO
     SET PCLO  ; $F8
-    ; stack pointer starts at $00FF
+    ; stack pointer starts at $01FF
     GET V255
     SET SLO
-    GET V0
+    GET V1
     SET SHI
     ; flags
     GET V0
