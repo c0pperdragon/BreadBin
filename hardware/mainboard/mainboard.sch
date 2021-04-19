@@ -268,37 +268,37 @@ $EndComp
 $Comp
 L 74xx:7400 U4
 U 1 1 5ECCC932
-P 6600 2550
-F 0 "U4" H 6600 2875 50  0000 C CNN
-F 1 "74HC00" H 6600 2784 50  0000 C CNN
-F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 6600 2550 50  0001 C CNN
-F 3 "http://www.ti.com/lit/gpn/sn7400" H 6600 2550 50  0001 C CNN
-	1    6600 2550
-	0    1    1    0   
+P 6000 1950
+F 0 "U4" H 6000 2275 50  0000 C CNN
+F 1 "74HC00" H 6000 2184 50  0000 C CNN
+F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 6000 1950 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn7400" H 6000 1950 50  0001 C CNN
+	1    6000 1950
+	-1   0    0    1   
 $EndComp
 Text Label 7950 4450 1    50   ~ 0
 WR#
 $Comp
 L 74xx:7400 U4
 U 2 1 5ECE311F
-P 5800 2550
-F 0 "U4" H 5800 2875 50  0000 C CNN
-F 1 "74HC00" H 5800 2784 50  0000 C CNN
-F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 5800 2550 50  0001 C CNN
-F 3 "http://www.ti.com/lit/gpn/sn7400" H 5800 2550 50  0001 C CNN
-	2    5800 2550
-	0    1    1    0   
+P 5550 2550
+F 0 "U4" H 5550 2875 50  0000 C CNN
+F 1 "74HC00" H 5550 2784 50  0000 C CNN
+F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 5550 2550 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn7400" H 5550 2550 50  0001 C CNN
+	2    5550 2550
+	0    -1   1    0   
 $EndComp
 $Comp
 L 74xx:7400 U4
 U 3 1 5ECE31C6
-P 6050 1650
-F 0 "U4" H 6050 1975 50  0000 C CNN
-F 1 "74HC00" H 6050 1884 50  0000 C CNN
-F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 6050 1650 50  0001 C CNN
-F 3 "http://www.ti.com/lit/gpn/sn7400" H 6050 1650 50  0001 C CNN
-	3    6050 1650
-	-1   0    0    -1  
+P 6600 2550
+F 0 "U4" H 6600 2875 50  0000 C CNN
+F 1 "74HC00" H 6600 2784 50  0000 C CNN
+F 2 "Package_DIP:DIP-14_W7.62mm_Socket" H 6600 2550 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn7400" H 6600 2550 50  0001 C CNN
+	3    6600 2550
+	0    1    1    0   
 $EndComp
 Text Label 6200 5850 1    50   ~ 0
 D2
@@ -1136,35 +1136,23 @@ Text Label 6600 3250 1    50   ~ 0
 IOSEL#
 Wire Wire Line
 	6700 2250 6700 1950
-Connection ~ 6700 1950
 Wire Wire Line
-	5700 1650 5750 1650
+	6350 1950 6350 2050
 Wire Wire Line
-	5700 2250 5700 1650
+	6350 2050 6300 2050
 Wire Wire Line
-	6500 1650 6400 1650
+	6350 1950 6350 1850
 Wire Wire Line
-	6400 1650 6400 1750
-Wire Wire Line
-	6400 1750 6350 1750
-Wire Wire Line
-	6400 1650 6400 1550
-Wire Wire Line
-	6400 1550 6350 1550
-Connection ~ 6400 1650
-Text Label 5800 3250 1    50   ~ 0
+	6350 1850 6300 1850
+Connection ~ 6350 1950
+Text Label 5550 3250 1    50   ~ 0
 ROMSEL#
-Connection ~ 6500 1650
 Wire Wire Line
 	6500 1650 6500 2250
 Wire Wire Line
 	6700 1950 7150 1950
 Wire Wire Line
-	5900 1950 6700 1950
-Wire Wire Line
-	5900 1950 5900 2250
-Wire Wire Line
-	5800 2850 5800 3250
+	5550 2850 5550 3250
 Wire Wire Line
 	6600 2850 6600 3250
 Wire Wire Line
@@ -1226,4 +1214,16 @@ Wire Wire Line
 Wire Wire Line
 	8000 2250 8000 2050
 NoConn ~ 8300 2250
+Wire Wire Line
+	6350 1950 6700 1950
+Connection ~ 6700 1950
+Wire Wire Line
+	6500 1650 5450 1650
+Wire Wire Line
+	5450 1650 5450 2250
+Connection ~ 6500 1650
+Wire Wire Line
+	5700 1950 5650 1950
+Wire Wire Line
+	5650 1950 5650 2250
 $EndSCHEMATC
