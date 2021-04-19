@@ -51,9 +51,10 @@ ENDMACRO
 ; After reading data into the position given as target, increase PC 
 ; Intermediate storage: TMP0
 MACRO FETCH target    
+    B PBR
+    OUT2
     A PCLO
     B PCHI
-    OUT2 PBR
     IN target
     B V1
     OP ADD
@@ -70,9 +71,10 @@ ENDMACRO
 ; Jump to the proper firmware segment. increase PC afterwards.
 ; Intermediate storage: TMP0, TMP1
 MACRO NEXT
+    B PBR
+    OUT2
     A PCLO
     B PCHI
-    OUT2 PBR
     IN TMP1
     B V1
     OP ADD
@@ -131,6 +133,24 @@ MACRO FETCHADDRESS_a
     FETCH ADDRHI
 ENDMACRO
 
+; fetch address indirect long. For this, combine the
+; next program byte with the DLO,DHI to get the address of the long pointer
+; store resulting address in ADDRLO/ADDRHI and the bank number
+; in the provided register
+; Intermediate storage: TMP0, TMP1, TMP2
+MACRO FETCHADDRESS_[d] bank
+    FETCHADDRESS_d
+    LOAD V0 TMP1
+    INCREMENTADDRESS
+    LOAD V0 TMP2
+    INCREMENTADDRESS
+    LOAD V0 bank
+    GET TMP1
+    SET ADDRLO
+    GET TMP2
+    SET ADDRHI
+ENDMACRO
+
 ; increment value of program counter
 ; Intermediate storage: TMP0 
 MACRO INCREMENTPC
@@ -180,17 +200,19 @@ ENDMACRO
 
 ; store a value into the specified memory bank at address ADDRLO/ADDRHI 
 MACRO STORE bank value
+    B bank
+    OUT2
     A ADDRLO
     B ADDRHI
-    OUT2 bank
     OUT value
 ENDMACRO 
 
 ; load a value from the specified memory bank at address ADDRLO/ADDRHI 
 MACRO LOAD bank value
+    B bank
+    OUT2
     A ADDRLO
     B ADDRHI
-    OUT2 bank
     IN value
 ENDMACRO 
 

@@ -9,7 +9,7 @@ class Board:
     def wr(self,address,value):
         print(value,end='\n',flush=True)
         
-    def wr2(self,value):
+    def wr2(self,a,b):
         pass
     
     def rd(self,address):
@@ -21,31 +21,29 @@ class ByteMachineBoard(Board):
         self.extraram = [255]*(1<<19)
         self.extrarom = extrarom
         self.bank = 0
-        self.iomode = False
         
     def wr(self,address,value):
         a = (self.bank<<16)+address;
- #       print(format(a,"06x"),"<-",format(value,"02x"))
-        if (a & 0x800000) !=0:   # by writing to ROM, switch to IO mode
-            self.iomode = True
-            self.output(value)
-        else:                     # by writing to RAM, switch to RAM mode
-            self.iomode = False
+#        print(format(a,"06x"),"<-",format(value,"02x"))
+        if (a & 0x800000) == 0:          # writing to RAM
             self.extraram[a&0x7ffff] = value
+        elif (a & 0xC00000) == 0xC00000:  # writing to IO
+            self.output((a>>8) & 0xff)   # use bits 8-15 of address as data
         
-    def wr2(self,value):
-        self.bank = value
+    def wr2(self,a,b):
+#        print("!", format(a,"02x"), format(b,"02x"))
+        self.bank = b
     
     def rd(self,address):
         v = 0
         a = (self.bank<<16)+address;
-        if (a & 0x800000) !=0:   # reading from ROM 
-            v = self.extrarom[a & 0x7ffff]
-        elif self.iomode:
-            v = self.input()
-        else:
+        if (a & 0x800000) ==0:             # reading from RAM 
             v = self.extraram[a & 0x7ffff]
- #       print(format(a,"06x"),"->",format(v,"02x"))
+        elif (a & 0xC00000) == 0xC00000:   # reading from IO
+            v = 0xFF
+        else:
+            v = self.extrarom[a & 0x7ffff] # reading from ROM
+#        print(format(a,"06x"),"->",format(v,"02x"))
         return v
     
     def output(self,value):
@@ -156,7 +154,7 @@ def execute(board,rom,steps,show):
             board.wr(b*256+a,ram[param])
         elif instr==0x60:  # OP
             op = param & 0x07
-            board.wr2(ram[param])
+            board.wr2(a,b)
         elif instr==0x80:  # A
             a = ram[param]
         elif instr==0xA0:  # B

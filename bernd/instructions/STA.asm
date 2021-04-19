@@ -21,3 +21,13 @@ STA_al_16bit:
     STORE TMP4 AHI
     NEXT
     
+; ---- STA [d]
+    ORG $8700
+    FETCHADDRESS_[d] TMP4
+    STORE TMP4 ALO
+    BRACCU16 STA_[d]_16bit
+    NEXT
+STA_[d]_16bit:    
+    INCREMENTADDRESS
+    STORE TMP4 AHI
+    NEXT

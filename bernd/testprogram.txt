@@ -1,0 +1,48 @@
+; Small test program to use various aspects of the 65C816 to be emulated by Bernd.
+; It is small enough so that I do not even use an assembler.
+; The program tries to use different parts of the ROM and different parts of the RAM for read and write.
+; It also accesses the input and the output port to check if all bits are working.
+
+808000 80 C0 60 30 18 0C 06 03 01 03 06 0C 18 30 60 C0  ; pattern sequence
+
+80FF00 A9 00          LDA #$00         ; initialize counter
+80FF02 85 00          STA $00  
+
+80FF04 A5 00          LDA $00          ; read counter from low RAM
+80FF06 18             CLC              ; increment up to 15 
+80FF07 69 01          ADC #1
+80FF09 29 0F          AND #$0F
+80FF0B 85 00          STA $00          ; write incremented counter to low RAM
+
+80FF0D AA             TAX
+80FF0E BF 00 80 80    LDA $808000,X    ; fetch output pattern from ROM
+80FF12 8F FF FF 07    STA $07FFFF      ; write to high RAM
+80FF16 AF FF FF 07    LDA $07FFFF      ; read from high RAM
+
+80FF1A 2F 00 00 C0    AND $C00000      ; merge with input data
+80FF1E 85 01          STA $01          ; set up 2. byte of access pointer
+80FF20 A9 C0          LDA #$C0         
+80FF22 85 02          STA $02          ; set up 3. byte of access pointer
+80FF24 87 00          STA [$00]        ; write via access pointer to output port
+
+80FF26 A9 05          LDA #5           ; waiting loop
+80FF28 A0 C8      w0: LDY #200
+80FF2A A2 C8      w1: LDX #200
+80FF2C E8         w2: INX
+80FF2D D0 FD          BNE w2
+80FF2F C8             INY
+80FF30 D0 F8          BNE w1
+80FF32 38             SEC 
+80FF33 E9 01          SBC #1
+80FF35 D0 F1          BNE w0
+
+80FF37 5C 04 FF 80    JMP $80FF04
+          
+; Bootstrap code to switch to native mode that can access all RAM and all ROM.
+; For Bernd emulation this would not be necessary, but it does not hurt, either.
+80FFF0 18             CLC     
+80FFF1 FB             XCE              ; turn off emulation mode (X and M flags are still 1)
+80FFF2 5C 00 FF 80    JMP $80FF00      ; start user program
+80FFF6 FF FF
+80FFF8 5C F0 FF 80    JMP $80FFF0      ; first instruction after reset -> jump to native mode ROM area 
+80FFFC F8 FF                           ; reset vector is pointing to the initial long jump in bank 0
