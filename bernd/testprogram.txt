@@ -13,16 +13,17 @@
 80FF07 69 01          ADC #1
 80FF09 29 0F          AND #$0F
 80FF0B 85 00          STA $00          ; write incremented counter to low RAM
-
 80FF0D AA             TAX
-80FF0E BF 00 80 80    LDA $808000,X    ; fetch output pattern from ROM
-80FF12 8F FF FF 07    STA $07FFFF      ; write to high RAM
-80FF16 AF FF FF 07    LDA $07FFFF      ; read from high RAM
 
-80FF1A 2F 00 00 C0    AND $C00000      ; merge with input data
-80FF1E 85 01          STA $01          ; set up 2. byte of access pointer
-80FF20 A9 C0          LDA #$C0         
-80FF22 85 02          STA $02          ; set up 3. byte of access pointer
+80FF0E A9 40          LDA #$40         ; set up 3. byte of access pointer
+80FF10 85 02          STA $02          
+
+80FF12 BF 00 80 80    LDA $808000,X    ; fetch output pattern from ROM
+80FF16 8F FF FF 07    STA $07FFFF      ; write to high RAM
+80FF2A AF FF FF 07    LDA $07FFFF      ; read from high RAM
+
+80FF1E 2F 00 00 40    AND $400000      ; merge with input data
+80FF22 85 01          STA $01          ; set up 2. byte of access pointer, but keep in A also
 80FF24 87 00          STA [$00]        ; write via access pointer to output port
 
 80FF26 A9 05          LDA #5           ; waiting loop

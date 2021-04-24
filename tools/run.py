@@ -1,4 +1,4 @@
-# BreadBin emulator.  ROM definition as Intel HEX format. 
+# BreadBin emulator.  ROM definition as Intel HEX format or binary. 
 
 import sys
 
@@ -25,9 +25,9 @@ class ByteMachineBoard(Board):
     def wr(self,address,value):
         a = (self.bank<<16)+address;
 #        print(format(a,"06x"),"<-",format(value,"02x"))
-        if (a & 0x800000) == 0:          # writing to RAM
+        if (a & 0xC00000) == 0x000000:    # writing to RAM
             self.extraram[a&0x7ffff] = value
-        elif (a & 0xC00000) == 0xC00000:  # writing to IO
+        elif (a & 0xC00000) == 0x400000:  # writing to IO
             self.output((a>>8) & 0xff)   # use bits 8-15 of address as data
         
     def wr2(self,a,b):
@@ -37,9 +37,9 @@ class ByteMachineBoard(Board):
     def rd(self,address):
         v = 0
         a = (self.bank<<16)+address;
-        if (a & 0x800000) ==0:             # reading from RAM 
+        if (a & 0xC00000) == 0x000000:     # reading from RAM 
             v = self.extraram[a & 0x7ffff]
-        elif (a & 0xC00000) == 0xC00000:   # reading from IO
+        elif (a & 0xC00000) == 0x400000:   # reading from IO
             v = 0xFF
         else:
             v = self.extrarom[a & 0x7ffff] # reading from ROM
