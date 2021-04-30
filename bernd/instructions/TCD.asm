@@ -1,0 +1,9 @@
+; ---- TCD i
+    ORG $5B00
+    GET ALO
+    SET DLO
+    GET AHI
+    SET DHI
+    COMPUTENZFLAGS DLO DHI
+    NEXT
+    

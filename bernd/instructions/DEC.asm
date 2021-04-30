@@ -1,0 +1,11 @@
+
+
+; ---- DEC A
+    ORG $3A00
+    BRACCU16 DEC_A_16bit
+    DEC8ANDSETNZ ALO
+    NEXT
+DEC_A_16bit:    
+    DEC16 ALO AHI
+    COMPUTENZFLAGS ALO AHI
+    NEXT

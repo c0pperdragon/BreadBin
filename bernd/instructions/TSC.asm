@@ -1,0 +1,9 @@
+; ---- TSC i
+    ORG $3B00
+    GET SLO
+    SET ALO
+    GET SHI
+    SET AHI
+    COMPUTENZFLAGS ALO AHI
+    NEXT
+    

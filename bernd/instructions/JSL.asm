@@ -1,0 +1,15 @@
+; ---- JSL al
+    ORG $2200
+    FETCH TMP2
+    FETCH TMP3
+    FETCH TMP4
+    PUSH PBR
+    PUSH PCHI
+    PUSH PCLO
+    GET TMP2
+    SET PCLO
+    GET TMP3
+    SET PCHI
+    GET TMP4
+    SET PBR
+    NEXT

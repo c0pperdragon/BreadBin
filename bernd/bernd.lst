@@ -22,6 +22,7 @@
 0000              MFLAG = 17
 0000              XFLAG = 18
 0000              
+0000              
 0000              ADDRLO = 19
 0000              ADDRHI = 20
 0000              
@@ -33,9 +34,29 @@
 0000              
 0000              V1 = 27
 0000              V2 = 28
-0000              V128 = 29
+0000              V4 = 29
 0000              V255 = 30
 0000              V0 = 31
+0000              
+0000              
+0000              
+0000              
+0000              
+0000              
+0000              
+0000              
+0000              
+0000              
+0000              
+0000              
+0000              
+0000              
+0000              
+0000              
+0000              
+0000              
+0000              
+0000              
 0000              
 0000              
 0000              
@@ -105,112 +126,106 @@
 000b 1c           SET V2
 000c 9c           A V2
 000d bc           B V2
-000e 63           OP MUL
-000f 16           SET TMP0
-0010 96           A TMP0
-0011 b6           B TMP0
-0012 63           OP MUL
-0013 16           SET TMP0
-0014 61           OP ADD
-0015 17           SET TMP1
-0016 96           A TMP0
-0017 b7           B TMP1
-0018 63           OP MUL
-0019 1d           SET V128
-001a 9b           A V1
-001b bf           B V0
-001c 64           OP DIV
-001d 1e           SET V255
-001e              
-001e              GET V0
-001e 9f           A V0
-001f bf           B V0
-0020 66           OP OR
-0021              
-0021 03           SET ALO
-0022 04           SET AHI
-0023 05           SET DBR
-0024 06           SET DLO
-0025 07           SET DHI
-0026 08           SET XLO
-0027 09           SET XHI
-0028 0a           SET YLO
-0029 0b           SET YHI
-002a              
-002a              GET V128
-002a 9d           A V128
-002b bd           B V128
+000e 61           OP ADD
+000f 1d           SET V4
+0010 9b           A V1
+0011 bf           B V0
+0012 64           OP DIV
+0013 1e           SET V255
+0014              
+0014              GET V0
+0014 9f           A V0
+0015 bf           B V0
+0016 66           OP OR
+0017              
+0017 03           SET ALO
+0018 04           SET AHI
+0019 05           SET DBR
+001a 06           SET DLO
+001b 07           SET DHI
+001c 08           SET XLO
+001d 09           SET XHI
+001e 0a           SET YLO
+001f 0b           SET YHI
+0020              
+0020 9d           A V4
+0021 bd           B V4
+0022 63           OP MUL
+0023 02           SET PBR
+0024 82           A PBR
+0025 bd           B V4
+0026 02           SET PBR
+0027 82           A PBR
+0028 bc           B V2
+0029 02           SET PBR
+002a              GET V255
+002a 9e           A V255
+002b be           B V255
 002c 66           OP OR
 002d              
-002d 02           SET PBR
-002e              GET V255
+002d 01           SET PCHI
 002e 9e           A V255
-002f be           B V255
-0030 66           OP OR
-0031              
-0031 01           SET PCHI
-0032 9e           A V255
-0033 bc           B V2
-0034 63           OP MUL
+002f bc           B V2
+0030 63           OP MUL
+0031 00           SET PCLO
+0032 80           A PCLO
+0033 00           SET PCLO
+0034 80           A PCLO
 0035 00           SET PCLO
-0036 80           A PCLO
-0037 00           SET PCLO
-0038 80           A PCLO
-0039 00           SET PCLO
-003a              
-003a              GET V255
-003a 9e           A V255
-003b be           B V255
+0036              
+0036              GET V255
+0036 9e           A V255
+0037 be           B V255
+0038 66           OP OR
+0039              
+0039 0c           SET SLO
+003a              GET V1
+003a 9b           A V1
+003b bb           B V1
 003c 66           OP OR
 003d              
-003d 0c           SET SLO
-003e              GET V1
-003e 9b           A V1
-003f bb           B V1
+003d 0d           SET SHI
+003e              
+003e              GET V0
+003e 9f           A V0
+003f bf           B V0
 0040 66           OP OR
 0041              
-0041 0d           SET SHI
-0042              
-0042              GET V0
-0042 9f           A V0
-0043 bf           B V0
-0044 66           OP OR
-0045              
-0045 0e           SET CFLAG
-0046 0f           SET NFLAG
-0047 10           SET ZFLAG
-0048              GET V1
-0048 9b           A V1
-0049 bb           B V1
-004a 66           OP OR
-004b              
-004b 11           SET MFLAG
-004c 12           SET XFLAG
-004d              
-004d              NEXT
-004d a2           B PBR
-004e 60           OUT2
-004f 80           A PCLO
-0050 a1           B PCHI
-0051 37           IN TMP1
-0052 bb           B V1
-0053 61           OP ADD
-0054 00           SET PCLO
-0055 60           OP OVL
-0056 16           SET TMP0
-0057 81           A PCHI
-0058 b6           B TMP0
-0059 61           OP ADD
-005a f7           JMP TMP1
-005b 01           SET PCHI
-005c              
-005c              
-005c              
-005c              
-005c              
-005c              
-005c              
-005c              
+0041 0e           SET CFLAG
+0042 0f           SET NFLAG
+0043 10           SET ZFLAG
+0044              GET V1
+0044 9b           A V1
+0045 bb           B V1
+0046 66           OP OR
+0047              
+0047 11           SET MFLAG
+0048 12           SET XFLAG
+0049              
+0049              NEXT
+0049 a2           B PBR
+004a 60           OUT2
+004b 80           A PCLO
+004c a1           B PCHI
+004d 37           IN TMP1
+004e bb           B V1
+004f 61           OP ADD
+0050 00           SET PCLO
+0051 60           OP OVL
+0052 16           SET TMP0
+0053 81           A PCHI
+0054 b6           B TMP0
+0055 61           OP ADD
+0056 f7           JMP TMP1
+0057 01           SET PCHI
+0058              
+0058              
+0058              
+0058              
+0058              
+0058              
+0058              
+0058              
 6900              ORG $6900
 6900              FETCH TMP4
 6900 a2           B PBR
@@ -399,51 +414,39 @@
 2934 61           OP ADD
 2935 01           SET PCHI
 2936              
-2936              ADC8 AHI TMP4
+2936              AND8 AHI TMP4
 2936 84           A AHI
 2937 ba           B TMP4
-2938 61           OP ADD
+2938 65           OP AND
 2939 04           SET AHI
-293a 60           OP OVL
-293b 16           SET TMP0
-293c 84           A AHI
-293d ae           B CFLAG
-293e 61           OP ADD
-293f 04           SET AHI
-2940 0f           SET NFLAG
-2941 10           SET ZFLAG
-2942 60           OP OVL
-2943 17           SET TMP1
-2944 96           A TMP0
-2945 b7           B TMP1
-2946 66           OP OR
-2947 0e           SET CFLAG
-2948              
-2948              COMPUTEZFLAG ALO AHI
-2948 83           A ALO
-2949 a4           B AHI
-294a 66           OP OR
-294b 10           SET ZFLAG
-294c              
-294c              NEXT
-294c a2           B PBR
-294d 60           OUT2
-294e 80           A PCLO
-294f a1           B PCHI
-2950 37           IN TMP1
-2951 bb           B V1
-2952 61           OP ADD
-2953 00           SET PCLO
-2954 60           OP OVL
-2955 16           SET TMP0
-2956 81           A PCHI
-2957 b6           B TMP0
-2958 61           OP ADD
-2959 f7           JMP TMP1
-295a 01           SET PCHI
-295b              
-295b              
-295b              
+293a 0f           SET NFLAG
+293b 10           SET ZFLAG
+293c              
+293c              COMPUTEZFLAG ALO AHI
+293c 83           A ALO
+293d a4           B AHI
+293e 66           OP OR
+293f 10           SET ZFLAG
+2940              
+2940              NEXT
+2940 a2           B PBR
+2941 60           OUT2
+2942 80           A PCLO
+2943 a1           B PCHI
+2944 37           IN TMP1
+2945 bb           B V1
+2946 61           OP ADD
+2947 00           SET PCLO
+2948 60           OP OVL
+2949 16           SET TMP0
+294a 81           A PCHI
+294b b6           B TMP0
+294c 61           OP ADD
+294d f7           JMP TMP1
+294e 01           SET PCHI
+294f              
+294f              
+294f              
 2500              ORG $2500
 2500              FETCHADDRESS_d
 2500              FETCH ADDRLO
@@ -512,6 +515,7 @@
 2535              
 2535 60 60 60     AND_d_16bit :
 2538              INCREMENTADDRESS
+2538              INC16 ADDRLO ADDRHI
 2538 93           A ADDRLO
 2539 bb           B V1
 253a 61           OP ADD
@@ -520,60 +524,62 @@
 253d 16           SET TMP0
 253e 96           A TMP0
 253f b4           B ADDRHI
-2540 14           SET ADDRHI
-2541              
-2541              LOAD V0 TMP4
-2541 bf           B V0
-2542 60           OUT2
-2543 93           A ADDRLO
-2544 b4           B ADDRHI
-2545 3a           IN TMP4
-2546              
-2546              ADC8 AHI TMP4
-2546 84           A AHI
-2547 ba           B TMP4
-2548 61           OP ADD
-2549 04           SET AHI
-254a 60           OP OVL
-254b 16           SET TMP0
-254c 84           A AHI
-254d ae           B CFLAG
-254e 61           OP ADD
-254f 04           SET AHI
-2550 0f           SET NFLAG
-2551 10           SET ZFLAG
-2552 60           OP OVL
-2553 17           SET TMP1
-2554 96           A TMP0
-2555 b7           B TMP1
-2556 66           OP OR
-2557 0e           SET CFLAG
-2558              
-2558              COMPUTEZFLAG ALO AHI
-2558 83           A ALO
-2559 a4           B AHI
-255a 66           OP OR
-255b 10           SET ZFLAG
-255c              
-255c              NEXT
-255c a2           B PBR
-255d 60           OUT2
-255e 80           A PCLO
-255f a1           B PCHI
-2560 37           IN TMP1
-2561 bb           B V1
-2562 61           OP ADD
-2563 00           SET PCLO
-2564 60           OP OVL
-2565 16           SET TMP0
-2566 81           A PCHI
-2567 b6           B TMP0
-2568 61           OP ADD
-2569 f7           JMP TMP1
-256a 01           SET PCHI
-256b              
-256b              
-256b              
+2540 61           OP ADD
+2541 14           SET ADDRHI
+2542              
+2542              
+2542              LOAD V0 TMP4
+2542 bf           B V0
+2543 60           OUT2
+2544 93           A ADDRLO
+2545 b4           B ADDRHI
+2546 3a           IN TMP4
+2547              
+2547              ADC8 AHI TMP4
+2547 84           A AHI
+2548 ba           B TMP4
+2549 61           OP ADD
+254a 04           SET AHI
+254b 60           OP OVL
+254c 16           SET TMP0
+254d 84           A AHI
+254e ae           B CFLAG
+254f 61           OP ADD
+2550 04           SET AHI
+2551 0f           SET NFLAG
+2552 10           SET ZFLAG
+2553 60           OP OVL
+2554 17           SET TMP1
+2555 96           A TMP0
+2556 b7           B TMP1
+2557 66           OP OR
+2558 0e           SET CFLAG
+2559              
+2559              COMPUTEZFLAG ALO AHI
+2559 83           A ALO
+255a a4           B AHI
+255b 66           OP OR
+255c 10           SET ZFLAG
+255d              
+255d              NEXT
+255d a2           B PBR
+255e 60           OUT2
+255f 80           A PCLO
+2560 a1           B PCHI
+2561 37           IN TMP1
+2562 bb           B V1
+2563 61           OP ADD
+2564 00           SET PCLO
+2565 60           OP OVL
+2566 16           SET TMP0
+2567 81           A PCHI
+2568 b6           B TMP0
+2569 61           OP ADD
+256a f7           JMP TMP1
+256b 01           SET PCHI
+256c              
+256c              
+256c              
 2f00              ORG $2F00
 2f00              FETCH ADDRLO
 2f00 a2           B PBR
@@ -662,6 +668,7 @@
 2f47              
 2f47 60           AND_al_16bit :
 2f48              INCREMENTADDRESS
+2f48              INC16 ADDRLO ADDRHI
 2f48 93           A ADDRLO
 2f49 bb           B V1
 2f4a 61           OP ADD
@@ -670,59 +677,246 @@
 2f4d 16           SET TMP0
 2f4e 96           A TMP0
 2f4f b4           B ADDRHI
-2f50 14           SET ADDRHI
-2f51              
-2f51              LOAD TMP3 TMP4
-2f51 b9           B TMP3
-2f52 60           OUT2
-2f53 93           A ADDRLO
-2f54 b4           B ADDRHI
-2f55 3a           IN TMP4
-2f56              
-2f56              ADC8 AHI TMP4
-2f56 84           A AHI
-2f57 ba           B TMP4
-2f58 61           OP ADD
-2f59 04           SET AHI
-2f5a 60           OP OVL
-2f5b 16           SET TMP0
-2f5c 84           A AHI
-2f5d ae           B CFLAG
-2f5e 61           OP ADD
-2f5f 04           SET AHI
-2f60 0f           SET NFLAG
-2f61 10           SET ZFLAG
-2f62 60           OP OVL
-2f63 17           SET TMP1
-2f64 96           A TMP0
-2f65 b7           B TMP1
-2f66 66           OP OR
-2f67 0e           SET CFLAG
-2f68              
-2f68              COMPUTEZFLAG ALO AHI
-2f68 83           A ALO
-2f69 a4           B AHI
-2f6a 66           OP OR
-2f6b 10           SET ZFLAG
-2f6c              
-2f6c              NEXT
-2f6c a2           B PBR
-2f6d 60           OUT2
-2f6e 80           A PCLO
-2f6f a1           B PCHI
-2f70 37           IN TMP1
-2f71 bb           B V1
-2f72 61           OP ADD
-2f73 00           SET PCLO
-2f74 60           OP OVL
-2f75 16           SET TMP0
-2f76 81           A PCHI
-2f77 b6           B TMP0
-2f78 61           OP ADD
-2f79 f7           JMP TMP1
-2f7a 01           SET PCHI
-2f7b              
-2f7b              
+2f50 61           OP ADD
+2f51 14           SET ADDRHI
+2f52              
+2f52              
+2f52              LOAD TMP3 TMP4
+2f52 b9           B TMP3
+2f53 60           OUT2
+2f54 93           A ADDRLO
+2f55 b4           B ADDRHI
+2f56 3a           IN TMP4
+2f57              
+2f57              ADC8 AHI TMP4
+2f57 84           A AHI
+2f58 ba           B TMP4
+2f59 61           OP ADD
+2f5a 04           SET AHI
+2f5b 60           OP OVL
+2f5c 16           SET TMP0
+2f5d 84           A AHI
+2f5e ae           B CFLAG
+2f5f 61           OP ADD
+2f60 04           SET AHI
+2f61 0f           SET NFLAG
+2f62 10           SET ZFLAG
+2f63 60           OP OVL
+2f64 17           SET TMP1
+2f65 96           A TMP0
+2f66 b7           B TMP1
+2f67 66           OP OR
+2f68 0e           SET CFLAG
+2f69              
+2f69              COMPUTEZFLAG ALO AHI
+2f69 83           A ALO
+2f6a a4           B AHI
+2f6b 66           OP OR
+2f6c 10           SET ZFLAG
+2f6d              
+2f6d              NEXT
+2f6d a2           B PBR
+2f6e 60           OUT2
+2f6f 80           A PCLO
+2f70 a1           B PCHI
+2f71 37           IN TMP1
+2f72 bb           B V1
+2f73 61           OP ADD
+2f74 00           SET PCLO
+2f75 60           OP OVL
+2f76 16           SET TMP0
+2f77 81           A PCHI
+2f78 b6           B TMP0
+2f79 61           OP ADD
+2f7a f7           JMP TMP1
+2f7b 01           SET PCHI
+2f7c              
+2f7c              
+9000              ORG $9000
+9000 8e           A CFLAG
+9001 bf           B V0
+9002 c4           BEQ BCC_r_taken
+9003              INC16 PCLO PCHI
+9003 80           A PCLO
+9004 bb           B V1
+9005 61           OP ADD
+9006 00           SET PCLO
+9007 60           OP OVL
+9008 16           SET TMP0
+9009 96           A TMP0
+900a a1           B PCHI
+900b 61           OP ADD
+900c 01           SET PCHI
+900d              
+900d              NEXT
+900d a2           B PBR
+900e 60           OUT2
+900f 80           A PCLO
+9010 a1           B PCHI
+9011 37           IN TMP1
+9012 bb           B V1
+9013 61           OP ADD
+9014 00           SET PCLO
+9015 60           OP OVL
+9016 16           SET TMP0
+9017 81           A PCHI
+9018 b6           B TMP0
+9019 61           OP ADD
+901a f7           JMP TMP1
+901b 01           SET PCHI
+901c              
+901c 60 60 60 60  BCC_r_taken :
+9020              FETCH TMP3
+9020 a2           B PBR
+9021 60           OUT2
+9022 80           A PCLO
+9023 a1           B PCHI
+9024 39           IN TMP3
+9025 bb           B V1
+9026 61           OP ADD
+9027 00           SET PCLO
+9028 60           OP OVL
+9029 16           SET TMP0
+902a 81           A PCHI
+902b b6           B TMP0
+902c 61           OP ADD
+902d 01           SET PCHI
+902e              
+902e 99           A TMP3
+902f b9           B TMP3
+9030 60           OP OVL
+9031 1a           SET TMP4
+9032 9a           A TMP4
+9033 be           B V255
+9034 63           OP MUL
+9035 1a           SET TMP4
+9036              JUMPRELATIVELONG TMP3 TMP4
+9036 80           A PCLO
+9037 b9           B TMP3
+9038 61           OP ADD
+9039 00           SET PCLO
+903a 60           OP OVL
+903b 16           SET TMP0
+903c 81           A PCHI
+903d ba           B TMP4
+903e 61           OP ADD
+903f 01           SET PCHI
+9040 81           A PCHI
+9041 b6           B TMP0
+9042 01           SET PCHI
+9043              
+9043              NEXT
+9043 a2           B PBR
+9044 60           OUT2
+9045 80           A PCLO
+9046 a1           B PCHI
+9047 37           IN TMP1
+9048 bb           B V1
+9049 61           OP ADD
+904a 00           SET PCLO
+904b 60           OP OVL
+904c 16           SET TMP0
+904d 81           A PCHI
+904e b6           B TMP0
+904f 61           OP ADD
+9050 f7           JMP TMP1
+9051 01           SET PCHI
+9052              
+9052              
+9052              
+f000              ORG $F000
+f000 90           A ZFLAG
+f001 bf           B V0
+f002 c4           BEQ BEQ_r_taken
+f003              INC16 PCLO PCHI
+f003 80           A PCLO
+f004 bb           B V1
+f005 61           OP ADD
+f006 00           SET PCLO
+f007 60           OP OVL
+f008 16           SET TMP0
+f009 96           A TMP0
+f00a a1           B PCHI
+f00b 61           OP ADD
+f00c 01           SET PCHI
+f00d              
+f00d              NEXT
+f00d a2           B PBR
+f00e 60           OUT2
+f00f 80           A PCLO
+f010 a1           B PCHI
+f011 37           IN TMP1
+f012 bb           B V1
+f013 61           OP ADD
+f014 00           SET PCLO
+f015 60           OP OVL
+f016 16           SET TMP0
+f017 81           A PCHI
+f018 b6           B TMP0
+f019 61           OP ADD
+f01a f7           JMP TMP1
+f01b 01           SET PCHI
+f01c              
+f01c 60 60 60 60  BEQ_r_taken :
+f020              FETCH TMP3
+f020 a2           B PBR
+f021 60           OUT2
+f022 80           A PCLO
+f023 a1           B PCHI
+f024 39           IN TMP3
+f025 bb           B V1
+f026 61           OP ADD
+f027 00           SET PCLO
+f028 60           OP OVL
+f029 16           SET TMP0
+f02a 81           A PCHI
+f02b b6           B TMP0
+f02c 61           OP ADD
+f02d 01           SET PCHI
+f02e              
+f02e 99           A TMP3
+f02f b9           B TMP3
+f030 60           OP OVL
+f031 1a           SET TMP4
+f032 9a           A TMP4
+f033 be           B V255
+f034 63           OP MUL
+f035 1a           SET TMP4
+f036              JUMPRELATIVELONG TMP3 TMP4
+f036 80           A PCLO
+f037 b9           B TMP3
+f038 61           OP ADD
+f039 00           SET PCLO
+f03a 60           OP OVL
+f03b 16           SET TMP0
+f03c 81           A PCHI
+f03d ba           B TMP4
+f03e 61           OP ADD
+f03f 01           SET PCHI
+f040 81           A PCHI
+f041 b6           B TMP0
+f042 01           SET PCHI
+f043              
+f043              NEXT
+f043 a2           B PBR
+f044 60           OUT2
+f045 80           A PCLO
+f046 a1           B PCHI
+f047 37           IN TMP1
+f048 bb           B V1
+f049 61           OP ADD
+f04a 00           SET PCLO
+f04b 60           OP OVL
+f04c 16           SET TMP0
+f04d 81           A PCHI
+f04e b6           B TMP0
+f04f 61           OP ADD
+f050 f7           JMP TMP1
+f051 01           SET PCHI
+f052              
+f052              
+f052              
+f052              
 d000              ORG $D000
 d000 90           A ZFLAG
 d001 bf           B V0
@@ -744,8 +938,8 @@ d00f 61           OP ADD
 d010 01           SET PCHI
 d011              
 d011 99           A TMP3
-d012 bd           B V128
-d013 64           OP DIV
+d012 b9           B TMP3
+d013 60           OP OVL
 d014 1a           SET TMP4
 d015 9a           A TMP4
 d016 be           B V255
@@ -784,7 +978,7 @@ d033 f7           JMP TMP1
 d034 01           SET PCHI
 d035              
 d035 60 60 60     BNE_r_nottaken :
-d038              INCREMENTPC
+d038              INC16 PCLO PCHI
 d038 80           A PCLO
 d039 bb           B V1
 d03a 61           OP ADD
@@ -815,6 +1009,64 @@ d050 01           SET PCHI
 d051              
 d051              
 d051              
+8000              ORG $8000
+8000              FETCH TMP3
+8000 a2           B PBR
+8001 60           OUT2
+8002 80           A PCLO
+8003 a1           B PCHI
+8004 39           IN TMP3
+8005 bb           B V1
+8006 61           OP ADD
+8007 00           SET PCLO
+8008 60           OP OVL
+8009 16           SET TMP0
+800a 81           A PCHI
+800b b6           B TMP0
+800c 61           OP ADD
+800d 01           SET PCHI
+800e              
+800e 99           A TMP3
+800f b9           B TMP3
+8010 60           OP OVL
+8011 1a           SET TMP4
+8012 9a           A TMP4
+8013 be           B V255
+8014 63           OP MUL
+8015 1a           SET TMP4
+8016              JUMPRELATIVELONG TMP3 TMP4
+8016 80           A PCLO
+8017 b9           B TMP3
+8018 61           OP ADD
+8019 00           SET PCLO
+801a 60           OP OVL
+801b 16           SET TMP0
+801c 81           A PCHI
+801d ba           B TMP4
+801e 61           OP ADD
+801f 01           SET PCHI
+8020 81           A PCHI
+8021 b6           B TMP0
+8022 01           SET PCHI
+8023              
+8023              NEXT
+8023 a2           B PBR
+8024 60           OUT2
+8025 80           A PCLO
+8026 a1           B PCHI
+8027 37           IN TMP1
+8028 bb           B V1
+8029 61           OP ADD
+802a 00           SET PCLO
+802b 60           OP OVL
+802c 16           SET TMP0
+802d 81           A PCHI
+802e b6           B TMP0
+802f 61           OP ADD
+8030 f7           JMP TMP1
+8031 01           SET PCHI
+8032              
+8032              
 1800              ORG $1800
 1800              GET V0
 1800 9f           A V0
@@ -841,6 +1093,224 @@ d051
 1813              
 1813              
 1813              
+1813              
+3a00              ORG $3A00
+3a00              BRACCU16 DEC_A_16bit
+3a00 9f           A V0
+3a01 b1           B MFLAG
+3a02 c3           BEQ DEC_A_16bit
+3a03              
+3a03              DEC8ANDSETNZ ALO
+3a03 83           A ALO
+3a04 bb           B V1
+3a05 62           OP SUB
+3a06 03           SET ALO
+3a07 0f           SET NFLAG
+3a08 10           SET ZFLAG
+3a09              
+3a09              NEXT
+3a09 a2           B PBR
+3a0a 60           OUT2
+3a0b 80           A PCLO
+3a0c a1           B PCHI
+3a0d 37           IN TMP1
+3a0e bb           B V1
+3a0f 61           OP ADD
+3a10 00           SET PCLO
+3a11 60           OP OVL
+3a12 16           SET TMP0
+3a13 81           A PCHI
+3a14 b6           B TMP0
+3a15 61           OP ADD
+3a16 f7           JMP TMP1
+3a17 01           SET PCHI
+3a18              
+3a18              DEC_A_16bit :
+3a18              DEC16 ALO AHI
+3a18 83           A ALO
+3a19 bb           B V1
+3a1a 62           OP SUB
+3a1b 03           SET ALO
+3a1c 83           A ALO
+3a1d be           B V255
+3a1e 64           OP DIV
+3a1f 16           SET TMP0
+3a20 84           A AHI
+3a21 b6           B TMP0
+3a22 62           OP SUB
+3a23 04           SET AHI
+3a24              
+3a24              COMPUTENZFLAGS ALO AHI
+3a24 83           A ALO
+3a25 a4           B AHI
+3a26 66           OP OR
+3a27 10           SET ZFLAG
+3a28 a4           B AHI
+3a29 0f           SET NFLAG
+3a2a              
+3a2a              NEXT
+3a2a a2           B PBR
+3a2b 60           OUT2
+3a2c 80           A PCLO
+3a2d a1           B PCHI
+3a2e 37           IN TMP1
+3a2f bb           B V1
+3a30 61           OP ADD
+3a31 00           SET PCLO
+3a32 60           OP OVL
+3a33 16           SET TMP0
+3a34 81           A PCHI
+3a35 b6           B TMP0
+3a36 61           OP ADD
+3a37 f7           JMP TMP1
+3a38 01           SET PCHI
+3a39              
+3a39              
+ca00              ORG $CA00
+ca00              BRINDEX16 DEX_i_16bit
+ca00 9f           A V0
+ca01 b2           B XFLAG
+ca02 c3           BEQ DEX_i_16bit
+ca03              
+ca03              DEC8ANDSETNZ XLO
+ca03 88           A XLO
+ca04 bb           B V1
+ca05 62           OP SUB
+ca06 08           SET XLO
+ca07 0f           SET NFLAG
+ca08 10           SET ZFLAG
+ca09              
+ca09              NEXT
+ca09 a2           B PBR
+ca0a 60           OUT2
+ca0b 80           A PCLO
+ca0c a1           B PCHI
+ca0d 37           IN TMP1
+ca0e bb           B V1
+ca0f 61           OP ADD
+ca10 00           SET PCLO
+ca11 60           OP OVL
+ca12 16           SET TMP0
+ca13 81           A PCHI
+ca14 b6           B TMP0
+ca15 61           OP ADD
+ca16 f7           JMP TMP1
+ca17 01           SET PCHI
+ca18              
+ca18              DEX_i_16bit :
+ca18              DEC16 XLO XHI
+ca18 88           A XLO
+ca19 bb           B V1
+ca1a 62           OP SUB
+ca1b 08           SET XLO
+ca1c 88           A XLO
+ca1d be           B V255
+ca1e 64           OP DIV
+ca1f 16           SET TMP0
+ca20 89           A XHI
+ca21 b6           B TMP0
+ca22 62           OP SUB
+ca23 09           SET XHI
+ca24              
+ca24              COMPUTENZFLAGS XLO XHI
+ca24 88           A XLO
+ca25 a9           B XHI
+ca26 66           OP OR
+ca27 10           SET ZFLAG
+ca28 a9           B XHI
+ca29 0f           SET NFLAG
+ca2a              
+ca2a              NEXT
+ca2a a2           B PBR
+ca2b 60           OUT2
+ca2c 80           A PCLO
+ca2d a1           B PCHI
+ca2e 37           IN TMP1
+ca2f bb           B V1
+ca30 61           OP ADD
+ca31 00           SET PCLO
+ca32 60           OP OVL
+ca33 16           SET TMP0
+ca34 81           A PCHI
+ca35 b6           B TMP0
+ca36 61           OP ADD
+ca37 f7           JMP TMP1
+ca38 01           SET PCHI
+ca39              
+ca39              
+ca39              
+ca39              
+1a00              ORG $1A00
+1a00              BRACCU16 INC_A_16bit
+1a00 9f           A V0
+1a01 b1           B MFLAG
+1a02 c3           BEQ INC_A_16bit
+1a03              
+1a03              INC8ANDSETNZ ALO
+1a03 83           A ALO
+1a04 bb           B V1
+1a05 61           OP ADD
+1a06 03           SET ALO
+1a07 0f           SET NFLAG
+1a08 10           SET ZFLAG
+1a09              
+1a09              NEXT
+1a09 a2           B PBR
+1a0a 60           OUT2
+1a0b 80           A PCLO
+1a0c a1           B PCHI
+1a0d 37           IN TMP1
+1a0e bb           B V1
+1a0f 61           OP ADD
+1a10 00           SET PCLO
+1a11 60           OP OVL
+1a12 16           SET TMP0
+1a13 81           A PCHI
+1a14 b6           B TMP0
+1a15 61           OP ADD
+1a16 f7           JMP TMP1
+1a17 01           SET PCHI
+1a18              
+1a18              INC_A_16bit :
+1a18              INC16 ALO AHI
+1a18 83           A ALO
+1a19 bb           B V1
+1a1a 61           OP ADD
+1a1b 03           SET ALO
+1a1c 60           OP OVL
+1a1d 16           SET TMP0
+1a1e 96           A TMP0
+1a1f a4           B AHI
+1a20 61           OP ADD
+1a21 04           SET AHI
+1a22              
+1a22              COMPUTENZFLAGS ALO AHI
+1a22 83           A ALO
+1a23 a4           B AHI
+1a24 66           OP OR
+1a25 10           SET ZFLAG
+1a26 a4           B AHI
+1a27 0f           SET NFLAG
+1a28              
+1a28              NEXT
+1a28 a2           B PBR
+1a29 60           OUT2
+1a2a 80           A PCLO
+1a2b a1           B PCHI
+1a2c 37           IN TMP1
+1a2d bb           B V1
+1a2e 61           OP ADD
+1a2f 00           SET PCLO
+1a30 60           OP OVL
+1a31 16           SET TMP0
+1a32 81           A PCHI
+1a33 b6           B TMP0
+1a34 61           OP ADD
+1a35 f7           JMP TMP1
+1a36 01           SET PCHI
+1a37              
+1a37              
+1a37              
 e800              ORG $E800
 e800 88           A XLO
 e801 bb           B V1
@@ -1045,7 +1515,155 @@ c838
 5c40 01           SET PCHI
 5c41              
 5c41              
-5c41              
+2200              ORG $2200
+2200              FETCH TMP2
+2200 a2           B PBR
+2201 60           OUT2
+2202 80           A PCLO
+2203 a1           B PCHI
+2204 38           IN TMP2
+2205 bb           B V1
+2206 61           OP ADD
+2207 00           SET PCLO
+2208 60           OP OVL
+2209 16           SET TMP0
+220a 81           A PCHI
+220b b6           B TMP0
+220c 61           OP ADD
+220d 01           SET PCHI
+220e              
+220e              FETCH TMP3
+220e a2           B PBR
+220f 60           OUT2
+2210 80           A PCLO
+2211 a1           B PCHI
+2212 39           IN TMP3
+2213 bb           B V1
+2214 61           OP ADD
+2215 00           SET PCLO
+2216 60           OP OVL
+2217 16           SET TMP0
+2218 81           A PCHI
+2219 b6           B TMP0
+221a 61           OP ADD
+221b 01           SET PCHI
+221c              
+221c              FETCH TMP4
+221c a2           B PBR
+221d 60           OUT2
+221e 80           A PCLO
+221f a1           B PCHI
+2220 3a           IN TMP4
+2221 bb           B V1
+2222 61           OP ADD
+2223 00           SET PCLO
+2224 60           OP OVL
+2225 16           SET TMP0
+2226 81           A PCHI
+2227 b6           B TMP0
+2228 61           OP ADD
+2229 01           SET PCHI
+222a              
+222a              PUSH PBR
+222a bf           B V0
+222b 60           OUT2
+222c 8c           A SLO
+222d ad           B SHI
+222e 42           OUT PBR
+222f              DEC16 SLO SHI
+222f 8c           A SLO
+2230 bb           B V1
+2231 62           OP SUB
+2232 0c           SET SLO
+2233 8c           A SLO
+2234 be           B V255
+2235 64           OP DIV
+2236 16           SET TMP0
+2237 8d           A SHI
+2238 b6           B TMP0
+2239 62           OP SUB
+223a 0d           SET SHI
+223b              
+223b              
+223b              PUSH PCHI
+223b bf           B V0
+223c 60           OUT2
+223d 8c           A SLO
+223e ad           B SHI
+223f 41           OUT PCHI
+2240              DEC16 SLO SHI
+2240 8c           A SLO
+2241 bb           B V1
+2242 62           OP SUB
+2243 0c           SET SLO
+2244 8c           A SLO
+2245 be           B V255
+2246 64           OP DIV
+2247 16           SET TMP0
+2248 8d           A SHI
+2249 b6           B TMP0
+224a 62           OP SUB
+224b 0d           SET SHI
+224c              
+224c              
+224c              PUSH PCLO
+224c bf           B V0
+224d 60           OUT2
+224e 8c           A SLO
+224f ad           B SHI
+2250 40           OUT PCLO
+2251              DEC16 SLO SHI
+2251 8c           A SLO
+2252 bb           B V1
+2253 62           OP SUB
+2254 0c           SET SLO
+2255 8c           A SLO
+2256 be           B V255
+2257 64           OP DIV
+2258 16           SET TMP0
+2259 8d           A SHI
+225a b6           B TMP0
+225b 62           OP SUB
+225c 0d           SET SHI
+225d              
+225d              
+225d              GET TMP2
+225d 98           A TMP2
+225e b8           B TMP2
+225f 66           OP OR
+2260              
+2260 00           SET PCLO
+2261              GET TMP3
+2261 99           A TMP3
+2262 b9           B TMP3
+2263 66           OP OR
+2264              
+2264 01           SET PCHI
+2265              GET TMP4
+2265 9a           A TMP4
+2266 ba           B TMP4
+2267 66           OP OR
+2268              
+2268 02           SET PBR
+2269              NEXT
+2269 a2           B PBR
+226a 60           OUT2
+226b 80           A PCLO
+226c a1           B PCHI
+226d 37           IN TMP1
+226e bb           B V1
+226f 61           OP ADD
+2270 00           SET PCLO
+2271 60           OP OVL
+2272 16           SET TMP0
+2273 81           A PCHI
+2274 b6           B TMP0
+2275 61           OP ADD
+2276 f7           JMP TMP1
+2277 01           SET PCHI
+2278              
+2278              
+2278              
 a500              ORG $A500
 a500              FETCHADDRESS_d
 a500              FETCH ADDRLO
@@ -1085,63 +1703,195 @@ a51d
 a51d              BRACCU16 LDA_d_16bit
 a51d 9f           A V0
 a51e b1           B MFLAG
-a51f c6           BEQ LDA_d_16bit
+a51f c7           BEQ LDA_d_16bit
 a520              
-a520              NEXT
-a520 a2           B PBR
-a521 60           OUT2
-a522 80           A PCLO
-a523 a1           B PCHI
-a524 37           IN TMP1
-a525 bb           B V1
-a526 61           OP ADD
-a527 00           SET PCLO
-a528 60           OP OVL
-a529 16           SET TMP0
-a52a 81           A PCHI
-a52b b6           B TMP0
-a52c 61           OP ADD
-a52d f7           JMP TMP1
-a52e 01           SET PCHI
-a52f              
-a52f 60           LDA_d_16bit :
-a530              INCREMENTADDRESS
-a530 93           A ADDRLO
-a531 bb           B V1
-a532 61           OP ADD
-a533 13           SET ADDRLO
-a534 60           OP OVL
-a535 16           SET TMP0
-a536 96           A TMP0
-a537 b4           B ADDRHI
-a538 14           SET ADDRHI
-a539              
-a539              LOAD V0 AHI
-a539 bf           B V0
-a53a 60           OUT2
-a53b 93           A ADDRLO
-a53c b4           B ADDRHI
-a53d 24           IN AHI
-a53e              
-a53e              NEXT
-a53e a2           B PBR
-a53f 60           OUT2
-a540 80           A PCLO
-a541 a1           B PCHI
-a542 37           IN TMP1
-a543 bb           B V1
-a544 61           OP ADD
-a545 00           SET PCLO
-a546 60           OP OVL
-a547 16           SET TMP0
-a548 81           A PCHI
-a549 b6           B TMP0
-a54a 61           OP ADD
-a54b f7           JMP TMP1
-a54c 01           SET PCHI
+a520              GET ALO
+a520 83           A ALO
+a521 a3           B ALO
+a522 66           OP OR
+a523              
+a523 10           SET ZFLAG
+a524 0f           SET NFLAG
+a525              NEXT
+a525 a2           B PBR
+a526 60           OUT2
+a527 80           A PCLO
+a528 a1           B PCHI
+a529 37           IN TMP1
+a52a bb           B V1
+a52b 61           OP ADD
+a52c 00           SET PCLO
+a52d 60           OP OVL
+a52e 16           SET TMP0
+a52f 81           A PCHI
+a530 b6           B TMP0
+a531 61           OP ADD
+a532 f7           JMP TMP1
+a533 01           SET PCHI
+a534              
+a534 60 60 60 60  LDA_d_16bit :
+a538              INCREMENTADDRESS
+a538              INC16 ADDRLO ADDRHI
+a538 93           A ADDRLO
+a539 bb           B V1
+a53a 61           OP ADD
+a53b 13           SET ADDRLO
+a53c 60           OP OVL
+a53d 16           SET TMP0
+a53e 96           A TMP0
+a53f b4           B ADDRHI
+a540 61           OP ADD
+a541 14           SET ADDRHI
+a542              
+a542              
+a542              LOAD V0 AHI
+a542 bf           B V0
+a543 60           OUT2
+a544 93           A ADDRLO
+a545 b4           B ADDRHI
+a546 24           IN AHI
+a547              
+a547              COMPUTENZFLAGS ALO AHI
+a547 83           A ALO
+a548 a4           B AHI
+a549 66           OP OR
+a54a 10           SET ZFLAG
+a54b a4           B AHI
+a54c 0f           SET NFLAG
 a54d              
-a54d              
-a54d              
+a54d              NEXT
+a54d a2           B PBR
+a54e 60           OUT2
+a54f 80           A PCLO
+a550 a1           B PCHI
+a551 37           IN TMP1
+a552 bb           B V1
+a553 61           OP ADD
+a554 00           SET PCLO
+a555 60           OP OVL
+a556 16           SET TMP0
+a557 81           A PCHI
+a558 b6           B TMP0
+a559 61           OP ADD
+a55a f7           JMP TMP1
+a55b 01           SET PCHI
+a55c              
+a55c              
+a55c              
+a300              ORG $A300
+a300              FETCHADDRESS_d_s
+a300              FETCH ADDRLO
+a300 a2           B PBR
+a301 60           OUT2
+a302 80           A PCLO
+a303 a1           B PCHI
+a304 33           IN ADDRLO
+a305 bb           B V1
+a306 61           OP ADD
+a307 00           SET PCLO
+a308 60           OP OVL
+a309 16           SET TMP0
+a30a 81           A PCHI
+a30b b6           B TMP0
+a30c 61           OP ADD
+a30d 01           SET PCHI
+a30e              
+a30e 93           A ADDRLO
+a30f ac           B SLO
+a310 61           OP ADD
+a311 13           SET ADDRLO
+a312 60           OP OVL
+a313 16           SET TMP0
+a314 8d           A SHI
+a315 b6           B TMP0
+a316 61           OP ADD
+a317 14           SET ADDRHI
+a318              
+a318              LOAD V0 ALO
+a318 bf           B V0
+a319 60           OUT2
+a31a 93           A ADDRLO
+a31b b4           B ADDRHI
+a31c 23           IN ALO
+a31d              
+a31d              BRACCU16 LDA_d_s_16bit
+a31d 9f           A V0
+a31e b1           B MFLAG
+a31f c7           BEQ LDA_d_s_16bit
+a320              
+a320              GET ALO
+a320 83           A ALO
+a321 a3           B ALO
+a322 66           OP OR
+a323              
+a323 10           SET ZFLAG
+a324 0f           SET NFLAG
+a325              NEXT
+a325 a2           B PBR
+a326 60           OUT2
+a327 80           A PCLO
+a328 a1           B PCHI
+a329 37           IN TMP1
+a32a bb           B V1
+a32b 61           OP ADD
+a32c 00           SET PCLO
+a32d 60           OP OVL
+a32e 16           SET TMP0
+a32f 81           A PCHI
+a330 b6           B TMP0
+a331 61           OP ADD
+a332 f7           JMP TMP1
+a333 01           SET PCHI
+a334              
+a334 60 60 60 60  LDA_d_s_16bit :
+a338              INCREMENTADDRESS
+a338              INC16 ADDRLO ADDRHI
+a338 93           A ADDRLO
+a339 bb           B V1
+a33a 61           OP ADD
+a33b 13           SET ADDRLO
+a33c 60           OP OVL
+a33d 16           SET TMP0
+a33e 96           A TMP0
+a33f b4           B ADDRHI
+a340 61           OP ADD
+a341 14           SET ADDRHI
+a342              
+a342              
+a342              LOAD V0 AHI
+a342 bf           B V0
+a343 60           OUT2
+a344 93           A ADDRLO
+a345 b4           B ADDRHI
+a346 24           IN AHI
+a347              
+a347              COMPUTENZFLAGS ALO AHI
+a347 83           A ALO
+a348 a4           B AHI
+a349 66           OP OR
+a34a 10           SET ZFLAG
+a34b a4           B AHI
+a34c 0f           SET NFLAG
+a34d              
+a34d              NEXT
+a34d a2           B PBR
+a34e 60           OUT2
+a34f 80           A PCLO
+a350 a1           B PCHI
+a351 37           IN TMP1
+a352 bb           B V1
+a353 61           OP ADD
+a354 00           SET PCLO
+a355 60           OP OVL
+a356 16           SET TMP0
+a357 81           A PCHI
+a358 b6           B TMP0
+a359 61           OP ADD
+a35a f7           JMP TMP1
+a35b 01           SET PCHI
+a35c              
+a35c              
+a35c              
 a900              ORG $A900
 a900              FETCH ALO
 a900 a2           B PBR
@@ -1162,61 +1912,332 @@ a90e
 a90e              BRACCU16 LDA_#_16bit
 a90e 9f           A V0
 a90f b1           B MFLAG
-a910 c4           BEQ LDA_#_16bit
+a910 c5           BEQ LDA_#_16bit
 a911              
-a911              NEXT
-a911 a2           B PBR
-a912 60           OUT2
-a913 80           A PCLO
-a914 a1           B PCHI
-a915 37           IN TMP1
-a916 bb           B V1
-a917 61           OP ADD
-a918 00           SET PCLO
-a919 60           OP OVL
-a91a 16           SET TMP0
-a91b 81           A PCHI
-a91c b6           B TMP0
-a91d 61           OP ADD
-a91e f7           JMP TMP1
-a91f 01           SET PCHI
-a920              
-a920              LDA_#_16bit :
-a920              FETCH AHI
-a920 a2           B PBR
-a921 60           OUT2
-a922 80           A PCLO
-a923 a1           B PCHI
-a924 24           IN AHI
-a925 bb           B V1
-a926 61           OP ADD
-a927 00           SET PCLO
-a928 60           OP OVL
-a929 16           SET TMP0
-a92a 81           A PCHI
-a92b b6           B TMP0
-a92c 61           OP ADD
-a92d 01           SET PCHI
-a92e              
-a92e              NEXT
-a92e a2           B PBR
-a92f 60           OUT2
-a930 80           A PCLO
-a931 a1           B PCHI
-a932 37           IN TMP1
-a933 bb           B V1
+a911              GET ALO
+a911 83           A ALO
+a912 a3           B ALO
+a913 66           OP OR
+a914              
+a914 10           SET ZFLAG
+a915 0f           SET NFLAG
+a916              NEXT
+a916 a2           B PBR
+a917 60           OUT2
+a918 80           A PCLO
+a919 a1           B PCHI
+a91a 37           IN TMP1
+a91b bb           B V1
+a91c 61           OP ADD
+a91d 00           SET PCLO
+a91e 60           OP OVL
+a91f 16           SET TMP0
+a920 81           A PCHI
+a921 b6           B TMP0
+a922 61           OP ADD
+a923 f7           JMP TMP1
+a924 01           SET PCHI
+a925              
+a925 60 60 60     LDA_#_16bit :
+a928              FETCH AHI
+a928 a2           B PBR
+a929 60           OUT2
+a92a 80           A PCLO
+a92b a1           B PCHI
+a92c 24           IN AHI
+a92d bb           B V1
+a92e 61           OP ADD
+a92f 00           SET PCLO
+a930 60           OP OVL
+a931 16           SET TMP0
+a932 81           A PCHI
+a933 b6           B TMP0
 a934 61           OP ADD
-a935 00           SET PCLO
-a936 60           OP OVL
-a937 16           SET TMP0
-a938 81           A PCHI
-a939 b6           B TMP0
-a93a 61           OP ADD
-a93b f7           JMP TMP1
-a93c 01           SET PCHI
-a93d              
-a93d              
-a93d              
+a935 01           SET PCHI
+a936              
+a936              COMPUTENZFLAGS ALO AHI
+a936 83           A ALO
+a937 a4           B AHI
+a938 66           OP OR
+a939 10           SET ZFLAG
+a93a a4           B AHI
+a93b 0f           SET NFLAG
+a93c              
+a93c              NEXT
+a93c a2           B PBR
+a93d 60           OUT2
+a93e 80           A PCLO
+a93f a1           B PCHI
+a940 37           IN TMP1
+a941 bb           B V1
+a942 61           OP ADD
+a943 00           SET PCLO
+a944 60           OP OVL
+a945 16           SET TMP0
+a946 81           A PCHI
+a947 b6           B TMP0
+a948 61           OP ADD
+a949 f7           JMP TMP1
+a94a 01           SET PCHI
+a94b              
+a94b              
+a94b              
+ad00              ORG $AD00
+ad00              FETCHADDRESS_a
+ad00              FETCH ADDRLO
+ad00 a2           B PBR
+ad01 60           OUT2
+ad02 80           A PCLO
+ad03 a1           B PCHI
+ad04 33           IN ADDRLO
+ad05 bb           B V1
+ad06 61           OP ADD
+ad07 00           SET PCLO
+ad08 60           OP OVL
+ad09 16           SET TMP0
+ad0a 81           A PCHI
+ad0b b6           B TMP0
+ad0c 61           OP ADD
+ad0d 01           SET PCHI
+ad0e              
+ad0e              FETCH ADDRHI
+ad0e a2           B PBR
+ad0f 60           OUT2
+ad10 80           A PCLO
+ad11 a1           B PCHI
+ad12 34           IN ADDRHI
+ad13 bb           B V1
+ad14 61           OP ADD
+ad15 00           SET PCLO
+ad16 60           OP OVL
+ad17 16           SET TMP0
+ad18 81           A PCHI
+ad19 b6           B TMP0
+ad1a 61           OP ADD
+ad1b 01           SET PCHI
+ad1c              
+ad1c              
+ad1c              LOAD DBR ALO
+ad1c a5           B DBR
+ad1d 60           OUT2
+ad1e 93           A ADDRLO
+ad1f b4           B ADDRHI
+ad20 23           IN ALO
+ad21              
+ad21              BRACCU16 LDA_a_16bit
+ad21 9f           A V0
+ad22 b1           B MFLAG
+ad23 c7           BEQ LDA_a_16bit
+ad24              
+ad24              GET ALO
+ad24 83           A ALO
+ad25 a3           B ALO
+ad26 66           OP OR
+ad27              
+ad27 10           SET ZFLAG
+ad28 0f           SET NFLAG
+ad29              NEXT
+ad29 a2           B PBR
+ad2a 60           OUT2
+ad2b 80           A PCLO
+ad2c a1           B PCHI
+ad2d 37           IN TMP1
+ad2e bb           B V1
+ad2f 61           OP ADD
+ad30 00           SET PCLO
+ad31 60           OP OVL
+ad32 16           SET TMP0
+ad33 81           A PCHI
+ad34 b6           B TMP0
+ad35 61           OP ADD
+ad36 f7           JMP TMP1
+ad37 01           SET PCHI
+ad38              
+ad38              LDA_a_16bit :
+ad38              INCREMENTADDRESS
+ad38              INC16 ADDRLO ADDRHI
+ad38 93           A ADDRLO
+ad39 bb           B V1
+ad3a 61           OP ADD
+ad3b 13           SET ADDRLO
+ad3c 60           OP OVL
+ad3d 16           SET TMP0
+ad3e 96           A TMP0
+ad3f b4           B ADDRHI
+ad40 61           OP ADD
+ad41 14           SET ADDRHI
+ad42              
+ad42              
+ad42              LOAD DBR AHI
+ad42 a5           B DBR
+ad43 60           OUT2
+ad44 93           A ADDRLO
+ad45 b4           B ADDRHI
+ad46 24           IN AHI
+ad47              
+ad47              COMPUTENZFLAGS ALO AHI
+ad47 83           A ALO
+ad48 a4           B AHI
+ad49 66           OP OR
+ad4a 10           SET ZFLAG
+ad4b a4           B AHI
+ad4c 0f           SET NFLAG
+ad4d              
+ad4d              NEXT
+ad4d a2           B PBR
+ad4e 60           OUT2
+ad4f 80           A PCLO
+ad50 a1           B PCHI
+ad51 37           IN TMP1
+ad52 bb           B V1
+ad53 61           OP ADD
+ad54 00           SET PCLO
+ad55 60           OP OVL
+ad56 16           SET TMP0
+ad57 81           A PCHI
+ad58 b6           B TMP0
+ad59 61           OP ADD
+ad5a f7           JMP TMP1
+ad5b 01           SET PCHI
+ad5c              
+ad5c              
+ad5c              
+af00              ORG $AF00
+af00              FETCHADDRESS_a
+af00              FETCH ADDRLO
+af00 a2           B PBR
+af01 60           OUT2
+af02 80           A PCLO
+af03 a1           B PCHI
+af04 33           IN ADDRLO
+af05 bb           B V1
+af06 61           OP ADD
+af07 00           SET PCLO
+af08 60           OP OVL
+af09 16           SET TMP0
+af0a 81           A PCHI
+af0b b6           B TMP0
+af0c 61           OP ADD
+af0d 01           SET PCHI
+af0e              
+af0e              FETCH ADDRHI
+af0e a2           B PBR
+af0f 60           OUT2
+af10 80           A PCLO
+af11 a1           B PCHI
+af12 34           IN ADDRHI
+af13 bb           B V1
+af14 61           OP ADD
+af15 00           SET PCLO
+af16 60           OP OVL
+af17 16           SET TMP0
+af18 81           A PCHI
+af19 b6           B TMP0
+af1a 61           OP ADD
+af1b 01           SET PCHI
+af1c              
+af1c              
+af1c              FETCH TMP4
+af1c a2           B PBR
+af1d 60           OUT2
+af1e 80           A PCLO
+af1f a1           B PCHI
+af20 3a           IN TMP4
+af21 bb           B V1
+af22 61           OP ADD
+af23 00           SET PCLO
+af24 60           OP OVL
+af25 16           SET TMP0
+af26 81           A PCHI
+af27 b6           B TMP0
+af28 61           OP ADD
+af29 01           SET PCHI
+af2a              
+af2a              LOAD TMP4 ALO
+af2a ba           B TMP4
+af2b 60           OUT2
+af2c 93           A ADDRLO
+af2d b4           B ADDRHI
+af2e 23           IN ALO
+af2f              
+af2f              BRACCU16 LDA_al_16bit
+af2f 9f           A V0
+af30 b1           B MFLAG
+af31 c9           BEQ LDA_al_16bit
+af32              
+af32              GET ALO
+af32 83           A ALO
+af33 a3           B ALO
+af34 66           OP OR
+af35              
+af35 10           SET ZFLAG
+af36 0f           SET NFLAG
+af37              NEXT
+af37 a2           B PBR
+af38 60           OUT2
+af39 80           A PCLO
+af3a a1           B PCHI
+af3b 37           IN TMP1
+af3c bb           B V1
+af3d 61           OP ADD
+af3e 00           SET PCLO
+af3f 60           OP OVL
+af40 16           SET TMP0
+af41 81           A PCHI
+af42 b6           B TMP0
+af43 61           OP ADD
+af44 f7           JMP TMP1
+af45 01           SET PCHI
+af46              
+af46 60 60        LDA_al_16bit :
+af48              INCREMENTADDRESS
+af48              INC16 ADDRLO ADDRHI
+af48 93           A ADDRLO
+af49 bb           B V1
+af4a 61           OP ADD
+af4b 13           SET ADDRLO
+af4c 60           OP OVL
+af4d 16           SET TMP0
+af4e 96           A TMP0
+af4f b4           B ADDRHI
+af50 61           OP ADD
+af51 14           SET ADDRHI
+af52              
+af52              
+af52              LOAD TMP4 AHI
+af52 ba           B TMP4
+af53 60           OUT2
+af54 93           A ADDRLO
+af55 b4           B ADDRHI
+af56 24           IN AHI
+af57              
+af57              COMPUTENZFLAGS ALO AHI
+af57 83           A ALO
+af58 a4           B AHI
+af59 66           OP OR
+af5a 10           SET ZFLAG
+af5b a4           B AHI
+af5c 0f           SET NFLAG
+af5d              
+af5d              NEXT
+af5d a2           B PBR
+af5e 60           OUT2
+af5f 80           A PCLO
+af60 a1           B PCHI
+af61 37           IN TMP1
+af62 bb           B V1
+af63 61           OP ADD
+af64 00           SET PCLO
+af65 60           OP OVL
+af66 16           SET TMP0
+af67 81           A PCHI
+af68 b6           B TMP0
+af69 61           OP ADD
+af6a f7           JMP TMP1
+af6b 01           SET PCHI
+af6c              
+af6c              
+af6c              
 bf00              ORG $BF00
 bf00              FETCHADDRESS_a_x
 bf00              FETCH ADDRLO
@@ -1291,183 +2312,83 @@ bf3c
 bf3c              BRACCU16 LDA_alx_16bit
 bf3c 9f           A V0
 bf3d b1           B MFLAG
-bf3e ca           BEQ LDA_alx_16bit
+bf3e cb           BEQ LDA_alx_16bit
 bf3f              
-bf3f              NEXT
-bf3f a2           B PBR
-bf40 60           OUT2
-bf41 80           A PCLO
-bf42 a1           B PCHI
-bf43 37           IN TMP1
-bf44 bb           B V1
-bf45 61           OP ADD
-bf46 00           SET PCLO
-bf47 60           OP OVL
-bf48 16           SET TMP0
-bf49 81           A PCHI
-bf4a b6           B TMP0
-bf4b 61           OP ADD
-bf4c f7           JMP TMP1
-bf4d 01           SET PCHI
-bf4e              
-bf4e 60 60        LDA_alx_16bit :
-bf50              INCREMENTADDRESS
-bf50 93           A ADDRLO
-bf51 bb           B V1
-bf52 61           OP ADD
-bf53 13           SET ADDRLO
-bf54 60           OP OVL
-bf55 16           SET TMP0
-bf56 96           A TMP0
-bf57 b4           B ADDRHI
-bf58 14           SET ADDRHI
-bf59              
-bf59              LOAD TMP4 AHI
-bf59 ba           B TMP4
-bf5a 60           OUT2
-bf5b 93           A ADDRLO
-bf5c b4           B ADDRHI
-bf5d 24           IN AHI
-bf5e              
-bf5e              NEXT
-bf5e a2           B PBR
-bf5f 60           OUT2
-bf60 80           A PCLO
-bf61 a1           B PCHI
-bf62 37           IN TMP1
-bf63 bb           B V1
-bf64 61           OP ADD
-bf65 00           SET PCLO
-bf66 60           OP OVL
-bf67 16           SET TMP0
-bf68 81           A PCHI
-bf69 b6           B TMP0
-bf6a 61           OP ADD
-bf6b f7           JMP TMP1
-bf6c 01           SET PCHI
+bf3f              GET ALO
+bf3f 83           A ALO
+bf40 a3           B ALO
+bf41 66           OP OR
+bf42              
+bf42 10           SET ZFLAG
+bf43 0f           SET NFLAG
+bf44              NEXT
+bf44 a2           B PBR
+bf45 60           OUT2
+bf46 80           A PCLO
+bf47 a1           B PCHI
+bf48 37           IN TMP1
+bf49 bb           B V1
+bf4a 61           OP ADD
+bf4b 00           SET PCLO
+bf4c 60           OP OVL
+bf4d 16           SET TMP0
+bf4e 81           A PCHI
+bf4f b6           B TMP0
+bf50 61           OP ADD
+bf51 f7           JMP TMP1
+bf52 01           SET PCHI
+bf53              
+bf53 60 60 60 60  LDA_alx_16bit :
+bf57 60          
+bf58              INCREMENTADDRESS
+bf58              INC16 ADDRLO ADDRHI
+bf58 93           A ADDRLO
+bf59 bb           B V1
+bf5a 61           OP ADD
+bf5b 13           SET ADDRLO
+bf5c 60           OP OVL
+bf5d 16           SET TMP0
+bf5e 96           A TMP0
+bf5f b4           B ADDRHI
+bf60 61           OP ADD
+bf61 14           SET ADDRHI
+bf62              
+bf62              
+bf62              LOAD TMP4 AHI
+bf62 ba           B TMP4
+bf63 60           OUT2
+bf64 93           A ADDRLO
+bf65 b4           B ADDRHI
+bf66 24           IN AHI
+bf67              
+bf67              COMPUTENZFLAGS ALO AHI
+bf67 83           A ALO
+bf68 a4           B AHI
+bf69 66           OP OR
+bf6a 10           SET ZFLAG
+bf6b a4           B AHI
+bf6c 0f           SET NFLAG
 bf6d              
-bf6d              
-bf6d              
-af00              ORG $AF00
-af00              FETCHADDRESS_a
-af00              FETCH ADDRLO
-af00 a2           B PBR
-af01 60           OUT2
-af02 80           A PCLO
-af03 a1           B PCHI
-af04 33           IN ADDRLO
-af05 bb           B V1
-af06 61           OP ADD
-af07 00           SET PCLO
-af08 60           OP OVL
-af09 16           SET TMP0
-af0a 81           A PCHI
-af0b b6           B TMP0
-af0c 61           OP ADD
-af0d 01           SET PCHI
-af0e              
-af0e              FETCH ADDRHI
-af0e a2           B PBR
-af0f 60           OUT2
-af10 80           A PCLO
-af11 a1           B PCHI
-af12 34           IN ADDRHI
-af13 bb           B V1
-af14 61           OP ADD
-af15 00           SET PCLO
-af16 60           OP OVL
-af17 16           SET TMP0
-af18 81           A PCHI
-af19 b6           B TMP0
-af1a 61           OP ADD
-af1b 01           SET PCHI
-af1c              
-af1c              
-af1c              FETCH TMP4
-af1c a2           B PBR
-af1d 60           OUT2
-af1e 80           A PCLO
-af1f a1           B PCHI
-af20 3a           IN TMP4
-af21 bb           B V1
-af22 61           OP ADD
-af23 00           SET PCLO
-af24 60           OP OVL
-af25 16           SET TMP0
-af26 81           A PCHI
-af27 b6           B TMP0
-af28 61           OP ADD
-af29 01           SET PCHI
-af2a              
-af2a              LOAD TMP4 ALO
-af2a ba           B TMP4
-af2b 60           OUT2
-af2c 93           A ADDRLO
-af2d b4           B ADDRHI
-af2e 23           IN ALO
-af2f              
-af2f              BRACCU16 LDA_al_16bit
-af2f 9f           A V0
-af30 b1           B MFLAG
-af31 c9           BEQ LDA_al_16bit
-af32              
-af32              NEXT
-af32 a2           B PBR
-af33 60           OUT2
-af34 80           A PCLO
-af35 a1           B PCHI
-af36 37           IN TMP1
-af37 bb           B V1
-af38 61           OP ADD
-af39 00           SET PCLO
-af3a 60           OP OVL
-af3b 16           SET TMP0
-af3c 81           A PCHI
-af3d b6           B TMP0
-af3e 61           OP ADD
-af3f f7           JMP TMP1
-af40 01           SET PCHI
-af41              
-af41 60 60 60 60  LDA_al_16bit :
-af45 60 60 60    
-af48              INCREMENTADDRESS
-af48 93           A ADDRLO
-af49 bb           B V1
-af4a 61           OP ADD
-af4b 13           SET ADDRLO
-af4c 60           OP OVL
-af4d 16           SET TMP0
-af4e 96           A TMP0
-af4f b4           B ADDRHI
-af50 14           SET ADDRHI
-af51              
-af51              LOAD TMP4 AHI
-af51 ba           B TMP4
-af52 60           OUT2
-af53 93           A ADDRLO
-af54 b4           B ADDRHI
-af55 24           IN AHI
-af56              
-af56              NEXT
-af56 a2           B PBR
-af57 60           OUT2
-af58 80           A PCLO
-af59 a1           B PCHI
-af5a 37           IN TMP1
-af5b bb           B V1
-af5c 61           OP ADD
-af5d 00           SET PCLO
-af5e 60           OP OVL
-af5f 16           SET TMP0
-af60 81           A PCHI
-af61 b6           B TMP0
-af62 61           OP ADD
-af63 f7           JMP TMP1
-af64 01           SET PCHI
-af65              
-af65              
-af65              
-af65              
+bf6d              NEXT
+bf6d a2           B PBR
+bf6e 60           OUT2
+bf6f 80           A PCLO
+bf70 a1           B PCHI
+bf71 37           IN TMP1
+bf72 bb           B V1
+bf73 61           OP ADD
+bf74 00           SET PCLO
+bf75 60           OP OVL
+bf76 16           SET TMP0
+bf77 81           A PCHI
+bf78 b6           B TMP0
+bf79 61           OP ADD
+bf7a f7           JMP TMP1
+bf7b 01           SET PCHI
+bf7c              
+bf7c              
+bf7c              
+bf7c              
 a200              ORG $A200
 a200              FETCH XLO
 a200 a2           B PBR
@@ -1543,6 +2464,126 @@ a23c 01           SET PCHI
 a23d              
 a23d              
 a23d              
+ae00              ORG $AE00
+ae00              FETCHADDRESS_a
+ae00              FETCH ADDRLO
+ae00 a2           B PBR
+ae01 60           OUT2
+ae02 80           A PCLO
+ae03 a1           B PCHI
+ae04 33           IN ADDRLO
+ae05 bb           B V1
+ae06 61           OP ADD
+ae07 00           SET PCLO
+ae08 60           OP OVL
+ae09 16           SET TMP0
+ae0a 81           A PCHI
+ae0b b6           B TMP0
+ae0c 61           OP ADD
+ae0d 01           SET PCHI
+ae0e              
+ae0e              FETCH ADDRHI
+ae0e a2           B PBR
+ae0f 60           OUT2
+ae10 80           A PCLO
+ae11 a1           B PCHI
+ae12 34           IN ADDRHI
+ae13 bb           B V1
+ae14 61           OP ADD
+ae15 00           SET PCLO
+ae16 60           OP OVL
+ae17 16           SET TMP0
+ae18 81           A PCHI
+ae19 b6           B TMP0
+ae1a 61           OP ADD
+ae1b 01           SET PCHI
+ae1c              
+ae1c              
+ae1c              LOAD V0 XLO
+ae1c bf           B V0
+ae1d 60           OUT2
+ae1e 93           A ADDRLO
+ae1f b4           B ADDRHI
+ae20 28           IN XLO
+ae21              
+ae21              BRINDEX16 LDX_a_16bit
+ae21 9f           A V0
+ae22 b2           B XFLAG
+ae23 c7           BEQ LDX_a_16bit
+ae24              
+ae24              GET XLO
+ae24 88           A XLO
+ae25 a8           B XLO
+ae26 66           OP OR
+ae27              
+ae27 10           SET ZFLAG
+ae28 0f           SET NFLAG
+ae29              NEXT
+ae29 a2           B PBR
+ae2a 60           OUT2
+ae2b 80           A PCLO
+ae2c a1           B PCHI
+ae2d 37           IN TMP1
+ae2e bb           B V1
+ae2f 61           OP ADD
+ae30 00           SET PCLO
+ae31 60           OP OVL
+ae32 16           SET TMP0
+ae33 81           A PCHI
+ae34 b6           B TMP0
+ae35 61           OP ADD
+ae36 f7           JMP TMP1
+ae37 01           SET PCHI
+ae38              
+ae38              LDX_a_16bit :
+ae38              INCREMENTADDRESS
+ae38              INC16 ADDRLO ADDRHI
+ae38 93           A ADDRLO
+ae39 bb           B V1
+ae3a 61           OP ADD
+ae3b 13           SET ADDRLO
+ae3c 60           OP OVL
+ae3d 16           SET TMP0
+ae3e 96           A TMP0
+ae3f b4           B ADDRHI
+ae40 61           OP ADD
+ae41 14           SET ADDRHI
+ae42              
+ae42              
+ae42              LOAD V0 XHI
+ae42 bf           B V0
+ae43 60           OUT2
+ae44 93           A ADDRLO
+ae45 b4           B ADDRHI
+ae46 29           IN XHI
+ae47              
+ae47              COMPUTENZFLAGS XLO XHI
+ae47 88           A XLO
+ae48 a9           B XHI
+ae49 66           OP OR
+ae4a 10           SET ZFLAG
+ae4b a9           B XHI
+ae4c 0f           SET NFLAG
+ae4d              
+ae4d              NEXT
+ae4d a2           B PBR
+ae4e 60           OUT2
+ae4f 80           A PCLO
+ae50 a1           B PCHI
+ae51 37           IN TMP1
+ae52 bb           B V1
+ae53 61           OP ADD
+ae54 00           SET PCLO
+ae55 60           OP OVL
+ae56 16           SET TMP0
+ae57 81           A PCHI
+ae58 b6           B TMP0
+ae59 61           OP ADD
+ae5a f7           JMP TMP1
+ae5b 01           SET PCHI
+ae5c              
+ae5c              
+ae5c              
 a000              ORG $A000
 a000              FETCH YLO
 a000 a2           B PBR
@@ -1618,10 +2659,809 @@ a03c 01           SET PCHI
 a03d              
 a03d              
 a03d              
-a03d              
-a03d              
-a03d              
-a03d              
+5400              ORG $5400
+5400              FETCH DBR
+5400 a2           B PBR
+5401 60           OUT2
+5402 80           A PCLO
+5403 a1           B PCHI
+5404 25           IN DBR
+5405 bb           B V1
+5406 61           OP ADD
+5407 00           SET PCLO
+5408 60           OP OVL
+5409 16           SET TMP0
+540a 81           A PCHI
+540b b6           B TMP0
+540c 61           OP ADD
+540d 01           SET PCHI
+540e              
+540e              FETCH TMP4
+540e a2           B PBR
+540f 60           OUT2
+5410 80           A PCLO
+5411 a1           B PCHI
+5412 3a           IN TMP4
+5413 bb           B V1
+5414 61           OP ADD
+5415 00           SET PCLO
+5416 60           OP OVL
+5417 16           SET TMP0
+5418 81           A PCHI
+5419 b6           B TMP0
+541a 61           OP ADD
+541b 01           SET PCHI
+541c              
+541c              
+541c 60 60 60 60  MVN_loop :
+5420              
+5420 ba           B TMP4
+5421 60           OUT2
+5422 88           A XLO
+5423 a9           B XHI
+5424 36           IN TMP0
+5425              
+5425              
+5425 a5           B DBR
+5426 60           OUT2
+5427 8a           A YLO
+5428 ab           B YHI
+5429 56           OUT TMP0
+542a              
+542a              
+542a              INC16 XLO XHI
+542a 88           A XLO
+542b bb           B V1
+542c 61           OP ADD
+542d 08           SET XLO
+542e 60           OP OVL
+542f 16           SET TMP0
+5430 96           A TMP0
+5431 a9           B XHI
+5432 61           OP ADD
+5433 09           SET XHI
+5434              
+5434              INC16 YLO YHI
+5434 8a           A YLO
+5435 bb           B V1
+5436 61           OP ADD
+5437 0a           SET YLO
+5438 60           OP OVL
+5439 16           SET TMP0
+543a 96           A TMP0
+543b ab           B YHI
+543c 61           OP ADD
+543d 0b           SET YHI
+543e              
+543e              
+543e              
+543e 83           A ALO
+543f a4           B AHI
+5440 66           OP OR
+5441 16           SET TMP0
+5442 96           A TMP0
+5443 bf           B V0
+5444 cb           BEQ MVN_done
+5445              
+5445              
+5445              DEC16 ALO AHI
+5445 83           A ALO
+5446 bb           B V1
+5447 62           OP SUB
+5448 03           SET ALO
+5449 83           A ALO
+544a be           B V255
+544b 64           OP DIV
+544c 16           SET TMP0
+544d 84           A AHI
+544e b6           B TMP0
+544f 62           OP SUB
+5450 04           SET AHI
+5451              
+5451              BRA MVN_loop
+5451 9f           A V0
+5452 bf           B V0
+5453 c4           BEQ MVN_loop
+5454              
+5454              
+5454 60 60 60 60  MVN_done :
+5458              NEXT
+5458 a2           B PBR
+5459 60           OUT2
+545a 80           A PCLO
+545b a1           B PCHI
+545c 37           IN TMP1
+545d bb           B V1
+545e 61           OP ADD
+545f 00           SET PCLO
+5460 60           OP OVL
+5461 16           SET TMP0
+5462 81           A PCHI
+5463 b6           B TMP0
+5464 61           OP ADD
+5465 f7           JMP TMP1
+5466 01           SET PCHI
+5467              
+5467              
+5467              
+f400              ORG $F400
+f400              FETCH TMP3
+f400 a2           B PBR
+f401 60           OUT2
+f402 80           A PCLO
+f403 a1           B PCHI
+f404 39           IN TMP3
+f405 bb           B V1
+f406 61           OP ADD
+f407 00           SET PCLO
+f408 60           OP OVL
+f409 16           SET TMP0
+f40a 81           A PCHI
+f40b b6           B TMP0
+f40c 61           OP ADD
+f40d 01           SET PCHI
+f40e              
+f40e              FETCH TMP4
+f40e a2           B PBR
+f40f 60           OUT2
+f410 80           A PCLO
+f411 a1           B PCHI
+f412 3a           IN TMP4
+f413 bb           B V1
+f414 61           OP ADD
+f415 00           SET PCLO
+f416 60           OP OVL
+f417 16           SET TMP0
+f418 81           A PCHI
+f419 b6           B TMP0
+f41a 61           OP ADD
+f41b 01           SET PCHI
+f41c              
+f41c              PUSH TMP4
+f41c bf           B V0
+f41d 60           OUT2
+f41e 8c           A SLO
+f41f ad           B SHI
+f420 5a           OUT TMP4
+f421              DEC16 SLO SHI
+f421 8c           A SLO
+f422 bb           B V1
+f423 62           OP SUB
+f424 0c           SET SLO
+f425 8c           A SLO
+f426 be           B V255
+f427 64           OP DIV
+f428 16           SET TMP0
+f429 8d           A SHI
+f42a b6           B TMP0
+f42b 62           OP SUB
+f42c 0d           SET SHI
+f42d              
+f42d              
+f42d              PUSH TMP3
+f42d bf           B V0
+f42e 60           OUT2
+f42f 8c           A SLO
+f430 ad           B SHI
+f431 59           OUT TMP3
+f432              DEC16 SLO SHI
+f432 8c           A SLO
+f433 bb           B V1
+f434 62           OP SUB
+f435 0c           SET SLO
+f436 8c           A SLO
+f437 be           B V255
+f438 64           OP DIV
+f439 16           SET TMP0
+f43a 8d           A SHI
+f43b b6           B TMP0
+f43c 62           OP SUB
+f43d 0d           SET SHI
+f43e              
+f43e              
+f43e              NEXT
+f43e a2           B PBR
+f43f 60           OUT2
+f440 80           A PCLO
+f441 a1           B PCHI
+f442 37           IN TMP1
+f443 bb           B V1
+f444 61           OP ADD
+f445 00           SET PCLO
+f446 60           OP OVL
+f447 16           SET TMP0
+f448 81           A PCHI
+f449 b6           B TMP0
+f44a 61           OP ADD
+f44b f7           JMP TMP1
+f44c 01           SET PCHI
+f44d              
+f44d              
+d400              ORG $D400
+d400              FETCHADDRESS_d
+d400              FETCH ADDRLO
+d400 a2           B PBR
+d401 60           OUT2
+d402 80           A PCLO
+d403 a1           B PCHI
+d404 33           IN ADDRLO
+d405 bb           B V1
+d406 61           OP ADD
+d407 00           SET PCLO
+d408 60           OP OVL
+d409 16           SET TMP0
+d40a 81           A PCHI
+d40b b6           B TMP0
+d40c 61           OP ADD
+d40d 01           SET PCHI
+d40e              
+d40e 93           A ADDRLO
+d40f a6           B DLO
+d410 61           OP ADD
+d411 13           SET ADDRLO
+d412 60           OP OVL
+d413 16           SET TMP0
+d414 87           A DHI
+d415 b6           B TMP0
+d416 61           OP ADD
+d417 14           SET ADDRHI
+d418              
+d418              LOAD V0 TMP3
+d418 bf           B V0
+d419 60           OUT2
+d41a 93           A ADDRLO
+d41b b4           B ADDRHI
+d41c 39           IN TMP3
+d41d              
+d41d              INCREMENTADDRESS
+d41d              INC16 ADDRLO ADDRHI
+d41d 93           A ADDRLO
+d41e bb           B V1
+d41f 61           OP ADD
+d420 13           SET ADDRLO
+d421 60           OP OVL
+d422 16           SET TMP0
+d423 96           A TMP0
+d424 b4           B ADDRHI
+d425 61           OP ADD
+d426 14           SET ADDRHI
+d427              
+d427              
+d427              LOAD V0 TMP4
+d427 bf           B V0
+d428 60           OUT2
+d429 93           A ADDRLO
+d42a b4           B ADDRHI
+d42b 3a           IN TMP4
+d42c              
+d42c              PUSH TMP4
+d42c bf           B V0
+d42d 60           OUT2
+d42e 8c           A SLO
+d42f ad           B SHI
+d430 5a           OUT TMP4
+d431              DEC16 SLO SHI
+d431 8c           A SLO
+d432 bb           B V1
+d433 62           OP SUB
+d434 0c           SET SLO
+d435 8c           A SLO
+d436 be           B V255
+d437 64           OP DIV
+d438 16           SET TMP0
+d439 8d           A SHI
+d43a b6           B TMP0
+d43b 62           OP SUB
+d43c 0d           SET SHI
+d43d              
+d43d              
+d43d              PUSH TMP3
+d43d bf           B V0
+d43e 60           OUT2
+d43f 8c           A SLO
+d440 ad           B SHI
+d441 59           OUT TMP3
+d442              DEC16 SLO SHI
+d442 8c           A SLO
+d443 bb           B V1
+d444 62           OP SUB
+d445 0c           SET SLO
+d446 8c           A SLO
+d447 be           B V255
+d448 64           OP DIV
+d449 16           SET TMP0
+d44a 8d           A SHI
+d44b b6           B TMP0
+d44c 62           OP SUB
+d44d 0d           SET SHI
+d44e              
+d44e              
+d44e              NEXT
+d44e a2           B PBR
+d44f 60           OUT2
+d450 80           A PCLO
+d451 a1           B PCHI
+d452 37           IN TMP1
+d453 bb           B V1
+d454 61           OP ADD
+d455 00           SET PCLO
+d456 60           OP OVL
+d457 16           SET TMP0
+d458 81           A PCHI
+d459 b6           B TMP0
+d45a 61           OP ADD
+d45b f7           JMP TMP1
+d45c 01           SET PCHI
+d45d              
+d45d              
+4800              ORG $4800
+4800              BRACCU16 PHA_16bit
+4800 9f           A V0
+4801 b1           B MFLAG
+4802 c5           BEQ PHA_16bit
+4803              
+4803              PUSH ALO
+4803 bf           B V0
+4804 60           OUT2
+4805 8c           A SLO
+4806 ad           B SHI
+4807 43           OUT ALO
+4808              DEC16 SLO SHI
+4808 8c           A SLO
+4809 bb           B V1
+480a 62           OP SUB
+480b 0c           SET SLO
+480c 8c           A SLO
+480d be           B V255
+480e 64           OP DIV
+480f 16           SET TMP0
+4810 8d           A SHI
+4811 b6           B TMP0
+4812 62           OP SUB
+4813 0d           SET SHI
+4814              
+4814              
+4814              NEXT
+4814 a2           B PBR
+4815 60           OUT2
+4816 80           A PCLO
+4817 a1           B PCHI
+4818 37           IN TMP1
+4819 bb           B V1
+481a 61           OP ADD
+481b 00           SET PCLO
+481c 60           OP OVL
+481d 16           SET TMP0
+481e 81           A PCHI
+481f b6           B TMP0
+4820 61           OP ADD
+4821 f7           JMP TMP1
+4822 01           SET PCHI
+4823              
+4823 60 60 60 60  PHA_16bit :
+4827 60          
+4828              PUSH AHI
+4828 bf           B V0
+4829 60           OUT2
+482a 8c           A SLO
+482b ad           B SHI
+482c 44           OUT AHI
+482d              DEC16 SLO SHI
+482d 8c           A SLO
+482e bb           B V1
+482f 62           OP SUB
+4830 0c           SET SLO
+4831 8c           A SLO
+4832 be           B V255
+4833 64           OP DIV
+4834 16           SET TMP0
+4835 8d           A SHI
+4836 b6           B TMP0
+4837 62           OP SUB
+4838 0d           SET SHI
+4839              
+4839              
+4839              PUSH ALO
+4839 bf           B V0
+483a 60           OUT2
+483b 8c           A SLO
+483c ad           B SHI
+483d 43           OUT ALO
+483e              DEC16 SLO SHI
+483e 8c           A SLO
+483f bb           B V1
+4840 62           OP SUB
+4841 0c           SET SLO
+4842 8c           A SLO
+4843 be           B V255
+4844 64           OP DIV
+4845 16           SET TMP0
+4846 8d           A SHI
+4847 b6           B TMP0
+4848 62           OP SUB
+4849 0d           SET SHI
+484a              
+484a              
+484a              NEXT
+484a a2           B PBR
+484b 60           OUT2
+484c 80           A PCLO
+484d a1           B PCHI
+484e 37           IN TMP1
+484f bb           B V1
+4850 61           OP ADD
+4851 00           SET PCLO
+4852 60           OP OVL
+4853 16           SET TMP0
+4854 81           A PCHI
+4855 b6           B TMP0
+4856 61           OP ADD
+4857 f7           JMP TMP1
+4858 01           SET PCHI
+4859              
+4859              
+0b00              ORG $0B00
+0b00              PUSH DHI
+0b00 bf           B V0
+0b01 60           OUT2
+0b02 8c           A SLO
+0b03 ad           B SHI
+0b04 47           OUT DHI
+0b05              DEC16 SLO SHI
+0b05 8c           A SLO
+0b06 bb           B V1
+0b07 62           OP SUB
+0b08 0c           SET SLO
+0b09 8c           A SLO
+0b0a be           B V255
+0b0b 64           OP DIV
+0b0c 16           SET TMP0
+0b0d 8d           A SHI
+0b0e b6           B TMP0
+0b0f 62           OP SUB
+0b10 0d           SET SHI
+0b11              
+0b11              
+0b11              PUSH DLO
+0b11 bf           B V0
+0b12 60           OUT2
+0b13 8c           A SLO
+0b14 ad           B SHI
+0b15 46           OUT DLO
+0b16              DEC16 SLO SHI
+0b16 8c           A SLO
+0b17 bb           B V1
+0b18 62           OP SUB
+0b19 0c           SET SLO
+0b1a 8c           A SLO
+0b1b be           B V255
+0b1c 64           OP DIV
+0b1d 16           SET TMP0
+0b1e 8d           A SHI
+0b1f b6           B TMP0
+0b20 62           OP SUB
+0b21 0d           SET SHI
+0b22              
+0b22              
+0b22              NEXT
+0b22 a2           B PBR
+0b23 60           OUT2
+0b24 80           A PCLO
+0b25 a1           B PCHI
+0b26 37           IN TMP1
+0b27 bb           B V1
+0b28 61           OP ADD
+0b29 00           SET PCLO
+0b2a 60           OP OVL
+0b2b 16           SET TMP0
+0b2c 81           A PCHI
+0b2d b6           B TMP0
+0b2e 61           OP ADD
+0b2f f7           JMP TMP1
+0b30 01           SET PCHI
+0b31              
+0b31              
+6800              ORG $6800
+6800              PULL ALO
+6800              INC16 SLO SHI
+6800 8c           A SLO
+6801 bb           B V1
+6802 61           OP ADD
+6803 0c           SET SLO
+6804 60           OP OVL
+6805 16           SET TMP0
+6806 96           A TMP0
+6807 ad           B SHI
+6808 61           OP ADD
+6809 0d           SET SHI
+680a              
+680a bf           B V0
+680b 60           OUT2
+680c 8c           A SLO
+680d ad           B SHI
+680e 23           IN ALO
+680f              
+680f              BRACCU16 PLA_16bit
+680f 9f           A V0
+6810 b1           B MFLAG
+6811 c5           BEQ PLA_16bit
+6812              
+6812              NEXT
+6812 a2           B PBR
+6813 60           OUT2
+6814 80           A PCLO
+6815 a1           B PCHI
+6816 37           IN TMP1
+6817 bb           B V1
+6818 61           OP ADD
+6819 00           SET PCLO
+681a 60           OP OVL
+681b 16           SET TMP0
+681c 81           A PCHI
+681d b6           B TMP0
+681e 61           OP ADD
+681f f7           JMP TMP1
+6820 01           SET PCHI
+6821              
+6821 60 60 60 60  PLA_16bit :
+6825 60 60 60    
+6828              PULL AHI
+6828              INC16 SLO SHI
+6828 8c           A SLO
+6829 bb           B V1
+682a 61           OP ADD
+682b 0c           SET SLO
+682c 60           OP OVL
+682d 16           SET TMP0
+682e 96           A TMP0
+682f ad           B SHI
+6830 61           OP ADD
+6831 0d           SET SHI
+6832              
+6832 bf           B V0
+6833 60           OUT2
+6834 8c           A SLO
+6835 ad           B SHI
+6836 24           IN AHI
+6837              
+6837              NEXT
+6837 a2           B PBR
+6838 60           OUT2
+6839 80           A PCLO
+683a a1           B PCHI
+683b 37           IN TMP1
+683c bb           B V1
+683d 61           OP ADD
+683e 00           SET PCLO
+683f 60           OP OVL
+6840 16           SET TMP0
+6841 81           A PCHI
+6842 b6           B TMP0
+6843 61           OP ADD
+6844 f7           JMP TMP1
+6845 01           SET PCHI
+6846              
+6846              
+6846              
+6846              
+c200              ORG $C200
+c200              FETCH TMP4
+c200 a2           B PBR
+c201 60           OUT2
+c202 80           A PCLO
+c203 a1           B PCHI
+c204 3a           IN TMP4
+c205 bb           B V1
+c206 61           OP ADD
+c207 00           SET PCLO
+c208 60           OP OVL
+c209 16           SET TMP0
+c20a 81           A PCHI
+c20b b6           B TMP0
+c20c 61           OP ADD
+c20d 01           SET PCHI
+c20e              
+c20e              
+c20e              
+c20e 9a           A TMP4
+c20f bb           B V1
+c210 65           OP AND
+c211 16           SET TMP0
+c212 96           A TMP0
+c213 bf           B V0
+c214 c4           BEQ REP_#_noC
+c215              
+c215              GET V0
+c215 9f           A V0
+c216 bf           B V0
+c217 66           OP OR
+c218              
+c218 0e           SET CFLAG
+c219 60 60 60 60  REP_#_noC :
+c21d 60 60 60    
+c220              
+c220              
+c220 9a           A TMP4
+c221 bc           B V2
+c222 65           OP AND
+c223 16           SET TMP0
+c224 96           A TMP0
+c225 bf           B V0
+c226 c6           BEQ REP_#_noZ
+c227              
+c227              GET V1
+c227 9b           A V1
+c228 bb           B V1
+c229 66           OP OR
+c22a              
+c22a 10           SET ZFLAG
+c22b 60 60 60 60  REP_#_noZ :
+c22f 60          
+c230              
+c230              
+c230 9a           A TMP4
+c231 ba           B TMP4
+c232 60           OP OVL
+c233 16           SET TMP0
+c234 96           A TMP0
+c235 bf           B V0
+c236 c8           BEQ REP_#_noN
+c237              
+c237              GET V0
+c237 9f           A V0
+c238 bf           B V0
+c239 66           OP OR
+c23a              
+c23a 0f           SET NFLAG
+c23b 60 60 60 60  REP_#_noN :
+c23f 60          
+c240              
+c240              
+c240 9a           A TMP4
+c241 bd           B V4
+c242 64           OP DIV
+c243 1a           SET TMP4
+c244 9a           A TMP4
+c245 1a           SET TMP4
+c246              
+c246              
+c246 9a           A TMP4
+c247 bb           B V1
+c248 65           OP AND
+c249 16           SET TMP0
+c24a 96           A TMP0
+c24b bf           B V0
+c24c cb           BEQ REP_#_noX
+c24d              
+c24d              GET V0
+c24d 9f           A V0
+c24e bf           B V0
+c24f 66           OP OR
+c250              
+c250 12           SET XFLAG
+c251              
+c251              
+c251 60 60 60 60  REP_#_noX :
+c255 60 60 60    
+c258              
+c258              
+c258 9a           A TMP4
+c259 bc           B V2
+c25a 65           OP AND
+c25b 16           SET TMP0
+c25c 96           A TMP0
+c25d bf           B V0
+c25e cd           BEQ REP_#_noM
+c25f              
+c25f              GET V0
+c25f 9f           A V0
+c260 bf           B V0
+c261 66           OP OR
+c262              
+c262 11           SET MFLAG
+c263 60 60 60 60  REP_#_noM :
+c267 60          
+c268              
+c268              
+c268              NEXT
+c268 a2           B PBR
+c269 60           OUT2
+c26a 80           A PCLO
+c26b a1           B PCHI
+c26c 37           IN TMP1
+c26d bb           B V1
+c26e 61           OP ADD
+c26f 00           SET PCLO
+c270 60           OP OVL
+c271 16           SET TMP0
+c272 81           A PCHI
+c273 b6           B TMP0
+c274 61           OP ADD
+c275 f7           JMP TMP1
+c276 01           SET PCHI
+c277              
+c277              
+6b00              ORG $6B00
+6b00              PULL PCLO
+6b00              INC16 SLO SHI
+6b00 8c           A SLO
+6b01 bb           B V1
+6b02 61           OP ADD
+6b03 0c           SET SLO
+6b04 60           OP OVL
+6b05 16           SET TMP0
+6b06 96           A TMP0
+6b07 ad           B SHI
+6b08 61           OP ADD
+6b09 0d           SET SHI
+6b0a              
+6b0a bf           B V0
+6b0b 60           OUT2
+6b0c 8c           A SLO
+6b0d ad           B SHI
+6b0e 20           IN PCLO
+6b0f              
+6b0f              PULL PCHI
+6b0f              INC16 SLO SHI
+6b0f 8c           A SLO
+6b10 bb           B V1
+6b11 61           OP ADD
+6b12 0c           SET SLO
+6b13 60           OP OVL
+6b14 16           SET TMP0
+6b15 96           A TMP0
+6b16 ad           B SHI
+6b17 61           OP ADD
+6b18 0d           SET SHI
+6b19              
+6b19 bf           B V0
+6b1a 60           OUT2
+6b1b 8c           A SLO
+6b1c ad           B SHI
+6b1d 21           IN PCHI
+6b1e              
+6b1e              PULL PBR
+6b1e              INC16 SLO SHI
+6b1e 8c           A SLO
+6b1f bb           B V1
+6b20 61           OP ADD
+6b21 0c           SET SLO
+6b22 60           OP OVL
+6b23 16           SET TMP0
+6b24 96           A TMP0
+6b25 ad           B SHI
+6b26 61           OP ADD
+6b27 0d           SET SHI
+6b28              
+6b28 bf           B V0
+6b29 60           OUT2
+6b2a 8c           A SLO
+6b2b ad           B SHI
+6b2c 22           IN PBR
+6b2d              
+6b2d              NEXT
+6b2d a2           B PBR
+6b2e 60           OUT2
+6b2f 80           A PCLO
+6b30 a1           B PCHI
+6b31 37           IN TMP1
+6b32 bb           B V1
+6b33 61           OP ADD
+6b34 00           SET PCLO
+6b35 60           OP OVL
+6b36 16           SET TMP0
+6b37 81           A PCHI
+6b38 b6           B TMP0
+6b39 61           OP ADD
+6b3a f7           JMP TMP1
+6b3b 01           SET PCHI
+6b3c              
+6b3c              
+6b3c              
+6b3c              
+6b3c              
+6b3c              
+6b3c              
 e900              ORG $E900
 e900              FETCH TMP4
 e900 a2           B PBR
@@ -1781,6 +3621,143 @@ e96f
 3812 01           SET PCHI
 3813              
 3813              
+3813              
+3813              
+e200              ORG $E200
+e200              FETCH TMP4
+e200 a2           B PBR
+e201 60           OUT2
+e202 80           A PCLO
+e203 a1           B PCHI
+e204 3a           IN TMP4
+e205 bb           B V1
+e206 61           OP ADD
+e207 00           SET PCLO
+e208 60           OP OVL
+e209 16           SET TMP0
+e20a 81           A PCHI
+e20b b6           B TMP0
+e20c 61           OP ADD
+e20d 01           SET PCHI
+e20e              
+e20e              
+e20e              
+e20e 9a           A TMP4
+e20f bb           B V1
+e210 65           OP AND
+e211 16           SET TMP0
+e212 96           A TMP0
+e213 bf           B V0
+e214 c4           BEQ SEP_#_noC
+e215              
+e215              GET V1
+e215 9b           A V1
+e216 bb           B V1
+e217 66           OP OR
+e218              
+e218 0e           SET CFLAG
+e219 60 60 60 60  SEP_#_noC :
+e21d 60 60 60    
+e220              
+e220              
+e220 9a           A TMP4
+e221 bc           B V2
+e222 65           OP AND
+e223 16           SET TMP0
+e224 96           A TMP0
+e225 bf           B V0
+e226 c6           BEQ SEP_#_noZ
+e227              
+e227              GET V0
+e227 9f           A V0
+e228 bf           B V0
+e229 66           OP OR
+e22a              
+e22a 10           SET ZFLAG
+e22b 60 60 60 60  SEP_#_noZ :
+e22f 60          
+e230              
+e230              
+e230 9a           A TMP4
+e231 ba           B TMP4
+e232 60           OP OVL
+e233 16           SET TMP0
+e234 96           A TMP0
+e235 bf           B V0
+e236 c8           BEQ SEP_#_noN
+e237              
+e237              GET V255
+e237 9e           A V255
+e238 be           B V255
+e239 66           OP OR
+e23a              
+e23a 0f           SET NFLAG
+e23b 60 60 60 60  SEP_#_noN :
+e23f 60          
+e240              
+e240              
+e240 9a           A TMP4
+e241 bd           B V4
+e242 64           OP DIV
+e243 1a           SET TMP4
+e244 9a           A TMP4
+e245 1a           SET TMP4
+e246              
+e246              
+e246 9a           A TMP4
+e247 bb           B V1
+e248 65           OP AND
+e249 16           SET TMP0
+e24a 96           A TMP0
+e24b bf           B V0
+e24c cb           BEQ SEP_#_noX
+e24d              
+e24d              GET V1
+e24d 9b           A V1
+e24e bb           B V1
+e24f 66           OP OR
+e250              
+e250 12           SET XFLAG
+e251 60 60 60 60  SEP_#_noX :
+e255 60 60 60    
+e258              
+e258              
+e258 9a           A TMP4
+e259 bc           B V2
+e25a 65           OP AND
+e25b 16           SET TMP0
+e25c 96           A TMP0
+e25d bf           B V0
+e25e cd           BEQ SEP_#_noM
+e25f              
+e25f              GET V1
+e25f 9b           A V1
+e260 bb           B V1
+e261 66           OP OR
+e262              
+e262 11           SET MFLAG
+e263 60 60 60 60  SEP_#_noM :
+e267 60          
+e268              
+e268              
+e268              NEXT
+e268 a2           B PBR
+e269 60           OUT2
+e26a 80           A PCLO
+e26b a1           B PCHI
+e26c 37           IN TMP1
+e26d bb           B V1
+e26e 61           OP ADD
+e26f 00           SET PCLO
+e270 60           OP OVL
+e271 16           SET TMP0
+e272 81           A PCHI
+e273 b6           B TMP0
+e274 61           OP ADD
+e275 f7           JMP TMP1
+e276 01           SET PCHI
+e277              
+e277              
 8500              ORG $8500
 8500              FETCHADDRESS_d
 8500              FETCH ADDRLO
@@ -1841,6 +3818,7 @@ e96f
 852f              
 852f 60           STA_d_16bit :
 8530              INCREMENTADDRESS
+8530              INC16 ADDRLO ADDRHI
 8530 93           A ADDRLO
 8531 bb           B V1
 8532 61           OP ADD
@@ -1849,34 +3827,241 @@ e96f
 8535 16           SET TMP0
 8536 96           A TMP0
 8537 b4           B ADDRHI
-8538 14           SET ADDRHI
-8539              
-8539              STORE V0 AHI
-8539 bf           B V0
-853a 60           OUT2
-853b 93           A ADDRLO
-853c b4           B ADDRHI
-853d 44           OUT AHI
-853e              
-853e              NEXT
-853e a2           B PBR
-853f 60           OUT2
-8540 80           A PCLO
-8541 a1           B PCHI
-8542 37           IN TMP1
-8543 bb           B V1
-8544 61           OP ADD
-8545 00           SET PCLO
-8546 60           OP OVL
-8547 16           SET TMP0
-8548 81           A PCHI
-8549 b6           B TMP0
-854a 61           OP ADD
-854b f7           JMP TMP1
-854c 01           SET PCHI
-854d              
-854d              
-854d              
+8538 61           OP ADD
+8539 14           SET ADDRHI
+853a              
+853a              
+853a              STORE V0 AHI
+853a bf           B V0
+853b 60           OUT2
+853c 93           A ADDRLO
+853d b4           B ADDRHI
+853e 44           OUT AHI
+853f              
+853f              NEXT
+853f a2           B PBR
+8540 60           OUT2
+8541 80           A PCLO
+8542 a1           B PCHI
+8543 37           IN TMP1
+8544 bb           B V1
+8545 61           OP ADD
+8546 00           SET PCLO
+8547 60           OP OVL
+8548 16           SET TMP0
+8549 81           A PCHI
+854a b6           B TMP0
+854b 61           OP ADD
+854c f7           JMP TMP1
+854d 01           SET PCHI
+854e              
+854e              
+854e              
+8300              ORG $8300
+8300              FETCHADDRESS_d_s
+8300              FETCH ADDRLO
+8300 a2           B PBR
+8301 60           OUT2
+8302 80           A PCLO
+8303 a1           B PCHI
+8304 33           IN ADDRLO
+8305 bb           B V1
+8306 61           OP ADD
+8307 00           SET PCLO
+8308 60           OP OVL
+8309 16           SET TMP0
+830a 81           A PCHI
+830b b6           B TMP0
+830c 61           OP ADD
+830d 01           SET PCHI
+830e              
+830e 93           A ADDRLO
+830f ac           B SLO
+8310 61           OP ADD
+8311 13           SET ADDRLO
+8312 60           OP OVL
+8313 16           SET TMP0
+8314 8d           A SHI
+8315 b6           B TMP0
+8316 61           OP ADD
+8317 14           SET ADDRHI
+8318              
+8318              STORE V0 ALO
+8318 bf           B V0
+8319 60           OUT2
+831a 93           A ADDRLO
+831b b4           B ADDRHI
+831c 43           OUT ALO
+831d              
+831d              BRACCU16 STA_d_s_16bit
+831d 9f           A V0
+831e b1           B MFLAG
+831f c6           BEQ STA_d_s_16bit
+8320              
+8320              NEXT
+8320 a2           B PBR
+8321 60           OUT2
+8322 80           A PCLO
+8323 a1           B PCHI
+8324 37           IN TMP1
+8325 bb           B V1
+8326 61           OP ADD
+8327 00           SET PCLO
+8328 60           OP OVL
+8329 16           SET TMP0
+832a 81           A PCHI
+832b b6           B TMP0
+832c 61           OP ADD
+832d f7           JMP TMP1
+832e 01           SET PCHI
+832f              
+832f 60           STA_d_s_16bit :
+8330              INCREMENTADDRESS
+8330              INC16 ADDRLO ADDRHI
+8330 93           A ADDRLO
+8331 bb           B V1
+8332 61           OP ADD
+8333 13           SET ADDRLO
+8334 60           OP OVL
+8335 16           SET TMP0
+8336 96           A TMP0
+8337 b4           B ADDRHI
+8338 61           OP ADD
+8339 14           SET ADDRHI
+833a              
+833a              
+833a              STORE V0 AHI
+833a bf           B V0
+833b 60           OUT2
+833c 93           A ADDRLO
+833d b4           B ADDRHI
+833e 44           OUT AHI
+833f              
+833f              NEXT
+833f a2           B PBR
+8340 60           OUT2
+8341 80           A PCLO
+8342 a1           B PCHI
+8343 37           IN TMP1
+8344 bb           B V1
+8345 61           OP ADD
+8346 00           SET PCLO
+8347 60           OP OVL
+8348 16           SET TMP0
+8349 81           A PCHI
+834a b6           B TMP0
+834b 61           OP ADD
+834c f7           JMP TMP1
+834d 01           SET PCHI
+834e              
+834e              
+834e              
+8d00              ORG $8D00
+8d00              FETCHADDRESS_a
+8d00              FETCH ADDRLO
+8d00 a2           B PBR
+8d01 60           OUT2
+8d02 80           A PCLO
+8d03 a1           B PCHI
+8d04 33           IN ADDRLO
+8d05 bb           B V1
+8d06 61           OP ADD
+8d07 00           SET PCLO
+8d08 60           OP OVL
+8d09 16           SET TMP0
+8d0a 81           A PCHI
+8d0b b6           B TMP0
+8d0c 61           OP ADD
+8d0d 01           SET PCHI
+8d0e              
+8d0e              FETCH ADDRHI
+8d0e a2           B PBR
+8d0f 60           OUT2
+8d10 80           A PCLO
+8d11 a1           B PCHI
+8d12 34           IN ADDRHI
+8d13 bb           B V1
+8d14 61           OP ADD
+8d15 00           SET PCLO
+8d16 60           OP OVL
+8d17 16           SET TMP0
+8d18 81           A PCHI
+8d19 b6           B TMP0
+8d1a 61           OP ADD
+8d1b 01           SET PCHI
+8d1c              
+8d1c              
+8d1c              STORE DBR ALO
+8d1c a5           B DBR
+8d1d 60           OUT2
+8d1e 93           A ADDRLO
+8d1f b4           B ADDRHI
+8d20 43           OUT ALO
+8d21              
+8d21              BRACCU16 STA_a_16bit
+8d21 9f           A V0
+8d22 b1           B MFLAG
+8d23 c7           BEQ STA_a_16bit
+8d24              
+8d24              NEXT
+8d24 a2           B PBR
+8d25 60           OUT2
+8d26 80           A PCLO
+8d27 a1           B PCHI
+8d28 37           IN TMP1
+8d29 bb           B V1
+8d2a 61           OP ADD
+8d2b 00           SET PCLO
+8d2c 60           OP OVL
+8d2d 16           SET TMP0
+8d2e 81           A PCHI
+8d2f b6           B TMP0
+8d30 61           OP ADD
+8d31 f7           JMP TMP1
+8d32 01           SET PCHI
+8d33              
+8d33 60 60 60 60  STA_a_16bit :
+8d37 60          
+8d38              INCREMENTADDRESS
+8d38              INC16 ADDRLO ADDRHI
+8d38 93           A ADDRLO
+8d39 bb           B V1
+8d3a 61           OP ADD
+8d3b 13           SET ADDRLO
+8d3c 60           OP OVL
+8d3d 16           SET TMP0
+8d3e 96           A TMP0
+8d3f b4           B ADDRHI
+8d40 61           OP ADD
+8d41 14           SET ADDRHI
+8d42              
+8d42              
+8d42              STORE DBR AHI
+8d42 a5           B DBR
+8d43 60           OUT2
+8d44 93           A ADDRLO
+8d45 b4           B ADDRHI
+8d46 44           OUT AHI
+8d47              
+8d47              NEXT
+8d47 a2           B PBR
+8d48 60           OUT2
+8d49 80           A PCLO
+8d4a a1           B PCHI
+8d4b 37           IN TMP1
+8d4c bb           B V1
+8d4d 61           OP ADD
+8d4e 00           SET PCLO
+8d4f 60           OP OVL
+8d50 16           SET TMP0
+8d51 81           A PCHI
+8d52 b6           B TMP0
+8d53 61           OP ADD
+8d54 f7           JMP TMP1
+8d55 01           SET PCHI
+8d56              
+8d56              
+8d56              
 8f00              ORG $8F00
 8f00              FETCHADDRESS_a
 8f00              FETCH ADDRLO
@@ -1960,6 +4145,7 @@ e96f
 8f41 60 60 60 60  STA_al_16bit :
 8f45 60 60 60    
 8f48              INCREMENTADDRESS
+8f48              INC16 ADDRLO ADDRHI
 8f48 93           A ADDRLO
 8f49 bb           B V1
 8f4a 61           OP ADD
@@ -1968,34 +4154,170 @@ e96f
 8f4d 16           SET TMP0
 8f4e 96           A TMP0
 8f4f b4           B ADDRHI
-8f50 14           SET ADDRHI
-8f51              
-8f51              STORE TMP4 AHI
-8f51 ba           B TMP4
-8f52 60           OUT2
-8f53 93           A ADDRLO
-8f54 b4           B ADDRHI
-8f55 44           OUT AHI
-8f56              
-8f56              NEXT
-8f56 a2           B PBR
-8f57 60           OUT2
-8f58 80           A PCLO
-8f59 a1           B PCHI
-8f5a 37           IN TMP1
-8f5b bb           B V1
-8f5c 61           OP ADD
-8f5d 00           SET PCLO
-8f5e 60           OP OVL
-8f5f 16           SET TMP0
-8f60 81           A PCHI
-8f61 b6           B TMP0
-8f62 61           OP ADD
-8f63 f7           JMP TMP1
-8f64 01           SET PCHI
-8f65              
-8f65              
-8f65              
+8f50 61           OP ADD
+8f51 14           SET ADDRHI
+8f52              
+8f52              
+8f52              STORE TMP4 AHI
+8f52 ba           B TMP4
+8f53 60           OUT2
+8f54 93           A ADDRLO
+8f55 b4           B ADDRHI
+8f56 44           OUT AHI
+8f57              
+8f57              NEXT
+8f57 a2           B PBR
+8f58 60           OUT2
+8f59 80           A PCLO
+8f5a a1           B PCHI
+8f5b 37           IN TMP1
+8f5c bb           B V1
+8f5d 61           OP ADD
+8f5e 00           SET PCLO
+8f5f 60           OP OVL
+8f60 16           SET TMP0
+8f61 81           A PCHI
+8f62 b6           B TMP0
+8f63 61           OP ADD
+8f64 f7           JMP TMP1
+8f65 01           SET PCHI
+8f66              
+8f66              
+8f66              
+9f00              ORG $9F00
+9f00              FETCHADDRESS_a_x
+9f00              FETCH ADDRLO
+9f00 a2           B PBR
+9f01 60           OUT2
+9f02 80           A PCLO
+9f03 a1           B PCHI
+9f04 33           IN ADDRLO
+9f05 bb           B V1
+9f06 61           OP ADD
+9f07 00           SET PCLO
+9f08 60           OP OVL
+9f09 16           SET TMP0
+9f0a 81           A PCHI
+9f0b b6           B TMP0
+9f0c 61           OP ADD
+9f0d 01           SET PCHI
+9f0e              
+9f0e              FETCH ADDRHI
+9f0e a2           B PBR
+9f0f 60           OUT2
+9f10 80           A PCLO
+9f11 a1           B PCHI
+9f12 34           IN ADDRHI
+9f13 bb           B V1
+9f14 61           OP ADD
+9f15 00           SET PCLO
+9f16 60           OP OVL
+9f17 16           SET TMP0
+9f18 81           A PCHI
+9f19 b6           B TMP0
+9f1a 61           OP ADD
+9f1b 01           SET PCHI
+9f1c              
+9f1c 93           A ADDRLO
+9f1d a8           B XLO
+9f1e 61           OP ADD
+9f1f 13           SET ADDRLO
+9f20 60           OP OVL
+9f21 16           SET TMP0
+9f22 94           A ADDRHI
+9f23 a9           B XHI
+9f24 61           OP ADD
+9f25 14           SET ADDRHI
+9f26 94           A ADDRHI
+9f27 b6           B TMP0
+9f28 14           SET ADDRHI
+9f29              
+9f29              FETCH TMP4
+9f29 a2           B PBR
+9f2a 60           OUT2
+9f2b 80           A PCLO
+9f2c a1           B PCHI
+9f2d 3a           IN TMP4
+9f2e bb           B V1
+9f2f 61           OP ADD
+9f30 00           SET PCLO
+9f31 60           OP OVL
+9f32 16           SET TMP0
+9f33 81           A PCHI
+9f34 b6           B TMP0
+9f35 61           OP ADD
+9f36 01           SET PCHI
+9f37              
+9f37              STORE TMP4 ALO
+9f37 ba           B TMP4
+9f38 60           OUT2
+9f39 93           A ADDRLO
+9f3a b4           B ADDRHI
+9f3b 43           OUT ALO
+9f3c              
+9f3c              BRACCU16 STA_al_x_16bit
+9f3c 9f           A V0
+9f3d b1           B MFLAG
+9f3e ca           BEQ STA_al_x_16bit
+9f3f              
+9f3f              NEXT
+9f3f a2           B PBR
+9f40 60           OUT2
+9f41 80           A PCLO
+9f42 a1           B PCHI
+9f43 37           IN TMP1
+9f44 bb           B V1
+9f45 61           OP ADD
+9f46 00           SET PCLO
+9f47 60           OP OVL
+9f48 16           SET TMP0
+9f49 81           A PCHI
+9f4a b6           B TMP0
+9f4b 61           OP ADD
+9f4c f7           JMP TMP1
+9f4d 01           SET PCHI
+9f4e              
+9f4e 60 60        STA_al_x_16bit :
+9f50              INCREMENTADDRESS
+9f50              INC16 ADDRLO ADDRHI
+9f50 93           A ADDRLO
+9f51 bb           B V1
+9f52 61           OP ADD
+9f53 13           SET ADDRLO
+9f54 60           OP OVL
+9f55 16           SET TMP0
+9f56 96           A TMP0
+9f57 b4           B ADDRHI
+9f58 61           OP ADD
+9f59 14           SET ADDRHI
+9f5a              
+9f5a              
+9f5a              STORE TMP4 AHI
+9f5a ba           B TMP4
+9f5b 60           OUT2
+9f5c 93           A ADDRLO
+9f5d b4           B ADDRHI
+9f5e 44           OUT AHI
+9f5f              
+9f5f              NEXT
+9f5f a2           B PBR
+9f60 60           OUT2
+9f61 80           A PCLO
+9f62 a1           B PCHI
+9f63 37           IN TMP1
+9f64 bb           B V1
+9f65 61           OP ADD
+9f66 00           SET PCLO
+9f67 60           OP OVL
+9f68 16           SET TMP0
+9f69 81           A PCHI
+9f6a b6           B TMP0
+9f6b 61           OP ADD
+9f6c f7           JMP TMP1
+9f6d 01           SET PCHI
+9f6e              
+9f6e              
+9f6e              
 8700              ORG $8700
 8700              FETCHADDRESS_[d] TMP4
 8700              FETCHADDRESS_d
@@ -2034,6 +4356,7 @@ e96f
 871c 37           IN TMP1
 871d              
 871d              INCREMENTADDRESS
+871d              INC16 ADDRLO ADDRHI
 871d 93           A ADDRLO
 871e bb           B V1
 871f 61           OP ADD
@@ -2042,112 +4365,121 @@ e96f
 8722 16           SET TMP0
 8723 96           A TMP0
 8724 b4           B ADDRHI
-8725 14           SET ADDRHI
-8726              
-8726              LOAD V0 TMP2
-8726 bf           B V0
-8727 60           OUT2
-8728 93           A ADDRLO
-8729 b4           B ADDRHI
-872a 38           IN TMP2
-872b              
-872b              INCREMENTADDRESS
-872b 93           A ADDRLO
-872c bb           B V1
-872d 61           OP ADD
-872e 13           SET ADDRLO
-872f 60           OP OVL
-8730 16           SET TMP0
-8731 96           A TMP0
-8732 b4           B ADDRHI
-8733 14           SET ADDRHI
-8734              
-8734              LOAD V0 TMP4
-8734 bf           B V0
-8735 60           OUT2
-8736 93           A ADDRLO
-8737 b4           B ADDRHI
-8738 3a           IN TMP4
-8739              
-8739              GET TMP1
-8739 97           A TMP1
-873a b7           B TMP1
-873b 66           OP OR
-873c              
-873c 13           SET ADDRLO
-873d              GET TMP2
-873d 98           A TMP2
-873e b8           B TMP2
-873f 66           OP OR
-8740              
-8740 14           SET ADDRHI
-8741              
-8741              STORE TMP4 ALO
-8741 ba           B TMP4
-8742 60           OUT2
-8743 93           A ADDRLO
-8744 b4           B ADDRHI
-8745 43           OUT ALO
-8746              
-8746              BRACCU16 STA_[d]_16bit
-8746 9f           A V0
-8747 b1           B MFLAG
-8748 cb           BEQ STA_[d]_16bit
-8749              
-8749              NEXT
-8749 a2           B PBR
-874a 60           OUT2
-874b 80           A PCLO
-874c a1           B PCHI
-874d 37           IN TMP1
-874e bb           B V1
-874f 61           OP ADD
-8750 00           SET PCLO
-8751 60           OP OVL
-8752 16           SET TMP0
-8753 81           A PCHI
-8754 b6           B TMP0
-8755 61           OP ADD
-8756 f7           JMP TMP1
-8757 01           SET PCHI
-8758              
-8758              STA_[d]_16bit :
-8758              INCREMENTADDRESS
-8758 93           A ADDRLO
-8759 bb           B V1
-875a 61           OP ADD
-875b 13           SET ADDRLO
-875c 60           OP OVL
-875d 16           SET TMP0
-875e 96           A TMP0
-875f b4           B ADDRHI
-8760 14           SET ADDRHI
-8761              
-8761              STORE TMP4 AHI
-8761 ba           B TMP4
-8762 60           OUT2
-8763 93           A ADDRLO
-8764 b4           B ADDRHI
-8765 44           OUT AHI
-8766              
-8766              NEXT
-8766 a2           B PBR
-8767 60           OUT2
-8768 80           A PCLO
-8769 a1           B PCHI
-876a 37           IN TMP1
-876b bb           B V1
-876c 61           OP ADD
-876d 00           SET PCLO
-876e 60           OP OVL
-876f 16           SET TMP0
-8770 81           A PCHI
-8771 b6           B TMP0
-8772 61           OP ADD
-8773 f7           JMP TMP1
-8774 01           SET PCHI
-8775              
-8775              
+8725 61           OP ADD
+8726 14           SET ADDRHI
+8727              
+8727              
+8727              LOAD V0 TMP2
+8727 bf           B V0
+8728 60           OUT2
+8729 93           A ADDRLO
+872a b4           B ADDRHI
+872b 38           IN TMP2
+872c              
+872c              INCREMENTADDRESS
+872c              INC16 ADDRLO ADDRHI
+872c 93           A ADDRLO
+872d bb           B V1
+872e 61           OP ADD
+872f 13           SET ADDRLO
+8730 60           OP OVL
+8731 16           SET TMP0
+8732 96           A TMP0
+8733 b4           B ADDRHI
+8734 61           OP ADD
+8735 14           SET ADDRHI
+8736              
+8736              
+8736              LOAD V0 TMP4
+8736 bf           B V0
+8737 60           OUT2
+8738 93           A ADDRLO
+8739 b4           B ADDRHI
+873a 3a           IN TMP4
+873b              
+873b              GET TMP1
+873b 97           A TMP1
+873c b7           B TMP1
+873d 66           OP OR
+873e              
+873e 13           SET ADDRLO
+873f              GET TMP2
+873f 98           A TMP2
+8740 b8           B TMP2
+8741 66           OP OR
+8742              
+8742 14           SET ADDRHI
+8743              
+8743              STORE TMP4 ALO
+8743 ba           B TMP4
+8744 60           OUT2
+8745 93           A ADDRLO
+8746 b4           B ADDRHI
+8747 43           OUT ALO
+8748              
+8748              BRACCU16 STA_[d]_16bit
+8748 9f           A V0
+8749 b1           B MFLAG
+874a cc           BEQ STA_[d]_16bit
+874b              
+874b              NEXT
+874b a2           B PBR
+874c 60           OUT2
+874d 80           A PCLO
+874e a1           B PCHI
+874f 37           IN TMP1
+8750 bb           B V1
+8751 61           OP ADD
+8752 00           SET PCLO
+8753 60           OP OVL
+8754 16           SET TMP0
+8755 81           A PCHI
+8756 b6           B TMP0
+8757 61           OP ADD
+8758 f7           JMP TMP1
+8759 01           SET PCHI
+875a              
+875a 60 60 60 60  STA_[d]_16bit :
+875e 60 60       
+8760              INCREMENTADDRESS
+8760              INC16 ADDRLO ADDRHI
+8760 93           A ADDRLO
+8761 bb           B V1
+8762 61           OP ADD
+8763 13           SET ADDRLO
+8764 60           OP OVL
+8765 16           SET TMP0
+8766 96           A TMP0
+8767 b4           B ADDRHI
+8768 61           OP ADD
+8769 14           SET ADDRHI
+876a              
+876a              
+876a              STORE TMP4 AHI
+876a ba           B TMP4
+876b 60           OUT2
+876c 93           A ADDRLO
+876d b4           B ADDRHI
+876e 44           OUT AHI
+876f              
+876f              NEXT
+876f a2           B PBR
+8770 60           OUT2
+8771 80           A PCLO
+8772 a1           B PCHI
+8773 37           IN TMP1
+8774 bb           B V1
+8775 61           OP ADD
+8776 00           SET PCLO
+8777 60           OP OVL
+8778 16           SET TMP0
+8779 81           A PCHI
+877a b6           B TMP0
+877b 61           OP ADD
+877c f7           JMP TMP1
+877d 01           SET PCHI
+877e              
+877e              
 aa00              ORG $AA00
 aa00              BRINDEX16 TAX_to16
 aa00 9f           A V0
@@ -2247,12 +4579,189 @@ aa4e 01           SET PCHI
 aa4f              
 aa4f              
 aa4f              
-aa4f              
-aa4f              
+5b00              ORG $5B00
+5b00              GET ALO
+5b00 83           A ALO
+5b01 a3           B ALO
+5b02 66           OP OR
+5b03              
+5b03 06           SET DLO
+5b04              GET AHI
+5b04 84           A AHI
+5b05 a4           B AHI
+5b06 66           OP OR
+5b07              
+5b07 07           SET DHI
+5b08              COMPUTENZFLAGS DLO DHI
+5b08 86           A DLO
+5b09 a7           B DHI
+5b0a 66           OP OR
+5b0b 10           SET ZFLAG
+5b0c a7           B DHI
+5b0d 0f           SET NFLAG
+5b0e              
+5b0e              NEXT
+5b0e a2           B PBR
+5b0f 60           OUT2
+5b10 80           A PCLO
+5b11 a1           B PCHI
+5b12 37           IN TMP1
+5b13 bb           B V1
+5b14 61           OP ADD
+5b15 00           SET PCLO
+5b16 60           OP OVL
+5b17 16           SET TMP0
+5b18 81           A PCHI
+5b19 b6           B TMP0
+5b1a 61           OP ADD
+5b1b f7           JMP TMP1
+5b1c 01           SET PCHI
+5b1d              
+5b1d              
+5b1d              
+1b00              ORG $1B00
+1b00              GET ALO
+1b00 83           A ALO
+1b01 a3           B ALO
+1b02 66           OP OR
+1b03              
+1b03 0c           SET SLO
+1b04              GET AHI
+1b04 84           A AHI
+1b05 a4           B AHI
+1b06 66           OP OR
+1b07              
+1b07 0d           SET SHI
+1b08              NEXT
+1b08 a2           B PBR
+1b09 60           OUT2
+1b0a 80           A PCLO
+1b0b a1           B PCHI
+1b0c 37           IN TMP1
+1b0d bb           B V1
+1b0e 61           OP ADD
+1b0f 00           SET PCLO
+1b10 60           OP OVL
+1b11 16           SET TMP0
+1b12 81           A PCHI
+1b13 b6           B TMP0
+1b14 61           OP ADD
+1b15 f7           JMP TMP1
+1b16 01           SET PCHI
+1b17              
+1b17              
+1b17              
+3b00              ORG $3B00
+3b00              GET SLO
+3b00 8c           A SLO
+3b01 ac           B SLO
+3b02 66           OP OR
+3b03              
+3b03 03           SET ALO
+3b04              GET SHI
+3b04 8d           A SHI
+3b05 ad           B SHI
+3b06 66           OP OR
+3b07              
+3b07 04           SET AHI
+3b08              COMPUTENZFLAGS ALO AHI
+3b08 83           A ALO
+3b09 a4           B AHI
+3b0a 66           OP OR
+3b0b 10           SET ZFLAG
+3b0c a4           B AHI
+3b0d 0f           SET NFLAG
+3b0e              
+3b0e              NEXT
+3b0e a2           B PBR
+3b0f 60           OUT2
+3b10 80           A PCLO
+3b11 a1           B PCHI
+3b12 37           IN TMP1
+3b13 bb           B V1
+3b14 61           OP ADD
+3b15 00           SET PCLO
+3b16 60           OP OVL
+3b17 16           SET TMP0
+3b18 81           A PCHI
+3b19 b6           B TMP0
+3b1a 61           OP ADD
+3b1b f7           JMP TMP1
+3b1c 01           SET PCHI
+3b1d              
+3b1d              
+3b1d              
+9b00              ORG $9B00
+9b00              GET XLO
+9b00 88           A XLO
+9b01 a8           B XLO
+9b02 66           OP OR
+9b03              
+9b03 0a           SET YLO
+9b04              GET XHI
+9b04 89           A XHI
+9b05 a9           B XHI
+9b06 66           OP OR
+9b07              
+9b07 0b           SET YHI
+9b08              NEXT
+9b08 a2           B PBR
+9b09 60           OUT2
+9b0a 80           A PCLO
+9b0b a1           B PCHI
+9b0c 37           IN TMP1
+9b0d bb           B V1
+9b0e 61           OP ADD
+9b0f 00           SET PCLO
+9b10 60           OP OVL
+9b11 16           SET TMP0
+9b12 81           A PCHI
+9b13 b6           B TMP0
+9b14 61           OP ADD
+9b15 f7           JMP TMP1
+9b16 01           SET PCHI
+9b17              
+9b17              
+9b17              
+bb00              ORG $BB00
+bb00              GET YLO
+bb00 8a           A YLO
+bb01 aa           B YLO
+bb02 66           OP OR
+bb03              
+bb03 08           SET XLO
+bb04              GET YHI
+bb04 8b           A YHI
+bb05 ab           B YHI
+bb06 66           OP OR
+bb07              
+bb07 09           SET XHI
+bb08              NEXT
+bb08 a2           B PBR
+bb09 60           OUT2
+bb0a 80           A PCLO
+bb0b a1           B PCHI
+bb0c 37           IN TMP1
+bb0d bb           B V1
+bb0e 61           OP ADD
+bb0f 00           SET PCLO
+bb10 60           OP OVL
+bb11 16           SET TMP0
+bb12 81           A PCHI
+bb13 b6           B TMP0
+bb14 61           OP ADD
+bb15 f7           JMP TMP1
+bb16 01           SET PCHI
+bb17              
+bb17              
+bb17              
 fb00              ORG $FB00
-fb00              GET V0
-fb00 9f           A V0
-fb01 bf           B V0
+fb00              
+fb00              
+fb00              
+fb00              GET V1
+fb00 9b           A V1
+fb01 bb           B V1
 fb02 66           OP OR
 fb03              
 fb03 0e           SET CFLAG

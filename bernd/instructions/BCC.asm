@@ -1,8 +1,11 @@
-; ---- BNE r
-    ORG $D000
-    A ZFLAG
+; ---- BCC r
+    ORG $9000
+    A CFLAG
     B V0
-    BEQ BNE_r_nottaken
+    BEQ BCC_r_taken
+    INC16 PCLO PCHI
+    NEXT
+BCC_r_taken:
     FETCH TMP3 
     A TMP3   ; create a sign-extension byte in TMP4
     B TMP3
@@ -13,8 +16,5 @@
     OP MUL
     SET TMP4
     JUMPRELATIVELONG TMP3 TMP4
-    NEXT
-BNE_r_nottaken:
-    INC16 PCLO PCHI
     NEXT
 

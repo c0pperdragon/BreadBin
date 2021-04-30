@@ -165,10 +165,17 @@ def execute(board,rom,steps,show):
         elif instr==0xE0:  # JMP
             nextpc = ram[param]<<8
         
+        # for debugging: reading a 0xFF instruction halts the processor
+        if rom[pc]==0xFF:
+            print ("Hit the 0xFF instruction at: ",
+                   format(pc,"x").zfill(4) )            
+            return
+
         # fetch instruction and progress program counter
         ir = rom[pc]
         pc = nextpc
 
+        
 
 
 # decode parameters

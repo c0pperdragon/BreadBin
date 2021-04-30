@@ -13,20 +13,10 @@
     B V1
     OP ADD
     SET V2   
-    A V2     ; construct 128
+    A V2     ; construct a 4
     B V2
-    OP MUL
-    SET TMP0 ; 4
-    A TMP0
-    B TMP0
-    OP MUL
-    SET TMP0 ; 16
     OP ADD
-    SET TMP1 ; 8
-    A TMP0
-    B TMP1
-    OP MUL
-    SET V128 ; 128
+    SET V4   
     A V1     ; construct a 255
     B V0
     OP DIV
@@ -43,8 +33,16 @@
     SET YLO
     SET YHI
     ; bernd starts program at $80FFF8
-    GET V128
-    SET PBR
+    A V4
+    B V4
+    OP MUL
+    SET PBR  ; -> 16
+    A PBR
+    B V4
+    SET PBR  ; -> 64
+    A PBR
+    B V2
+    SET PBR  ; -> 128  = $80  
     GET V255
     SET PCHI
     A V255
@@ -60,7 +58,7 @@
     SET SLO
     GET V1
     SET SHI
-    ; flags
+    ; initialize flags
     GET V0
     SET CFLAG
     SET NFLAG

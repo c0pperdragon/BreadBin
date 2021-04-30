@@ -1,0 +1,11 @@
+
+
+; ---- INC A
+    ORG $1A00
+    BRACCU16 INC_A_16bit
+    INC8ANDSETNZ ALO
+    NEXT
+INC_A_16bit:    
+    INC16 ALO AHI
+    COMPUTENZFLAGS ALO AHI
+    NEXT

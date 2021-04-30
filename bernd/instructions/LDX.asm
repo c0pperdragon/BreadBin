@@ -7,3 +7,18 @@
 LDX_#_16bit:    
     FETCH XHI
     NEXT
+
+; ---- LDX a
+    ORG $AE00
+    FETCHADDRESS_a
+    LOAD V0 XLO
+    BRINDEX16 LDX_a_16bit
+    GET XLO
+    SET ZFLAG
+    SET NFLAG
+    NEXT
+LDX_a_16bit:    
+    INCREMENTADDRESS
+    LOAD V0 XHI
+    COMPUTENZFLAGS XLO XHI
+    NEXT

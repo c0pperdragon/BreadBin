@@ -21,6 +21,7 @@
     ZFLAG = 16   ; result of previous alu operation converning z
     MFLAG = 17   ; 1 if using 8-bit memory and accu. 0 otherwise
     XFLAG = 18   ; 1 if using 8-bit x,y. 0 otherwise
+                 ; as long as XFLAG is set, XHI and XLO must be kept at 0
 ; temporary address registers
     ADDRLO = 19
     ADDRHI = 20
@@ -33,7 +34,7 @@
 ; mem holding constant values
     V1 = 27
     V2 = 28
-    V128 = 29
+    V4 = 29
     V255 = 30
     V0 = 31   ; with mem 31 holding 0, executing a 
               ; $FF instruction will jump to $0000, 
@@ -105,6 +106,23 @@ MACRO FETCHADDRESS_d
     SET ADDRHI
 ENDMACRO
 
+; fetch next byte from program and construct the 16-bit address with SPHI/SPLO
+; store result in ADDRLO/ADDRHI
+; Intermediate storage: TMP0 
+MACRO FETCHADDRESS_d_s
+    FETCH ADDRLO
+    A ADDRLO
+    B SLO
+    OP ADD
+    SET ADDRLO
+    OP OVL
+    SET TMP0
+    A SHI
+    B TMP0
+    OP ADD
+    SET ADDRHI
+ENDMACRO
+
 ; fetch two bytes from program and combine with X to get 16-bit address
 ; store result in ADDRLO/ADDRHI
 ; Intermediate storage: TMP0 
@@ -151,19 +169,36 @@ MACRO FETCHADDRESS_[d] bank
     SET ADDRHI
 ENDMACRO
 
-; increment value of program counter
-; Intermediate storage: TMP0 
-MACRO INCREMENTPC
-    A PCLO
+; Increment a 16-bit value.
+; Intermediate registers: TMP0
+MACRO INC16 rlo rhi
+    A rlo
     B V1
     OP ADD
-    SET PCLO
+    SET rlo
     OP OVL
     SET TMP0
     A TMP0
-    B PCHI
+    B rhi
     OP ADD
-    SET PCHI
+    SET rhi
+ENDMACRO
+
+; Decrement a 16-bit value.
+; Intermediate registers: TMP0
+MACRO DEC16 rlo rhi
+    A rlo
+    B V1
+    OP SUB
+    SET rlo
+    A rlo
+    B V255
+    OP DIV
+    SET TMP0
+    A rhi
+    B TMP0
+    OP SUB
+    SET rhi
 ENDMACRO
 
 ; perform relative (16-bit) jump
@@ -187,15 +222,7 @@ ENDMACRO
 ; increment the 16-bit value ADDRLO/ADDRHI
 ; Intermediate storage: TMP0 
 MACRO INCREMENTADDRESS
-    A ADDRLO
-    B V1
-    OP ADD
-    SET ADDRLO
-    OP OVL
-    SET TMP0
-    A TMP0
-    B ADDRHI
-    SET ADDRHI
+    INC16 ADDRLO ADDRHI
 ENDMACRO
 
 ; store a value into the specified memory bank at address ADDRLO/ADDRHI 
@@ -216,6 +243,33 @@ MACRO LOAD bank value
     IN value
 ENDMACRO 
 
+; store an 8-bit value on the stack
+MACRO PUSH value
+    B V0
+    OUT2
+    A SLO
+    B SHI
+    OUT value
+    DEC16 SLO SHI
+ENDMACRO
+
+; fetch an 8-bit value from the stack
+MACRO PULL value
+    INC16 SLO SHI
+    B V0
+    OUT2
+    A SLO
+    B SHI
+    IN value
+ENDMACRO
+
+; unconditional branch
+MACRO BRA target
+    A V0
+    B V0
+    BEQ target    
+ENDMACRO
+
 ; perform a branch if the A/M flag is set to 16 bit mode
 MACRO BRACCU16 branchtarget
     A V0
@@ -230,6 +284,26 @@ MACRO BRINDEX16 branchtarget
     BEQ branchtarget
 ENDMACRO
 
+; decrement an 8-bit value and set ZFLAG and NFLAG accordingly
+MACRO DEC8ANDSETNZ r
+    A r
+    B V1
+    OP SUB
+    SET r
+    SET NFLAG
+    SET ZFLAG
+ENDMACRO
+
+; increment an 8-bit value and set ZFLAG and NFLAG accordingly
+MACRO INC8ANDSETNZ r
+    A r
+    B V1
+    OP ADD
+    SET r
+    SET NFLAG
+    SET ZFLAG
+ENDMACRO
+
 ; join low and high byte of a 16-bit value to reflect the 
 ; zero-ness state of the value (basically doing an OR)
 MACRO COMPUTEZFLAG lo hi
@@ -238,22 +312,54 @@ MACRO COMPUTEZFLAG lo hi
     OP OR
     SET ZFLAG
 ENDMACRO
+
+; compute N and Z flags from a 16-bit value
+MACRO COMPUTENZFLAGS lo hi
+    A lo
+    B hi
+    OP OR
+    SET ZFLAG
+    B hi
+    SET NFLAG    
+ENDMACRO
+
   
     
 include startup.asm
 include instructions/ADC.asm
 include instructions/AND.asm
+include instructions/BCC.asm
+include instructions/BEQ.asm
 include instructions/BNE.asm
+include instructions/BRA.asm
 include instructions/CLC.asm
+include instructions/DEC.asm
+include instructions/DEX.asm
+include instructions/INC.asm
 include instructions/INX.asm
 include instructions/INY.asm
 include instructions/JMP.asm
+include instructions/JSL.asm
 include instructions/LDA.asm
 include instructions/LDX.asm
 include instructions/LDY.asm
+include instructions/MVN.asm
+include instructions/PEA.asm
+include instructions/PEI.asm
+include instructions/PHA.asm
+include instructions/PHD.asm
+include instructions/PLA.asm
+include instructions/REP.asm
+include instructions/RTL.asm
 include instructions/SBC.asm
 include instructions/SEC.asm
+include instructions/SEP.asm
 include instructions/STA.asm
 include instructions/TAX.asm
+include instructions/TCD.asm
+include instructions/TCS.asm
+include instructions/TSC.asm
+include instructions/TXY.asm
+include instructions/TYX.asm
 include instructions/XCE.asm
 

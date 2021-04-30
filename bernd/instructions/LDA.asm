@@ -4,31 +4,57 @@
     FETCHADDRESS_d
     LOAD V0 ALO
     BRACCU16 LDA_d_16bit
+    GET ALO
+    SET ZFLAG
+    SET NFLAG
     NEXT
 LDA_d_16bit:    
     INCREMENTADDRESS
     LOAD V0 AHI
+    COMPUTENZFLAGS ALO AHI
     NEXT
 
+    ; ---- LDA d,s
+    ORG $A300
+    FETCHADDRESS_d_s
+    LOAD V0 ALO
+    BRACCU16 LDA_d_s_16bit
+    GET ALO
+    SET ZFLAG
+    SET NFLAG
+    NEXT
+LDA_d_s_16bit:    
+    INCREMENTADDRESS
+    LOAD V0 AHI
+    COMPUTENZFLAGS ALO AHI
+    NEXT
+    
 ; ---- LDA #
     ORG $A900
     FETCH ALO
     BRACCU16 LDA_#_16bit
+    GET ALO
+    SET ZFLAG
+    SET NFLAG
     NEXT
 LDA_#_16bit:
     FETCH AHI
+    COMPUTENZFLAGS ALO AHI
     NEXT
-    
-; ---- LDA al,x
-    ORG $BF00
-    FETCHADDRESS_a_x
-    FETCH TMP4      ; data bank
-    LOAD TMP4 ALO
-    BRACCU16 LDA_alx_16bit
+
+; ---- LDA a
+    ORG $AD00
+    FETCHADDRESS_a
+    LOAD DBR ALO
+    BRACCU16 LDA_a_16bit
+    GET ALO
+    SET ZFLAG
+    SET NFLAG
     NEXT
-LDA_alx_16bit:    
+LDA_a_16bit:    
     INCREMENTADDRESS
-    LOAD TMP4 AHI
+    LOAD DBR AHI
+    COMPUTENZFLAGS ALO AHI
     NEXT
     
 ; ---- LDA al
@@ -37,9 +63,29 @@ LDA_alx_16bit:
     FETCH TMP4      ; data bank
     LOAD TMP4 ALO
     BRACCU16 LDA_al_16bit
+    GET ALO
+    SET ZFLAG
+    SET NFLAG
     NEXT
 LDA_al_16bit:    
     INCREMENTADDRESS
     LOAD TMP4 AHI
+    COMPUTENZFLAGS ALO AHI
+    NEXT
+    
+; ---- LDA al,x
+    ORG $BF00
+    FETCHADDRESS_a_x
+    FETCH TMP4      ; data bank
+    LOAD TMP4 ALO
+    BRACCU16 LDA_alx_16bit
+    GET ALO
+    SET ZFLAG
+    SET NFLAG
+    NEXT
+LDA_alx_16bit:    
+    INCREMENTADDRESS
+    LOAD TMP4 AHI
+    COMPUTENZFLAGS ALO AHI
     NEXT
     

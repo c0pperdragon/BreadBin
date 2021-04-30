@@ -1,0 +1,9 @@
+; ---- DEX i
+    ORG $CA00
+    BRINDEX16 DEX_i_16bit
+    DEC8ANDSETNZ XLO
+    NEXT
+DEX_i_16bit:    
+    DEC16 XLO XHI
+    COMPUTENZFLAGS XLO XHI
+    NEXT
