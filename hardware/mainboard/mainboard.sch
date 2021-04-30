@@ -116,7 +116,7 @@ F 3 "" H 6300 7450 50  0001 C CNN
 $EndComp
 Text Label 10400 1700 2    50   ~ 0
 WR#
-Text Label 10400 1900 2    50   ~ 0
+Text Label 10400 1800 2    50   ~ 0
 RD#
 Text Label 7650 5900 1    50   ~ 0
 A18
@@ -894,17 +894,6 @@ F 3 "~" H 10750 2900 50  0001 C CNN
 	1    0    0    1   
 $EndComp
 $Comp
-L Connector_Generic:Conn_01x03 JCTR
-U 1 1 60894DE5
-P 10750 1800
-F 0 "JCTR" H 10670 1475 50  0000 C CNN
-F 1 "Conn_01x03" H 10670 1566 50  0000 C CNN
-F 2 "" H 10750 1800 50  0001 C CNN
-F 3 "~" H 10750 1800 50  0001 C CNN
-	1    10750 1800
-	1    0    0    1   
-$EndComp
-$Comp
 L power:PWR_FLAG #FLG?
 U 1 1 608AA4DE
 P 6200 7350
@@ -930,14 +919,10 @@ Wire Wire Line
 	6200 7350 6300 7350
 Wire Wire Line
 	6200 7450 6300 7450
-Text Label 10400 1800 2    50   ~ 0
-WRX#
 Wire Wire Line
 	10550 1700 10400 1700
 Wire Wire Line
 	10550 1800 10400 1800
-Wire Wire Line
-	10550 1900 10400 1900
 Wire Wire Line
 	10550 2500 10400 2500
 Wire Wire Line
@@ -989,20 +974,7 @@ Wire Wire Line
 NoConn ~ 8100 2250
 NoConn ~ 8200 2250
 Text Label 8700 3550 1    50   ~ 0
-WRX#
-$Comp
-L power:GND #PWR?
-U 1 1 60D49D16
-P 8800 3300
-F 0 "#PWR?" H 8800 3050 50  0001 C CNN
-F 1 "GND" V 8805 3172 50  0000 R CNN
-F 2 "" H 8800 3300 50  0001 C CNN
-F 3 "" H 8800 3300 50  0001 C CNN
-	1    8800 3300
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	8800 3300 8800 3250
+CLK
 Wire Wire Line
 	8700 3550 8700 3250
 $Comp
@@ -1250,4 +1222,31 @@ Wire Wire Line
 	6650 2050 6650 1450
 Wire Wire Line
 	5550 1450 5550 3050
+$Comp
+L Connector_Generic:Conn_01x05 JCTR
+U 1 1 6093C414
+P 10750 1900
+F 0 "JCTR" H 10650 2350 50  0000 L CNN
+F 1 "Conn_01x05" H 10550 2250 50  0000 L CNN
+F 2 "" H 10750 1900 50  0001 C CNN
+F 3 "~" H 10750 1900 50  0001 C CNN
+	1    10750 1900
+	1    0    0    -1  
+$EndComp
+Text Label 10400 2000 2    50   ~ 0
+LATCHB#
+Text Label 10400 1900 2    50   ~ 0
+LATCHA#
+Text Label 10400 2100 2    50   ~ 0
+CLK
+Wire Wire Line
+	10400 1900 10550 1900
+Wire Wire Line
+	10400 2000 10550 2000
+Wire Wire Line
+	10400 2100 10550 2100
+Text Label 8800 3550 1    50   ~ 0
+LATCHB#
+Wire Wire Line
+	8800 3550 8800 3250
 $EndSCHEMATC

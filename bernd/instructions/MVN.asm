@@ -7,14 +7,12 @@
 MVN_loop:    
     ; get from source
     B TMP4    
-    OUT2
     A XLO
     B XHI
     IN TMP0
     
     ; write to destination
     B DBR
-    OUT2
     A YLO
     B YHI
     OUT TMP0

@@ -9,13 +9,16 @@ class Board:
     def wr(self,address,value):
         print(value,end='\n',flush=True)
         
-    def wr2(self,a,b):
+    def latcha(self,preva):
+        pass
+    
+    def latchb(self,prevb):
         pass
     
     def rd(self,address):
         return 0xff
 
-class ByteMachineBoard(Board):
+class BreadBinBoard(Board):
     def __init__(self, extrarom):
         Board.__init__(self)
         self.extraram = [255]*(1<<19)
@@ -30,10 +33,6 @@ class ByteMachineBoard(Board):
         elif (a & 0xC00000) == 0x400000:  # writing to IO
             self.output((a>>8) & 0xff)   # use bits 8-15 of address as data
         
-    def wr2(self,a,b):
-#        print("!", format(a,"02x"), format(b,"02x"))
-        self.bank = b
-    
     def rd(self,address):
         v = 0
         a = (self.bank<<16)+address;
@@ -45,6 +44,9 @@ class ByteMachineBoard(Board):
             v = self.extrarom[a & 0x7ffff] # reading from ROM
 #        print(format(a,"06x"),"->",format(v,"02x"))
         return v
+
+    def latchb(self,prevb):
+        self.bank = prevb
     
     def output(self,value):
         print(format(value,"08b"),end='\n',flush=True)
@@ -154,10 +156,11 @@ def execute(board,rom,steps,show):
             board.wr(b*256+a,ram[param])
         elif instr==0x60:  # OP
             op = param & 0x07
-            board.wr2(a,b)
         elif instr==0x80:  # A
+            board.latcha(a)
             a = ram[param]
         elif instr==0xA0:  # B
+            board.latchb(b)
             b = ram[param]
         elif instr==0xC0:  # BBZ
             if b==0:
@@ -192,6 +195,6 @@ for i in range(len(sys.argv)-1):
 
 # execute
 rom = readromfile(sys.argv[len(sys.argv)-1])
-board = Board() if extra==None else ByteMachineBoard(readromfile(extra))
+board = Board() if extra==None else BreadBinBoard(readromfile(extra))
 execute(board,rom,steps,show)
     

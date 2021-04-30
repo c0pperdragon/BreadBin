@@ -174,8 +174,6 @@ def processline(identifiers, macros, finalpass, tokens, codeaddress, outbuffer,l
         bytes = [ 0x20 | op(I,G,T, 1, 5) ]
     elif T[0]=="OUT":
         bytes = [ 0x40 | op(I,G,T, 1, 5) ]
-    elif T[0]=="OUT2":
-        bytes = [ 0x60 ]
     elif T[0]=="OP":
         bytes = [ 0x60 | operator(T, 1) ]
     elif T[0]=="A":
@@ -192,8 +190,6 @@ def processline(identifiers, macros, finalpass, tokens, codeaddress, outbuffer,l
         bytes = [ 0xC0 | ((addr%256)//8)]
     elif T[0]=="JMP":
         bytes = [ 0xE0 | op(I,G,T, 1, 5) ]
-    elif T[0]=="NOP":
-        bytes = [ 0x60 | 0 ]
         
     elif T[0] in macros:
         m = macros[T[0]]

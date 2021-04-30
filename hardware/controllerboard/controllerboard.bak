@@ -1949,17 +1949,9 @@ Wire Wire Line
 Wire Wire Line
 	5400 6650 5950 6650
 Wire Wire Line
-	3750 6550 3450 6550
-Wire Wire Line
-	3800 6650 3450 6650
-Wire Wire Line
 	3450 6850 3750 6850
 Wire Wire Line
 	3450 6750 3800 6750
-Wire Wire Line
-	3800 6650 3850 6650
-Wire Wire Line
-	3750 6550 3900 6550
 Wire Wire Line
 	9700 3850 9700 4400
 Wire Wire Line
@@ -2131,10 +2123,8 @@ Wire Wire Line
 	3000 5750 3450 5750
 Wire Wire Line
 	3000 5650 3450 5650
-Connection ~ 3750 6550
 Wire Wire Line
 	3750 6550 3750 6850
-Connection ~ 3800 6650
 Wire Wire Line
 	3800 6650 3800 6750
 $Comp
@@ -2187,4 +2177,38 @@ Wire Wire Line
 Connection ~ 3050 7250
 Wire Wire Line
 	3050 7250 3050 7150
+$Comp
+L power:GND #PWR0142
+U 1 1 60B65DC9
+P 3300 550
+F 0 "#PWR0142" H 3300 300 50  0001 C CNN
+F 1 "GND" V 3305 422 50  0000 R CNN
+F 2 "" H 3300 550 50  0001 C CNN
+F 3 "" H 3300 550 50  0001 C CNN
+	1    3300 550 
+	0    -1   -1   0   
+$EndComp
+$Comp
+L power:+5V #PWR0143
+U 1 1 60B65EA6
+P 2800 550
+F 0 "#PWR0143" H 2800 400 50  0001 C CNN
+F 1 "+5V" V 2815 678 50  0000 L CNN
+F 2 "" H 2800 550 50  0001 C CNN
+F 3 "" H 2800 550 50  0001 C CNN
+	1    2800 550 
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	3300 550  3250 550 
+Wire Wire Line
+	3250 550  3250 600 
+Wire Wire Line
+	2800 550  3050 550 
+Wire Wire Line
+	3050 550  3050 600 
+Wire Wire Line
+	3450 6650 3850 6650
+Wire Wire Line
+	3450 6550 3900 6550
 $EndSCHEMATC

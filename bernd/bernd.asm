@@ -22,9 +22,6 @@
     MFLAG = 17   ; 1 if using 8-bit memory and accu. 0 otherwise
     XFLAG = 18   ; 1 if using 8-bit x,y. 0 otherwise
                  ; as long as XFLAG is set, XHI and XLO must be kept at 0
-; temporary address registers
-    ADDRLO = 19
-    ADDRHI = 20
 ; temporary storage 
     TMP0 = 22
     TMP1 = 23
@@ -36,7 +33,7 @@
     V2 = 28
     V4 = 29
     V255 = 30
-    V0 = 31   ; with mem 31 holding 0, executing a 
+    V0 = 31   ; with register 31 holding 0, executing a 
               ; $FF instruction will jump to $0000, 
               ; instantly resetting the machine
   
@@ -53,7 +50,6 @@ ENDMACRO
 ; Intermediate storage: TMP0
 MACRO FETCH target    
     B PBR
-    OUT2
     A PCLO
     B PCHI
     IN target
@@ -73,7 +69,6 @@ ENDMACRO
 ; Intermediate storage: TMP0, TMP1
 MACRO NEXT
     B PBR
-    OUT2
     A PCLO
     B PCHI
     IN TMP1
@@ -86,87 +81,92 @@ MACRO NEXT
     B TMP0
     OP ADD
     JMP TMP1
-    SET PCHI
+    SET PCHI  ; make use of delay slot
 ENDMACRO
 
 ; fetch next byte from program and construct the 16-bit address with DHI/DLO
-; store result in ADDRLO/ADDRHI
 ; Intermediate storage: TMP0 
-MACRO FETCHADDRESS_d
-    FETCH ADDRLO
-    A ADDRLO
+MACRO FETCHADDRESS_d rlo rhi
+    FETCH rlo
+    A rlo
     B DLO
     OP ADD
-    SET ADDRLO
+    SET rlo
     OP OVL
     SET TMP0
     A DHI
     B TMP0
     OP ADD
-    SET ADDRHI
+    SET rhi
 ENDMACRO
 
 ; fetch next byte from program and construct the 16-bit address with SPHI/SPLO
-; store result in ADDRLO/ADDRHI
 ; Intermediate storage: TMP0 
-MACRO FETCHADDRESS_d_s
-    FETCH ADDRLO
-    A ADDRLO
+MACRO FETCHADDRESS_d_s rlo rhi
+    FETCH rlo
+    A rlo
     B SLO
     OP ADD
-    SET ADDRLO
+    SET rlo
     OP OVL
     SET TMP0
     A SHI
     B TMP0
     OP ADD
-    SET ADDRHI
+    SET rhi
 ENDMACRO
 
 ; fetch two bytes from program and combine with X to get 16-bit address
-; store result in ADDRLO/ADDRHI
 ; Intermediate storage: TMP0 
-MACRO FETCHADDRESS_a_x
-    FETCH ADDRLO
-    FETCH ADDRHI
-    A ADDRLO
+MACRO FETCHADDRESS_a_x rlo rhi
+    FETCH rlo
+    FETCH rhi
+    A rlo
     B XLO
     OP ADD
-    SET ADDRLO
+    SET rlo
     OP OVL
     SET TMP0
-    A ADDRHI
+    A rhi
     B XHI
     OP ADD
-    SET ADDRHI
-    A ADDRHI
+    SET rhi
+    A rhi
     B TMP0
-    SET ADDRHI
+    SET rhi
 ENDMACRO
 
-; fetch two bytes and use as address
+; fetch three bytes from program and combine with X to get 16-bit address
 ; Intermediate storage: TMP0 
-MACRO FETCHADDRESS_a
-    FETCH ADDRLO
-    FETCH ADDRHI
+MACRO FETCHADDRESS_al_x rlo rhi rbank
+    FETCHADDRESS_a_x rlo rhi
+    FETCH rbank
+ENDMACRO
+
+; fetch address consisting of two bytes
+; Intermediate storage: TMP0 
+MACRO FETCHADDRESS_a rlo rhi
+    FETCH rlo
+    FETCH rhi
+ENDMACRO
+
+; fetch address consisting of three bytes
+; Intermediate storage: TMP0 
+MACRO FETCHADDRESS_al rlo rhi rbank
+    FETCHADDRESS_a rlo rhi
+    FETCH rbank
 ENDMACRO
 
 ; fetch address indirect long. For this, combine the
 ; next program byte with the DLO,DHI to get the address of the long pointer
-; store resulting address in ADDRLO/ADDRHI and the bank number
-; in the provided register
-; Intermediate storage: TMP0, TMP1, TMP2
-MACRO FETCHADDRESS_[d] bank
-    FETCHADDRESS_d
-    LOAD V0 TMP1
-    INCREMENTADDRESS
-    LOAD V0 TMP2
-    INCREMENTADDRESS
-    LOAD V0 bank
-    GET TMP1
-    SET ADDRLO
-    GET TMP2
-    SET ADDRHI
+; Intermediate storage: TMP0, TMP1
+MACRO FETCHADDRESS_[d] rlo rhi rbank
+    FETCHADDRESS_d TMP1 rbank  ; use target register as temporary storage
+    LOAD TMP1 rbank V0 rlo
+    INC16 TMP1 rbank
+    LOAD TMP1 rbank V0 rhi
+    INC16 TMP1 rbank
+    LOAD TMP1 rbank V0 rbank
 ENDMACRO
 
 ; Increment a 16-bit value.
@@ -201,7 +201,9 @@ MACRO DEC16 rlo rhi
     SET rhi
 ENDMACRO
 
-; perform relative (16-bit) jump
+
+
+; perform relative jump with 16-bit offset
 ; Intermediate storage: TMP0 
 MACRO JUMPRELATIVELONG offsetlo offsethi
     A PCLO
@@ -219,48 +221,48 @@ MACRO JUMPRELATIVELONG offsetlo offsethi
     SET PCHI
 ENDMACRO
 
-; increment the 16-bit value ADDRLO/ADDRHI
-; Intermediate storage: TMP0 
-MACRO INCREMENTADDRESS
-    INC16 ADDRLO ADDRHI
+; perform a relative jump with an 8-bit offset
+; Intermediate storage: TMP0, TMP1
+MACRO JUMPRELATIVE offset
+    A offset   ; create a sign-extension byte in TMP1
+    B offset
+    OP OVL
+    SET TMP1 ; only the sign bit remains
+    A TMP1
+    B V255
+    OP MUL
+    SET TMP1
+    JUMPRELATIVELONG offset TMP1
 ENDMACRO
 
-; store a value into the specified memory bank at address ADDRLO/ADDRHI 
-MACRO STORE bank value
+; store a value into the specified memory location and bank 
+MACRO STORE rlo rhi bank value
     B bank
-    OUT2
-    A ADDRLO
-    B ADDRHI
+    A rlo
+    B rhi
     OUT value
 ENDMACRO 
 
-; load a value from the specified memory bank at address ADDRLO/ADDRHI 
-MACRO LOAD bank value
+; load a value from the specified memory location and bank 
+MACRO LOAD rlo rhi bank value
     B bank
-    OUT2
-    A ADDRLO
-    B ADDRHI
+    A rlo
+    B rhi
     IN value
 ENDMACRO 
 
 ; store an 8-bit value on the stack
+; Intermediate storage: TMP0 
 MACRO PUSH value
-    B V0
-    OUT2
-    A SLO
-    B SHI
-    OUT value
+    STORE SLO SHI V0 value
     DEC16 SLO SHI
 ENDMACRO
 
 ; fetch an 8-bit value from the stack
+; Intermediate storage: TMP0 
 MACRO PULL value
     INC16 SLO SHI
-    B V0
-    OUT2
-    A SLO
-    B SHI
-    IN value
+    LOAD SLO SHI V0 value
 ENDMACRO
 
 ; perform a branch if the A/M flag is set to 16 bit mode

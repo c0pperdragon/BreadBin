@@ -25,9 +25,9 @@ F 3 "~" H 6250 750 50  0001 C CNN
 	1    6250 750 
 	0    1    -1   0   
 $EndComp
-Text Label 5450 1150 1    50   ~ 0
+Text Label 5250 1250 1    50   ~ 0
 WR#
-Text Label 5650 1150 1    50   ~ 0
+Text Label 5350 1250 1    50   ~ 0
 RD#
 $Comp
 L power:GND #PWR0207
@@ -987,41 +987,24 @@ Wire Wire Line
 $Comp
 L 74xx:74LS32 UOR1
 U 1 1 61E0D517
-P 4900 800
-F 0 "UOR1" H 4850 1000 50  0000 C CNN
-F 1 "74HC32" H 5100 950 50  0000 C CNN
-F 2 "" H 4900 800 50  0001 C CNN
-F 3 "http://www.ti.com/lit/gpn/sn74LS32" H 4900 800 50  0001 C CNN
-	1    4900 800 
-	1    0    0    -1  
-$EndComp
-$Comp
-L 74xx:74LS32 UOR1
-U 2 1 61E0D57E
-P 4900 1250
-F 0 "UOR1" H 4850 1450 50  0000 C CNN
-F 1 "74HC32" H 5100 1400 50  0000 C CNN
-F 2 "" H 4900 1250 50  0001 C CNN
-F 3 "http://www.ti.com/lit/gpn/sn74LS32" H 4900 1250 50  0001 C CNN
-	2    4900 1250
+P 4700 1050
+F 0 "UOR1" H 4650 1250 50  0000 C CNN
+F 1 "74HC32" H 4900 1200 50  0000 C CNN
+F 2 "" H 4700 1050 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn74LS32" H 4700 1050 50  0001 C CNN
+	1    4700 1050
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	5450 950  5450 1200
-Wire Wire Line
-	5550 950  5550 1250
-Text Label 4300 700  0    50   ~ 0
+	5250 950  5250 1300
+Text Label 4100 950  0    50   ~ 0
 CLK
-Text Label 4300 1150 0    50   ~ 0
+Text Label 5650 1250 1    50   ~ 0
 CLK
-Wire Wire Line
-	4300 1150 4600 1150
-Text Label 4250 900  0    50   ~ 0
+Text Label 4050 1150 0    50   ~ 0
 CMDOUT#
-Text Label 4300 1800 0    50   ~ 0
+Text Label 4100 1650 0    50   ~ 0
 CMDIN#
-Wire Wire Line
-	4300 1350 4600 1350
 $Comp
 L 74xx:74LS32 UOR1
 U 5 1 62016085
@@ -1444,17 +1427,6 @@ Wire Wire Line
 	3450 6250 4300 6250
 Wire Wire Line
 	3450 6350 4350 6350
-$Comp
-L 74xx:74LS32 UOR1
-U 4 1 644963BF
-P 4900 1700
-F 0 "UOR1" H 4850 1900 50  0000 C CNN
-F 1 "74HC32" H 5150 1850 50  0000 C CNN
-F 2 "" H 4900 1700 50  0001 C CNN
-F 3 "http://www.ti.com/lit/gpn/sn74LS32" H 4900 1700 50  0001 C CNN
-	4    4900 1700
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	6550 1950 6550 4800
 Wire Wire Line
@@ -1501,43 +1473,24 @@ Wire Wire Line
 	7200 4200 6050 4200
 Wire Wire Line
 	7200 4100 6150 4100
-$Comp
-L Connector_Generic:Conn_01x03 JCTRL1
-U 1 1 64911D58
-P 5550 750
-F 0 "JCTRL1" V 5750 850 50  0000 R CNN
-F 1 "Conn_01x03" V 5650 1000 50  0000 R CNN
-F 2 "" H 5550 750 50  0001 C CNN
-F 3 "~" H 5550 750 50  0001 C CNN
-	1    5550 750 
-	0    1    -1   0   
-$EndComp
 Wire Wire Line
-	5450 1200 5300 1200
+	5250 1300 5100 1300
 Wire Wire Line
-	5300 1200 5300 800 
+	5100 1300 5100 1050
 Wire Wire Line
-	5300 800  5200 800 
+	5100 1050 5000 1050
 Wire Wire Line
-	4300 700  4600 700 
+	4100 950  4400 950 
 Wire Wire Line
-	5200 1250 5550 1250
-Wire Wire Line
-	5200 1700 5650 1700
-Wire Wire Line
-	5650 1700 5650 950 
-Text Label 5550 1150 1    50   ~ 0
-WRX#
-Text Label 4300 1600 0    50   ~ 0
+	5000 1550 5350 1550
+Text Label 4100 1450 0    50   ~ 0
 CLK
 Wire Wire Line
-	4300 1600 4600 1600
+	4100 1450 4400 1450
 Wire Wire Line
-	4250 900  4600 900 
-Text Label 4300 1350 0    50   ~ 0
-CMDOP#
+	4050 1150 4400 1150
 Wire Wire Line
-	4300 1800 4600 1800
+	4100 1650 4400 1650
 Wire Wire Line
 	6850 3800 7200 3800
 Wire Wire Line
@@ -2211,4 +2164,38 @@ Wire Wire Line
 	3450 6650 3850 6650
 Wire Wire Line
 	3450 6550 3900 6550
+$Comp
+L 74xx:74LS32 UOR1
+U 4 1 644963BF
+P 4700 1550
+F 0 "UOR1" H 4650 1750 50  0000 C CNN
+F 1 "74HC32" H 4950 1700 50  0000 C CNN
+F 2 "" H 4700 1550 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn74LS32" H 4700 1550 50  0001 C CNN
+	4    4700 1550
+	1    0    0    -1  
+$EndComp
+$Comp
+L Connector_Generic:Conn_01x05 J?
+U 1 1 60A33E07
+P 5450 750
+F 0 "J?" V 5416 462 50  0000 R CNN
+F 1 "Conn_01x05" V 5325 462 50  0000 R CNN
+F 2 "" H 5450 750 50  0001 C CNN
+F 3 "~" H 5450 750 50  0001 C CNN
+	1    5450 750 
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	5650 1250 5650 950 
+Text Label 5450 1250 1    50   ~ 0
+CMDA#
+Text Label 5550 1250 1    50   ~ 0
+CMDB#
+Wire Wire Line
+	5350 950  5350 1550
+Wire Wire Line
+	5450 950  5450 1250
+Wire Wire Line
+	5550 950  5550 1250
 $EndSCHEMATC
