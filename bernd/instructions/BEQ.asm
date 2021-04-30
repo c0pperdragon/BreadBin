@@ -1,8 +1,7 @@
 ; ---- BEQ r
     ORG $F000
-    A ZFLAG
-    B V0
-    BEQ BEQ_r_taken
+    B ZFLAG
+    BBZ BEQ_r_taken
     INC16 PCLO PCHI
     NEXT
 BEQ_r_taken:

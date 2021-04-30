@@ -28,13 +28,13 @@ MVN_loop:
     B AHI
     OP OR
     SET TMP0
-    A TMP0
-    B V0
-    BEQ MVN_done
+    B TMP0
+    BBZ MVN_done
     
     ; decrement C and keep going
     DEC16 ALO AHI
-    BRA MVN_loop
+    B V0
+    BBZ MVN_loop
     
 MVN_done:
     NEXT

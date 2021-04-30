@@ -9,9 +9,8 @@
     B V1
     OP AND
     SET TMP0
-    A TMP0
-    B V0
-    BEQ REP_#_noC
+    B TMP0
+    BBZ REP_#_noC
     ; clear CFLAG
     GET V0
     SET CFLAG
@@ -22,9 +21,8 @@ REP_#_noC:
     B V2
     OP AND
     SET TMP0
-    A TMP0
-    B V0
-    BEQ REP_#_noZ
+    B TMP0
+    BBZ REP_#_noZ
     ; clear ZFLAG
     GET V1    
     SET ZFLAG
@@ -35,9 +33,8 @@ REP_#_noZ:
     B TMP4
     OP OVL
     SET TMP0
-    A TMP0
-    B V0
-    BEQ REP_#_noN
+    B TMP0
+    BBZ REP_#_noN
     ; clear NFLAG
     GET V0    
     SET NFLAG
@@ -56,9 +53,8 @@ REP_#_noN:
     B V1
     OP AND
     SET TMP0
-    A TMP0
-    B V0
-    BEQ REP_#_noX
+    B TMP0
+    BBZ REP_#_noX
     ; clear XFLAG
     GET V0    
     SET XFLAG
@@ -71,13 +67,11 @@ REP_#_noX:
     B V2
     OP AND
     SET TMP0
-    A TMP0
-    B V0
-    BEQ REP_#_noM
+    B TMP0
+    BBZ REP_#_noM
     ; clear MFLAG
     GET V0    
     SET MFLAG
 REP_#_noM:
     
-
     NEXT

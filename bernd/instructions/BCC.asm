@@ -1,8 +1,7 @@
 ; ---- BCC r
     ORG $9000
-    A CFLAG
-    B V0
-    BEQ BCC_r_taken
+    B CFLAG
+    BBZ BCC_r_taken
     INC16 PCLO PCHI
     NEXT
 BCC_r_taken:

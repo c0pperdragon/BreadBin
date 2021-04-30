@@ -182,7 +182,7 @@ def processline(identifiers, macros, finalpass, tokens, codeaddress, outbuffer,l
         bytes = [ 0x80 | op(I,G,T, 1, 5) ]
     elif T[0]=="B":
         bytes = [ 0xA0 | op(I,G,T, 1, 5) ]
-    elif T[0]=="BEQ":
+    elif T[0]=="BBZ":
         addr = op(I,G,T, 1, 16)
         if finalpass:
             if (addr//256) != (pc//256):

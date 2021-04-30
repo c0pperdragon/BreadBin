@@ -1,8 +1,7 @@
 ; ---- BNE r
     ORG $D000
-    A ZFLAG
-    B V0
-    BEQ BNE_r_nottaken
+    B ZFLAG
+    BBZ BNE_r_nottaken
     FETCH TMP3 
     A TMP3   ; create a sign-extension byte in TMP4
     B TMP3

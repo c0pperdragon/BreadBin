@@ -31,7 +31,7 @@
     TMP2 = 24
     TMP3 = 25
     TMP4 = 26
-; mem holding constant values
+; constant values
     V1 = 27
     V2 = 28
     V4 = 29
@@ -41,7 +41,7 @@
               ; instantly resetting the machine
   
   
-; provide the value on the ALU output for setting
+; provide the source value on the ALU output for setting
 MACRO GET source
     A source
     B source
@@ -263,25 +263,16 @@ MACRO PULL value
     IN value
 ENDMACRO
 
-; unconditional branch
-MACRO BRA target
-    A V0
-    B V0
-    BEQ target    
-ENDMACRO
-
 ; perform a branch if the A/M flag is set to 16 bit mode
 MACRO BRACCU16 branchtarget
-    A V0
     B MFLAG
-    BEQ branchtarget
+    BBZ branchtarget
 ENDMACRO
 
 ; perform a branch if the X flag is set to 16 bit mode
 MACRO BRINDEX16 branchtarget
-    A V0
     B XFLAG
-    BEQ branchtarget
+    BBZ branchtarget
 ENDMACRO
 
 ; decrement an 8-bit value and set ZFLAG and NFLAG accordingly
@@ -326,6 +317,7 @@ ENDMACRO
   
     
 include startup.asm
+include unsupported.asm
 include instructions/ADC.asm
 include instructions/AND.asm
 include instructions/BCC.asm

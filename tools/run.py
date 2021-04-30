@@ -159,8 +159,8 @@ def execute(board,rom,steps,show):
             a = ram[param]
         elif instr==0xA0:  # B
             b = ram[param]
-        elif instr==0xC0:  # BEQ
-            if a==b:
+        elif instr==0xC0:  # BBZ
+            if b==0:
                 nextpc = (pc & 0xff00) | (param<<3)
         elif instr==0xE0:  # JMP
             nextpc = ram[param]<<8
