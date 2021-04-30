@@ -37,17 +37,17 @@ If this happens on the breadboard machine, the opcode that caused the halt can b
 ## Special handling of BRK
 
 As it happens, the BRK instruction has the opcode $00. Executing this opcode causes the Bernd
-emulator to just restart, which also resets the emulated 65c816 processor.
+emulator just to restart, which also resets the emulated 65c816 processor.
 
 
 ## Special use of XCE
 
-Event though emulation is missing and the E flag is not implemented, programmes still
+Even though emulation is missing and the E flag is not implemented, programmes still
 need to be able to use the XCE instruction to get into native mode when running on a genuine
 65C816 processor. 
-To allow this, the XCE instruction in the context of Bernd, it does not change anything 
-of the emulation state, but always just sets the C flag instead of returning the previous
-state of the E (which would be 0 in native mode).
-With this a program can detect that it is running in the Bernd emulator without additional 
+To allow this, the XCE instruction when executed by Bernd, does not change anything 
+on the emulation state. It always just directly sets the C flag, instead of setting it to the
+previous emulation state (which would be 0 in native mode).
+With this a program can detect when it is running in the Bernd emulator without additional 
 preparations.
 
