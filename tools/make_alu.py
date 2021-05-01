@@ -8,17 +8,15 @@ def op(o,a,b):
             return 0
     elif o==1:                         # ADD
         return (a+b) & 0xff            
-    elif o==2:                         # SUB
-        return (a+256-b) & 0xff        
-    elif o==3:                         # MUL
-        return (a*b) & 0xff            
-    elif o==4:                         # DIV
-        if b!=0:                         # regular division
-            return int(a/b) 
-        elif a==0:                       # 0/0 -> 1
-            return 1
+    elif o==2:                         # INC
+        return (a+1) & 0xff        
+    elif o==3:                         # CRY
+        if a==255:
+            return (b+1) & 0xff
         else:
-            return 255                   # n/0 -> 255
+            return b;
+    elif o==4:                         # ROR
+        return ((b&0x01)<<7) | ((a&0xfe)>>1)
     elif o==5:                         # AND
         return a & b                   
     elif o==6:                         # OR

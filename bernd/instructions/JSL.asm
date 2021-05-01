@@ -6,10 +6,12 @@
     PUSH PBR
     PUSH PCHI
     PUSH PCLO
-    GET TMP2
+    A V0
+    OP CRY
+    B TMP2
     SET PCLO
-    GET TMP3
+    B TMP3
     SET PCHI
-    GET TMP4
+    B TMP4
     SET PBR
     NEXT

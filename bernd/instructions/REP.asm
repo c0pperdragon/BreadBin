@@ -28,6 +28,33 @@ REP_#_noC:
     SET ZFLAG
 REP_#_noZ:
 
+    ; check if XFLAG needs to be cleared
+    A TMP4
+    B V16
+    OP AND
+    SET TMP0
+    B TMP0
+    BBZ REP_#_noX
+    ; clear XFLAG
+    GET V0    
+    SET XFLAG
+    ; clear high bytes of the index registers    
+    SET XHI
+    SET YHI
+REP_#_noX:
+    
+    ; check if MFLAG needs to be cleared
+    A TMP4
+    B V32
+    OP AND
+    SET TMP0
+    B TMP0
+    BBZ REP_#_noM
+    ; clear MFLAG
+    GET V0    
+    SET MFLAG
+REP_#_noM:
+
     ; check if NFLAG needs to be cleared
     A TMP4
     B TMP4
@@ -39,39 +66,6 @@ REP_#_noZ:
     GET V0    
     SET NFLAG
 REP_#_noN:
-
-    ; continue with the M and X flags from higher nibble
-    A TMP4
-    B V4
-    OP DIV
-    SET TMP4
-    A TMP4
-    SET TMP4  
-
-    ; check if XFLAG needs to be cleared
-    A TMP4
-    B V1
-    OP AND
-    SET TMP0
-    B TMP0
-    BBZ REP_#_noX
-    ; clear XFLAG
-    GET V0    
-    SET XFLAG
-    ; clear high bytes of the index registers
-    
-REP_#_noX:
-    
-    ; check if MFLAG needs to be cleared
-    A TMP4
-    B V2
-    OP AND
-    SET TMP0
-    B TMP0
-    BBZ REP_#_noM
-    ; clear MFLAG
-    GET V0    
-    SET MFLAG
-REP_#_noM:
     
     NEXT
+    

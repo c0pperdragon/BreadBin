@@ -134,15 +134,12 @@ def execute(board,rom,steps,show):
                 result = 1 if a+b>255 else 0
             elif op==1:    # ADD
                 result = (a+b) & 0xff
-            elif op==2:    # SUB
-                result = (a+256-b) & 0xff
-            elif op==3:    # MUL
-                result = (a*b) & 0xff
-            elif op==4:    # DIV
-                if b==0:
-                    result = 1 if a==0 else 255
-                else:
-                    result = a // b
+            elif op==2:    # INC
+                result = (a+1) & 0xff
+            elif op==3:    # CRY
+                result = ((b+1)&0xff) if a==255 else b
+            elif op==4:    # ROR
+                result = ((b&0x01)<<7) | ((a&0xfe)>>1)
             elif op==5:    # AND
                 result = a & b
             elif op==6:    # OR

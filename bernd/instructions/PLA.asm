@@ -2,7 +2,11 @@
     ORG $6800
     PULL ALO
     BRACCU16 PLA_16bit
+    GET ALO
+    SET ZFLAG
+    SET NFLAG
     NEXT
 PLA_16bit:
     PULL AHI
+    COMPUTENZFLAGS ALO AHI    
     NEXT

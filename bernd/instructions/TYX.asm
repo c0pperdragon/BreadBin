@@ -1,8 +1,6 @@
 ; ---- TYX i
     ORG $BB00
-    GET YLO
-    SET XLO
-    GET YHI
-    SET XHI
+    COPY16 XLO XHI YLO YHI
+    COMPUTENZFLAGS XLO XHI
     NEXT
     

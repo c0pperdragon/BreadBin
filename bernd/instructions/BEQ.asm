@@ -5,6 +5,6 @@
     INC16 PCLO PCHI
     NEXT
 BEQ_r_taken:
-    FETCH TMP4
-    JUMPRELATIVE TMP4
-    NEXT
+    NEXT_RELATIVE BEQ_r_taken2
+
+    

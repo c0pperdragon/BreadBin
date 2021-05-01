@@ -3,7 +3,11 @@
     ORG $A000
     FETCH YLO
     BRINDEX16 LDY_#_16bit
+    GET YLO
+    SET NFLAG
+    SET ZFLAG
     NEXT
 LDY_#_16bit:    
     FETCH YHI
+    COMPUTENZFLAGS XLO XHI
     NEXT

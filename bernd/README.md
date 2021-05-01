@@ -28,6 +28,8 @@ If this happens on the breadboard machine, the opcode that caused the halt can b
 * CLI (clear interrupt)
 * CLV (clear overflow)
 * COP (co-processor interrupt) 
+* PHP (push processor status) 
+* PLP (pull processor status) 
 * RTI (return from interrupt)
 * SED (set decimal)
 * SEI (set interrupt)

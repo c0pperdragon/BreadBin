@@ -1,21 +1,9 @@
-
 ; ---- INX i
-    ORG $E800
-    A XLO
-    B V1
-    OP ADD
-    SET XLO
-    SET ZFLAG
-    SET NFLAG
-    OP OVL
-    SET TMP4
+    ORG $E800    
     BRINDEX16 INX_i_16bit
+    INC8ANDSETNZ XLO    
     NEXT
 INX_i_16bit: 
-    A XHI
-    B TMP4
-    OP ADD
-    SET XHI
-    SET NFLAG
-    COMPUTEZFLAG XLO XHI
+    INC16 XLO XHI
+    COMPUTENZFLAGS XLO XHI
     NEXT

@@ -1,6 +1,3 @@
 ; ---- BRA r
     ORG $8000
-    FETCH TMP4
-    JUMPRELATIVE TMP4
-    NEXT
-
+    NEXT_RELATIVE BRA_r_taken2

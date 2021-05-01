@@ -35,6 +35,20 @@ COP_s_stop:
     BBZ COP_s_stop
     BBZ COP_s_stop
 
+; ---- PHP s
+    ORG $0800
+    B V0
+PHP_s_stop:
+    BBZ PHP_s_stop
+    BBZ PHP_s_stop
+
+; ---- PLP s
+    ORG $2800
+    B V0
+PLP_s_stop:
+    BBZ PLP_s_stop
+    BBZ PLP_s_stop
+
 ; ---- RTI s
     ORG $4000
     B V0

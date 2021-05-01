@@ -3,9 +3,13 @@
     ORG $A200
     FETCH XLO
     BRINDEX16 LDX_#_16bit
+    GET XLO
+    SET NFLAG
+    SET ZFLAG
     NEXT
 LDX_#_16bit:    
     FETCH XHI
+    COMPUTENZFLAGS XLO XHI
     NEXT
 
 ; ---- LDX a

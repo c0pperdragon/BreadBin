@@ -1,8 +1,6 @@
 ; ---- TXY i
     ORG $9B00
-    GET XLO
-    SET YLO
-    GET XHI
-    SET YHI
+    COPY16 YLO YHI XLO XHI
+    COMPUTENZFLAGS YLO YHI
     NEXT
     

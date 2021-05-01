@@ -28,6 +28,30 @@ SEP_#_noC:
     SET ZFLAG
 SEP_#_noZ:
 
+    ; check if XFLAG needs to be set
+    A TMP4
+    B V16
+    OP AND
+    SET TMP0
+    B TMP0
+    BBZ SEP_#_noX
+    ; set XFLAG
+    GET V1    
+    SET XFLAG
+SEP_#_noX:
+    
+    ; check if MFLAG needs to be set
+    A TMP4
+    B V32
+    OP AND
+    SET TMP0
+    B TMP0
+    BBZ SEP_#_noM
+    ; set MFLAG
+    GET V1    
+    SET MFLAG
+SEP_#_noM:
+
     ; check if NFLAG needs to be set
     A TMP4
     B TMP4
@@ -40,37 +64,5 @@ SEP_#_noZ:
     SET NFLAG
 SEP_#_noN:
 
-    ; continue with the M and X flags from higher nibble
-    A TMP4
-    B V4
-    OP DIV
-    SET TMP4
-    A TMP4
-    SET TMP4  
-
-    ; check if XFLAG needs to be set
-    A TMP4
-    B V1
-    OP AND
-    SET TMP0
-    B TMP0
-    BBZ SEP_#_noX
-    ; set XFLAG
-    GET V1    
-    SET XFLAG
-SEP_#_noX:
-    
-    ; check if MFLAG needs to be set
-    A TMP4
-    B V2
-    OP AND
-    SET TMP0
-    B TMP0
-    BBZ SEP_#_noM
-    ; set MFLAG
-    GET V1    
-    SET MFLAG
-SEP_#_noM:
-    
 
     NEXT

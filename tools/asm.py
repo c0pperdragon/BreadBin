@@ -93,11 +93,11 @@ def operator(tokens, tidx):
         return 0
     elif o=='ADD':
         return 1
-    elif o=='SUB':
+    elif o=='INC':
         return 2
-    elif o=='MUL':
+    elif o=='CRY':
         return 3
-    elif o=='DIV':
+    elif o=='ROR':
         return 4
     elif o=='AND':
         return 5
@@ -166,7 +166,10 @@ def processline(identifiers, macros, finalpass, tokens, codeaddress, outbuffer,l
             else:
                 identifiers[id] = value
     elif len(T)==2 and T[0]=="ORG":
-        codeaddress[0] = evaluate(identifiers, T[1])
+        a = evaluate(identifiers, T[1])
+        if a%256 != 0:
+            raise AssemblerException("May only start segment on page boundary")
+        codeaddress[0] = a
 
     elif T[0]=="SET":
         bytes = [ 0x00 | op(I,G,T, 1, 5) ]
@@ -280,6 +283,15 @@ def printhexfile(hexfile, buffer):
             start += l
     print(formatwithchecksum([0x00,0x00,0x00,0x01]), file=dest)                
     dest.close()
+
+def pagefills(rom):
+    fills = [0]*256
+    for a in range(len(rom)):
+        if rom[a]==None:
+            pass
+        else:
+            fills[a//256] = (a%256)+1
+    return fills
         
 def asm(sourcefile,hexfile,listfile):
     try:
@@ -295,6 +307,10 @@ def asm(sourcefile,hexfile,listfile):
         lst.close()
         
         printhexfile(hexfile, rom)
+
+        fills = pagefills(rom);
+        m = max(fills)
+        print ("HIGHEST PAGE FILL",m,"FOR",fills.index(m))
     except AssemblerException as e:
         print (e,file=sys.stderr) 
 
