@@ -1,26 +1,24 @@
-
-; add two 8-bit values plus the carry flag
-; and store into the dest and update CFLAG,NFLAG,ZFLAG
-; uses TMP0 and TMP1
-MACRO ADC8 destination operand
+; add source to destination, using the CFLAG as carry input 
+; and also set the output carry
+; set NFLAG and ZFLAG according to the result
+; uses storage: TMP0, TMP1
+MACRO ADC8 destination source 
     A destination
-    B operand
+    B source
     OP ADD
     SET destination
     OP OVL
     SET TMP0  ; first carry possibility
     A destination
     B CFLAG
+    SET TMP1  ; second carry possibility
     OP ADD
     SET destination
     SET NFLAG
     SET ZFLAG
-    OP OVL
-    SET TMP1  ; second carry possibility
     A TMP0
     B TMP1
-    OP OR
-    SET CFLAG ; compose carry 
+    SET CFLAG ; compose carry (only one input can be 1)
 ENDMACRO
 
 ; ---- ADC #

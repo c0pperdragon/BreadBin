@@ -1,68 +1,47 @@
-; Set a bunch of status flags. These flags are distributed across different registers.
+; Set M and/or X status flag. Other flags are not allowed here.
 
 ; ---- REP #
     ORG $E200
     FETCH TMP4
 
-    ; check if CFLAG needs to be set
-    A TMP4
-    B V1
-    OP AND
-    SET TMP0
-    B TMP0
-    BBZ SEP_#_noC
-    ; set CFLAG
-    GET V1
-    SET CFLAG
-SEP_#_noC:
-
-    ; check if ZFLAG needs to be set
-    A TMP4
-    B V2
-    OP AND
-    SET TMP0
-    B TMP0
-    BBZ SEP_#_noZ
-    ; set ZFLAG
-    GET V0    
-    SET ZFLAG
-SEP_#_noZ:
-
-    ; check if XFLAG needs to be set
-    A TMP4
-    B V16
-    OP AND
-    SET TMP0
-    B TMP0
-    BBZ SEP_#_noX
-    ; set XFLAG
-    GET V1    
-    SET XFLAG
-SEP_#_noX:
     
-    ; check if MFLAG needs to be set
+    ; check allowed values of operand (most likely cases first)
     A TMP4
+    OP EOR    
     B V32
-    OP AND
     SET TMP0
     B TMP0
-    BBZ SEP_#_noM
+    BBZ SEP_#_M
+    B V16
+    SET TMP0
+    B TMP0
+    BBZ SEP_#_X
+    B V48
+    SET TMP0
+    B TMP0
+    BBZ SEP_#_MX
+
+    ; halt processor on invalid operand
+    B V0
+SEP_#_halt:
+    BBZ SEP_#_halt
+    BBZ SEP_#_halt
+
     ; set MFLAG
-    GET V1    
+SEP_#_M:
+    GET1    
     SET MFLAG
-SEP_#_noM:
-
-    ; check if NFLAG needs to be set
-    A TMP4
-    B TMP4
-    OP OVL
-    SET TMP0
-    B TMP0
-    BBZ SEP_#_noN
-    ; set NFLAG
-    GET V255    
-    SET NFLAG
-SEP_#_noN:
-
-
+    NEXT
+    
+    ; set XFLAG
+SEP_#_X:
+    GET1    
+    SET XFLAG
+    NEXT
+    
+    ; combine both operations
+SEP_#_MX:
+    GET1    
+    SET MFLAG
+    SET XFLAG
     NEXT

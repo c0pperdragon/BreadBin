@@ -1,71 +1,50 @@
-; Reset a bunch of status flags. These flags are distributed across different registers.
+; Reset M and/or X status flag. Other flags are not allowed here.
 
 ; ---- REP #
     ORG $C200
     FETCH TMP4
 
-    ; check if CFLAG needs to be cleared
+    ; check allowed values of operand (most likely cases first)
     A TMP4
-    B V1
-    OP AND
-    SET TMP0
-    B TMP0
-    BBZ REP_#_noC
-    ; clear CFLAG
-    GET V0
-    SET CFLAG
-REP_#_noC:
-
-    ; check if ZFLAG needs to be cleared
-    A TMP4
-    B V2
-    OP AND
-    SET TMP0
-    B TMP0
-    BBZ REP_#_noZ
-    ; clear ZFLAG
-    GET V1    
-    SET ZFLAG
-REP_#_noZ:
-
-    ; check if XFLAG needs to be cleared
-    A TMP4
-    B V16
-    OP AND
-    SET TMP0
-    B TMP0
-    BBZ REP_#_noX
-    ; clear XFLAG
-    GET V0    
-    SET XFLAG
-    ; clear high bytes of the index registers    
-    SET XHI
-    SET YHI
-REP_#_noX:
-    
-    ; check if MFLAG needs to be cleared
-    A TMP4
+    OP EOR    
     B V32
-    OP AND
     SET TMP0
     B TMP0
-    BBZ REP_#_noM
-    ; clear MFLAG
-    GET V0    
-    SET MFLAG
-REP_#_noM:
+    BBZ REP_#_M
+    B V16
+    SET TMP0
+    B TMP0
+    BBZ REP_#_X
+    B V48
+    SET TMP0
+    B TMP0
+    BBZ REP_#_MX
 
-    ; check if NFLAG needs to be cleared
-    A TMP4
-    B TMP4
-    OP OVL
-    SET TMP0
-    B TMP0
-    BBZ REP_#_noN
-    ; clear NFLAG
-    GET V0    
-    SET NFLAG
-REP_#_noN:
-    
+    ; halt processor on invalid operand
+    B V0
+REP_#_halt:
+    BBZ REP_#_halt
+    BBZ REP_#_halt
+
+    ; clear MFLAG
+REP_#_M:
+    GET0    
+    SET MFLAG
     NEXT
     
+    ; clear XFLAG and higher bytes of X and Y
+REP_#_X:
+    GET0    
+    SET XFLAG
+    SET XHI
+    SET YHI
+    NEXT
+    
+    ; combine both operations
+REP_#_MX:
+    GET0    
+    SET MFLAG
+    SET XFLAG
+    SET XHI
+    SET YHI
+    NEXT

@@ -30,10 +30,11 @@ If this happens on the breadboard machine, the opcode that caused the halt can b
 * COP (co-processor interrupt) 
 * PHP (push processor status) 
 * PLP (pull processor status) 
+* REP with any operand execept $10, $20, $30
 * RTI (return from interrupt)
 * SED (set decimal)
 * SEI (set interrupt)
-* STP (stop -> will actually stop the processor as intended)
+* SEP with any operand execept $10, $20, $30
 * WAI (wait for interrupt)
 
 ## Special handling of BRK
