@@ -28,6 +28,7 @@
     TMP2 = 21
     TMP3 = 22
     TMP4 = 23
+    TMP5 = 24
 ; useful constant values
     V1 = 26
     V16 = 27
@@ -46,6 +47,7 @@ include unsupported.asm
 include instructions/ADC.asm
 include instructions/AND.asm
 include instructions/BCC.asm
+include instructions/BCS.asm
 include instructions/BEQ.asm
 include instructions/BNE.asm
 include instructions/BRA.asm
@@ -57,17 +59,21 @@ include instructions/INX.asm
 include instructions/INY.asm
 include instructions/JMP.asm
 include instructions/JSL.asm
+include instructions/JSR.asm
 include instructions/LDA.asm
 include instructions/LDX.asm
 include instructions/LDY.asm
+include instructions/LSR.asm
 include instructions/MVN.asm
 include instructions/PEA.asm
 include instructions/PEI.asm
 include instructions/PHA.asm
 include instructions/PHD.asm
 include instructions/PLA.asm
+include instructions/PLD.asm
 include instructions/REP.asm
 include instructions/RTL.asm
+include instructions/RTS.asm
 include instructions/SBC.asm
 include instructions/SEC.asm
 include instructions/SEP.asm
@@ -76,6 +82,7 @@ include instructions/TAX.asm
 include instructions/TCD.asm
 include instructions/TCS.asm
 include instructions/TSC.asm
+include instructions/TXA.asm
 include instructions/TXY.asm
 include instructions/TYX.asm
 include instructions/XCE.asm

@@ -2,6 +2,8 @@
 
 import sys
 
+mnemonic = [ "SET", " IN", "OUT", " OP", "  A", "  B", "BBZ", "JMP" ]
+
 class Board:
     def __init__(self):
         pass
@@ -24,6 +26,7 @@ class BreadBinBoard(Board):
         self.extraram = [255]*(1<<19)
         self.extrarom = extrarom
         self.bank = 0
+        self.collectedbits = 0
         
     def wr(self,address,value):
         a = (self.bank<<16)+address;
@@ -39,7 +42,7 @@ class BreadBinBoard(Board):
         if (a & 0xC00000) == 0x000000:     # reading from RAM 
             v = self.extraram[a & 0x7ffff]
         elif (a & 0xC00000) == 0x400000:   # reading from IO
-            v = 0xFF
+            v = self.input()
         else:
             v = self.extrarom[a & 0x7ffff] # reading from ROM
 #        print(format(a,"06x"),"->",format(v,"02x"))
@@ -49,10 +52,18 @@ class BreadBinBoard(Board):
         self.bank = prevb
     
     def output(self,value):
-        print(format(value,"08b"),end='\n',flush=True)
+#        print(format(value,"08b"),end='\n',flush=True)
+        # collect serial bits and print
+        if self.collectedbits!=0:
+            self.collectedbits = (self.collectedbits>>1) | ((value & 0x01) << 8)
+            if (self.collectedbits & 1) == 1:  # mark bit reached end position
+                print (chr(self.collectedbits>>1),end='',flush=True)
+                self.collectedbits = 0            
+        elif (value&0x01) == 0x00:  # detected start bit
+            self.collectedbits = 0x100  # start with only the mark bit
 
     def input(self):
-        return 255
+        return 0xFD   # assert the CTS input
 
 
 def hextobytes(line):
@@ -118,8 +129,9 @@ def execute(board,rom,steps,show):
 
         # basic tracing
         if tracing:  # i>=steps-show:
-            print ("PC:",format(pc,"x").zfill(4),
-                   "IR:",format(ir, "x").zfill(2),
+            print (format(pc,"x").zfill(4),
+                   mnemonic[ir//32],
+                   format(ir&31, "x").zfill(2),
                    "A:",format(a, "x").zfill(2),
                    "B:",format(b, "x").zfill(2),
                    "OP:",format(op, "x").zfill(1),
@@ -181,17 +193,17 @@ def execute(board,rom,steps,show):
 # decode parameters
 steps = 30
 show = -1
-extra = None
+breadbin = None
 for i in range(len(sys.argv)-1):
     if sys.argv[i]=='-steps':
         steps = int(sys.argv[i+1])
     elif sys.argv[i]=='-show':
         show = int(sys.argv[i+1],16)
-    elif sys.argv[i]=='-extra':
-        extra = sys.argv[i+1]
+    elif sys.argv[i]=='-breadbin':
+        breadbin = sys.argv[i+1]
 
 # execute
 rom = readromfile(sys.argv[len(sys.argv)-1])
-board = Board() if extra==None else BreadBinBoard(readromfile(extra))
+board = Board() if breadbin==None else BreadBinBoard(readromfile(breadbin))
 execute(board,rom,steps,show)
     

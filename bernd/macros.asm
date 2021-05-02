@@ -95,12 +95,12 @@ MACRO INC16 rlo rhi
     SET rhi
 ENDMACRO
 
-
 ; Decrement a 16-bit value.
 ; Intermediate registers: TMP0
 MACRO DEC16 rlo rhi
     ADD16 rlo rhi V255 V255
 ENDMACRO
+
 
 ; set 2 registers to the values of 2 other registers
 MACRO COPY16 targetlo targethi sourcelo sourcehi
@@ -198,6 +198,40 @@ MACRO STORE rlo rhi bank value
     A rlo
     B rhi
     OUT value
+ENDMACRO 
+
+; load a 16-bit value from the specified memory location and bank 
+; used temporary storage: TMP0, TMP1
+MACRO LOAD16 rlo rhi bank valuelo valuehi
+    B bank
+    A rlo
+    B rhi
+    IN valuelo
+    OP INC
+    SET TMP0
+    OP CRY
+    SET TMP1
+    B bank
+    A TMP0
+    B TMP1
+    IN valuehi
+ENDMACRO 
+
+; store a 16-bit value into the specified memory location and bank 
+; used temporary storage: TMP0, TMP1
+MACRO STORE16 rlo rhi bank valuelo valuehi
+    B bank
+    A rlo
+    B rhi
+    OUT valuelo
+    OP INC
+    SET TMP0
+    OP CRY
+    SET TMP1
+    B bank
+    A TMP0
+    B TMP1
+    OUT valuehi
 ENDMACRO 
 
 ; load a value from the specified memory location and bank 
