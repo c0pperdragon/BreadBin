@@ -46,12 +46,15 @@ include startup.asm
 include unsupported.asm
 include instructions/ADC.asm
 include instructions/AND.asm
+include instructions/ASL.asm
 include instructions/BCC.asm
 include instructions/BCS.asm
 include instructions/BEQ.asm
+include instructions/BMI.asm
 include instructions/BNE.asm
 include instructions/BRA.asm
 include instructions/CLC.asm
+include instructions/CMP.asm
 include instructions/DEC.asm
 include instructions/DEX.asm
 include instructions/INC.asm
@@ -78,6 +81,7 @@ include instructions/SBC.asm
 include instructions/SEC.asm
 include instructions/SEP.asm
 include instructions/STA.asm
+include instructions/STZ.asm
 include instructions/TAX.asm
 include instructions/TCD.asm
 include instructions/TCS.asm

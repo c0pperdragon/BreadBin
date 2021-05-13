@@ -31,6 +31,17 @@ STA_a_16bit:
     STORE TMP2 TMP3 DBR AHI
     NEXT
 
+; ---- STA a,x
+    ORG $9D00
+    FETCHADDRESS_a_x TMP2 TMP3 
+    STORE TMP2 TMP3 DBR ALO
+    BRACCU16 STA_a_x_16bit
+    NEXT
+STA_a_x_16bit:    
+    INC16 TMP2 TMP3
+    STORE TMP2 TMP3 DBR AHI
+    NEXT
+
 ; ---- STA al
     ORG $8F00
     FETCHADDRESS_al TMP2 TMP3 TMP4

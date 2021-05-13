@@ -93,13 +93,32 @@ def readromfile(filename):
         
 
 def printableram(ram):
-    l = []
-    for b in ram:
-        l.append(format(b, "x").zfill(2))
-    return " ".join(l)
+    return ("{2:0>2X}{1:0>2X}{0:0>2X} "   # PC
+            "{4:0>2X}{3:0>2X} "          # A
+            "{5:0>2X} "                  # DBR
+            "{7:0>2X}{6:0>2X} "          # D
+            "{9:0>2X}{8:0>2X} "          # X
+            "{11:0>2X}{10:0>2X} "        # Y
+            "{13:0>2X}{12:0>2X} "        # S
+            "{14:0>2X} "                 # CFLAG
+            "{15:0>2X} "                 # NFLAG
+            "{16:0>2X} "                 # ZFLAG
+            "{17:0>2X} "                 # MFLAG
+            "{18:0>2X} "                 # XFLAG
+            "{19:0>2X} "                 # TMP0
+            "{20:0>2X} "                 # TMP1
+            "{21:0>2X} "                 # TMP2
+            "{22:0>2X} "                 # TMP3
+            "{23:0>2X} "                 # TMP4
+            "{24:0>2X} "                 # TMP5
+            "{25:0>2X}{26:0>2X}{27:0>2X}" # consts 
+            "{28:0>2X}{29:0>2X}{30:0>2X}" # consts
+            "{31:0>2X}"
+            ).format(*ram)
 
-def execute(board,rom,steps,show):
-    tracing = False
+def execute(board,rom,stop,onlyjumps):
+    didjump = 0
+    start = stop-5000 if onlyjumps else stop-200
 
     # state of the controller, start with dummy values
     ram = [255]*32
@@ -115,21 +134,14 @@ def execute(board,rom,steps,show):
     ram[0] = 0
 
     # only run for the desired number of steps
-    step = 0 if show<0 else -1000000000
-    while step<steps:
-        # turn on full tracing at specified code point
-        if pc==show and not tracing:
-            tracing = True
-            step = 0    # start counting after reaching trace point
-        else:
-            step = step+1;
-
-        # unless instruction overrides this, the pc just increments
+    for step in range(stop):
+         # unless instruction overrides this, the pc just increments
         nextpc = ((pc+1) & 0x00ff) | (pc&0xff00)
 
         # basic tracing
-        if tracing:  # i>=steps-show:
-            print (format(pc,"x").zfill(4),
+        if (step>=start) and ((didjump==1) or not onlyjumps):
+            print (step,
+                   format(pc,"x").zfill(4),
                    mnemonic[ir//32],
                    format(ir&31, "x").zfill(2),
                    "A:",format(a, "x").zfill(2),
@@ -140,6 +152,7 @@ def execute(board,rom,steps,show):
         # execution
         instr = ir & 0xe0
         param = ir & 0x1f
+        didjump = didjump+1
         if instr==0x00:  # SET
             result = 0
             if op==0:      # OVL
@@ -176,10 +189,11 @@ def execute(board,rom,steps,show):
                 nextpc = (pc & 0xff00) | (param<<3)
         elif instr==0xE0:  # JMP
             nextpc = ram[param]<<8
+            didjump = 0
         
         # for debugging: reading a 0xFF instruction halts the processor
         if rom[pc]==0xFF:
-            print ("Hit the 0xFF instruction at: ",
+            print ("Hit the 0xFF instruction after",step,"steps at:",
                    format(pc,"x").zfill(4) )            
             return
 
@@ -191,19 +205,19 @@ def execute(board,rom,steps,show):
 
 
 # decode parameters
-steps = 30
-show = -1
+stop = 100000000000
+onlyjumps = False
 breadbin = None
 for i in range(len(sys.argv)-1):
-    if sys.argv[i]=='-steps':
-        steps = int(sys.argv[i+1])
-    elif sys.argv[i]=='-show':
-        show = int(sys.argv[i+1],16)
+    if sys.argv[i]=='-stop':
+        stop = int(sys.argv[i+1])
+    elif sys.argv[i]=='-jumps':
+        onlyjumps = True
     elif sys.argv[i]=='-breadbin':
         breadbin = sys.argv[i+1]
 
 # execute
 rom = readromfile(sys.argv[len(sys.argv)-1])
 board = Board() if breadbin==None else BreadBinBoard(readromfile(breadbin))
-execute(board,rom,steps,show)
+execute(board,rom,stop,onlyjumps)
     

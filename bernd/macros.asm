@@ -121,7 +121,6 @@ MACRO INV8 operand
 ENDMACRO
 
 
-
 ; fetch next byte from program and construct the 16-bit address with DHI/DLO
 ; Intermediate storage: TMP0 
 MACRO FETCHADDRESS_d rlo rhi
