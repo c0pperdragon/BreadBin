@@ -82,6 +82,7 @@ include instructions/SBC.asm
 include instructions/SEC.asm
 include instructions/SEP.asm
 include instructions/STA.asm
+include instructions/STY.asm
 include instructions/STZ.asm
 include instructions/TAX.asm
 include instructions/TAY.asm

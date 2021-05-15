@@ -1,0 +1,12 @@
+    
+; ---- STY a
+    ORG $8C00
+    FETCHADDRESS_a TMP2 TMP3 
+    STORE TMP2 TMP3 DBR YLO
+    BRINDEX16 STY_a_16bit
+    NEXT
+STY_a_16bit:    
+    INC16 TMP2 TMP3
+    STORE TMP2 TMP3 DBR YHI
+    NEXT
+
