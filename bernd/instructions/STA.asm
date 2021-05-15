@@ -74,3 +74,15 @@ STA_[d]_16bit:
     INC16 TMP2 TMP3
     STORE TMP2 TMP3 TMP4 AHI
     NEXT
+
+; ---- STA [d],y
+    ORG $9700
+    FETCHADDRESS_[d]_y TMP2 TMP3 TMP4
+    STORE TMP2 TMP3 TMP4 ALO
+    BRACCU16 STA_[d]_y_16bit
+    NEXT
+STA_[d]_y_16bit:    
+    INC16 TMP2 TMP3
+    STORE TMP2 TMP3 TMP4 AHI
+    NEXT
+    

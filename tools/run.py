@@ -27,6 +27,9 @@ class BreadBinBoard(Board):
         self.extrarom = extrarom
         self.bank = 0
         self.collectedbits = 0
+        self.rts = 1
+        self.inputcharacters = []
+        self.inputbits = []
         
     def wr(self,address,value):
         a = (self.bank<<16)+address;
@@ -52,7 +55,7 @@ class BreadBinBoard(Board):
         self.bank = prevb
     
     def output(self,value):
-#        print(format(value,"08b"),end='\n',flush=True)
+#        print("OUT "+format(value,"08b"),end='\n',flush=True)
         # collect serial bits and print
         if self.collectedbits!=0:
             self.collectedbits = (self.collectedbits>>1) | ((value & 0x01) << 8)
@@ -61,10 +64,34 @@ class BreadBinBoard(Board):
                 self.collectedbits = 0            
         elif (value&0x01) == 0x00:  # detected start bit
             self.collectedbits = 0x100  # start with only the mark bit
+        # keep track of the RTS output
+        self.rts = (value&0x02)>>1
 
     def input(self):
-        return 0xFD   # assert the CTS input
+        # when the bit buffer has run empty and program still wants to get
+        # data, next character is fetched and prepared
+        if self.rts==0 and len(self.inputbits)==0:
+            # if necessary fetch new line from console
+            if len(self.inputcharacters)==0:
+                self.inputcharacters.extend(list(input()))
+                self.inputcharacters.append("\n")
+            # bit serialization
+            bitserialize(self.inputbits, self.inputcharacters.pop(0))
+        # as long as there is stuff in the serialized buffer, receive it
+        bit = 1  # idle state of input line
+        if len(self.inputbits)>0:
+            bit = self.inputbits.pop(0)
+        value = 0xFC | bit   # additionally keep CTS input asserted
+#        print("IN  "+format(value,"08b"),end='\n',flush=True)
+        return value
 
+def bitserialize(bitlist, c):
+    b = ord(c) & 0xFF
+    bitlist.append(0);  # start bit
+    for i in range(8):
+        bitlist.append(b & 0x01)
+        b = b>>1
+    bitlist.append(1);  # stop bit    
 
 def hextobytes(line):
     b = []

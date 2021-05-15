@@ -75,6 +75,7 @@ include instructions/PHD.asm
 include instructions/PLA.asm
 include instructions/PLD.asm
 include instructions/REP.asm
+include instructions/ROR.asm
 include instructions/RTL.asm
 include instructions/RTS.asm
 include instructions/SBC.asm
@@ -83,11 +84,14 @@ include instructions/SEP.asm
 include instructions/STA.asm
 include instructions/STZ.asm
 include instructions/TAX.asm
+include instructions/TAY.asm
 include instructions/TCD.asm
 include instructions/TCS.asm
+include instructions/TDC.asm
 include instructions/TSC.asm
 include instructions/TXA.asm
 include instructions/TXY.asm
+include instructions/TYA.asm
 include instructions/TYX.asm
 include instructions/XCE.asm
 

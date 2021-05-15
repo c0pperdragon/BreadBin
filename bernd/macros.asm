@@ -190,6 +190,18 @@ MACRO FETCHADDRESS_[d] rlo rhi rbank
     LOAD TMP1 rbank V0 rbank
 ENDMACRO
 
+; fetch address indirect long. For this, combine the
+; next program byte with the DLO,DHI to get the address of the long pointer
+; Intermediate storage: TMP0, TMP1
+MACRO FETCHADDRESS_[d]_y rlo rhi rbank
+    FETCHADDRESS_d TMP1 rbank  ; use target register as temporary storage
+    LOAD TMP1 rbank V0 rlo
+    INC16 TMP1 rbank
+    LOAD TMP1 rbank V0 rhi
+    INC16 TMP1 rbank
+    LOAD TMP1 rbank V0 rbank
+    ADD16 rlo rhi YLO YHI
+ENDMACRO
 
 ; store a value into the specified memory location and bank 
 MACRO STORE rlo rhi bank value
