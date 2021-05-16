@@ -1,0 +1,6 @@
+; ---- BRL rl
+    ORG $8200
+    FETCH TMP3
+    FETCH TMP4
+    ADD16 PCLO PCHI TMP3 TMP4    
+    NEXT

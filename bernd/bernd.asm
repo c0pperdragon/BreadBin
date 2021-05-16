@@ -53,6 +53,7 @@ include instructions/BEQ.asm
 include instructions/BMI.asm
 include instructions/BNE.asm
 include instructions/BRA.asm
+include instructions/BRL.asm
 include instructions/CLC.asm
 include instructions/CMP.asm
 include instructions/DEC.asm
