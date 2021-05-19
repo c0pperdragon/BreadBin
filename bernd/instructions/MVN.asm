@@ -24,15 +24,19 @@ MVN_loop:
     ; check if C is already 0
     A ALO
     B AHI
-    OP OR
+    OP NOR
+    SET TMP0
+    A TMP0
+    B V1
+    OP CRY
     SET TMP0
     B TMP0
-    BBZ MVN_done
+    BBE MVN_done
     
     ; decrement C and keep going
     DEC16 ALO AHI
     B V0
-    BBZ MVN_loop
+    BBE MVN_loop
     
 MVN_done:
     NEXT

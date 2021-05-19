@@ -99,12 +99,12 @@ def operator(tokens, tidx):
         return 3
     elif o=='ROR':
         return 4
-    elif o=='AND':
+    elif o=='NOR':
         return 5
-    elif o=='OR':
-        return 6
-    elif o=='EOR':
-        return 7
+#    elif o=='OR':
+#        return 6
+#    elif o=='EOR':
+#        return 7
     else:
         raise AssemblerException("Unknown operator")
 
@@ -183,7 +183,7 @@ def processline(identifiers, macros, finalpass, tokens, codeaddress, outbuffer,l
         bytes = [ 0x80 | op(I,G,T, 1, 5) ]
     elif T[0]=="B":
         bytes = [ 0xA0 | op(I,G,T, 1, 5) ]
-    elif T[0]=="BBZ":
+    elif T[0]=="BBE":
         addr = op(I,G,T, 1, 16)
         if finalpass:
             if (addr//256) != (pc//256):

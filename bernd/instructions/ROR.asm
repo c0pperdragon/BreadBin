@@ -1,33 +1,43 @@
 
 ; rotate right 8-bit value. update ZFLAG, NFLAG, CFLAG
 MACRO ROR8 r
+    B r
+    OP ROR
+    SET TMP4 ; received the carry in bit 7
+
     A r
     B CFLAG
     OP ROR
     SET r
-    B V1
-    OP AND
-    SET CFLAG
+    SET NFLAG
+    SET ZFLAG
+
+    A TMP4
+    B TMP4
+    OP OVL
+    SET CFLAG  ; transfer bit 7 to bit 0 and clear everything else    
 ENDMACRO
 
 ; rotate right 16-bit value. update ZFLAG, NFLAG, CFLAG
 ; temporary value: TMP0
 MACRO ROR16 rlo rhi
-    A CFLAG
-    B CFLAG
-    OP OR
-    SET TMP0
+    B rlo
+    OP ROR
+    SET TMP4  ; received the carry in bit 7
+    
     A rlo
     B rhi
     OP ROR
     SET rlo
-    B V1
-    OP AND
-    SET CFLAG
     A rhi
-    B TMP0
-    OP ROR
+    B CFLAG
     SET rhi
+    COMPUTENZFLAGS rlo rhi    
+
+    A TMP4
+    B TMP4
+    OP OVL
+    SET CFLAG  ; transfer bit 7 to bit 0 and clear everything else    
 ENDMACRO
 
 

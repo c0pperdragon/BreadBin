@@ -17,12 +17,8 @@ def op(o,a,b):
             return b;
     elif o==4:                         # ROR
         return ((b&0x01)<<7) | ((a&0xfe)>>1)
-    elif o==5:                         # AND
-        return a & b                   
-    elif o==6:                         # OR
-        return a | b                   
-    elif o==7:                         # EOR
-        return a ^ b                   
+    elif o==5:                         # NOR
+        return (a | b) ^ 255                   
     else:
         return 0
 

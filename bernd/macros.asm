@@ -2,8 +2,8 @@
 ; provide the source value on the ALU output for setting
 MACRO GET source
     A source
-    B source
-    OP OR
+    B V0
+    OP ADD
 ENDMACRO  
   
 ; provide a value 0 on the ALU output for setting
@@ -56,7 +56,7 @@ MACRO NEXT_RELATIVE freelabel
     OP OVL
     SET TMP0
     B TMP0
-    BBZ freelabel  
+    BBE freelabel  
     ; branching backward
     ADD16 PCLO PCHI TMP1 V255
     NEXT
@@ -114,9 +114,9 @@ ENDMACRO
 
 ; bit-invert the value of the operand
 MACRO INV8 operand
-    OP EOR
-    A V255
+    A operand
     B operand
+    OP NOR
     SET operand
 ENDMACRO
 
@@ -269,13 +269,13 @@ ENDMACRO
 ; perform a branch if the A/M flag is set to 16 bit mode
 MACRO BRACCU16 branchtarget
     B MFLAG
-    BBZ branchtarget
+    BBE branchtarget
 ENDMACRO
 
 ; perform a branch if the X flag is set to 16 bit mode
 MACRO BRINDEX16 branchtarget
     B XFLAG
-    BBZ branchtarget
+    BBE branchtarget
 ENDMACRO
 
 ; decrement an 8-bit value and set ZFLAG and NFLAG accordingly
@@ -302,17 +302,19 @@ ENDMACRO
 MACRO COMPUTEZFLAG lo hi
     A lo
     B hi
-    OP OR
+    OP NOR
+    SET ZFLAG
+    A ZFLAG
+    B ZFLAG
     SET ZFLAG
 ENDMACRO
 
 ; compute N and Z flags from a 16-bit value
 MACRO COMPUTENZFLAGS lo hi
-    A hi
-    B hi
-    OP OR
-    SET NFLAG
+    COMPUTEZFLAG lo hi
     A lo
-    SET ZFLAG    
+    B V0
+    OP ADD
+    SET NFLAG    
 ENDMACRO
 

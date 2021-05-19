@@ -3,47 +3,17 @@
     ; create constant values after cold start
     A V0     ; construct a 0 from arbitary start values
     B V0
-    OP EOR
-    SET V0   
-    A V0     ; construct a 1
+    OP NOR
+    SET V0
+    B V0
+    SET V0
+    A V0       ; construct 1
     OP INC  
     SET V1
-    OP ADD   ; further constructions use ADD
-    A V1     ; construct a 16
-    B V1
-    SET TMP0   ; 2
-    A TMP0
-    B TMP0
-    SET TMP0   ; 4
-    A TMP0
-    B TMP0
-    SET TMP0   ; 8
-    A TMP0
-    B TMP0
-    SET V16  
-    A V16     ; construct a 32
-    B V16
-    SET V32
-    A V16     ; construct a 48
-    B V32
-    SET V48
-    A V1      ; construct a 255 
-    B V1
-    SET TMP0  ; 2
-    A TMP0
-    SET TMP0  ; 3
-    A TMP0
-    B V48
-    SET TMP0  ; 0x33
-    A TMP0
-    B TMP0
-    SET TMP1  ; 0x66
-    A TMP1
-    B TMP1
-    SET TMP1  ; 0xCC
-    A TMP0
-    B TMP1
-    SET V255   ; 0xFF
+    A V0     ; construct 255
+    B V0
+    OP NOR
+    SET V255
     ; initialize emulated registers
     GET V0
     SET ALO
@@ -56,13 +26,10 @@
     SET YLO
     SET YHI
     ; bernd starts execution at $80FFF8
-    A V32
-    B V32
-    OP ADD
-    SET TMP0 ; 64 
-    A TMP0
-    B TMP0
-    SET PBR  ; 128  = $80
+    A V0
+    B V1
+    OP ROR
+    SET PBR  ; $80
     GET V255
     SET PCHI ; 255 = $FF
     A V255

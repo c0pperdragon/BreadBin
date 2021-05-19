@@ -31,10 +31,7 @@ MACRO ASL16 rlo rhi
     B TMP0
     SET rhi   ; include the carry-in from low byte
     SET NFLAG
-    A rhi
-    B ZFLAG
-    OP OR
-    SET ZFLAG  ; combine both bytes for zero-detection
+    COMPUTEZFLAG rhi ZFLAG  ; combine both bytes for zero-detection
 ENDMACRO
 
 

@@ -192,12 +192,12 @@ def execute(board,rom,stop,onlyjumps):
                 result = ((b+1)&0xff) if a==255 else b
             elif op==4:    # ROR
                 result = ((b&0x01)<<7) | ((a&0xfe)>>1)
-            elif op==5:    # AND
-                result = a & b
-            elif op==6:    # OR
-                result = a | b
-            elif op==7:    # EOR
-                result = a ^ b
+            elif op==5:    # NOR
+                result = 255 ^ (a | b)
+            elif op==6:    
+                result = 0 
+            elif op==7:    
+                result = 0 
             ram[param] = result
         elif instr==0x20:  # IN
             ram[param] = board.rd(b*256+a)
@@ -211,8 +211,8 @@ def execute(board,rom,stop,onlyjumps):
         elif instr==0xA0:  # B
             board.latchb(b)
             b = ram[param]
-        elif instr==0xC0:  # BBZ
-            if b==0:
+        elif instr==0xC0:  # BBE
+            if (b%2)==0:
                 nextpc = (pc & 0xff00) | (param<<3)
         elif instr==0xE0:  # JMP
             nextpc = ram[param]<<8
