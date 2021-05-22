@@ -1,16 +1,16 @@
 ; ---- BEQ r
     ORG $F000
-    A ZFLAG
-    B ZFLAG
-    OP NOR     
-    SET TMP0   ; 255 if ZFLAG==0 
-    A TMP0
-    B V1
+    X ZFLAG
+    X ZFLAG
+    OP NAND     
+    SET TMP0   ; 255 if ZFLAG==0 (meaning result was zero)
+    X V1
+    X TMP0
     OP CRY
     SET TMP0   ; 2 if ZFLAG==0, 1 otherwise
-    B TMP0
-    BBE BEQ_r_taken
-    INC16 PCLO PCHI
+    X TMP0
+    BEV BEQ_r_taken
+    SKIP
     NEXT
 BEQ_r_taken:
-    NEXT_RELATIVE BEQ_r_taken2
+    NEXT_RELATIVE

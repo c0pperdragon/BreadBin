@@ -1,17 +1,10 @@
 ; ---- JSL al
     ORG $2200
+    PUSH PBR
     FETCH TMP2
     FETCH TMP3
-    FETCH TMP4
-    PUSH PBR
+    FETCH PBR
     PUSH PCHI
     PUSH PCLO
-    A V0
-    OP CRY
-    B TMP2
-    SET PCLO
-    B TMP3
-    SET PCHI
-    B TMP4
-    SET PBR
+    COPY16 PCLO PCHI TMP2 TMP3
     NEXT

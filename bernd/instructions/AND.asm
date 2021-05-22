@@ -1,19 +1,4 @@
 
-; combine two 8-bit value with AND. also update ZFLAG and NFLAG.
-MACRO AND8 destination operand
-    OP NOR
-    A destination
-    B destination
-    SET TMP0
-    A operand
-    B operand
-    SET TMP1
-    A TMP0
-    B TMP1
-    SET destination
-    SET NFLAG
-    SET ZFLAG
-ENDMACRO
 
 ; ---- AND #
     ORG $2900

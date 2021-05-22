@@ -1,8 +1,8 @@
 ; ---- BCC r
     ORG $B000
-    B CFLAG
-    BBE BCS_r_nottaken
-    NEXT_RELATIVE BCS_r_taken2
+    X CFLAG
+    BEV BCS_r_nottaken
+    NEXT_RELATIVE
 BCS_r_nottaken:
-    INC16 PCLO PCHI
+    SKIP
     NEXT

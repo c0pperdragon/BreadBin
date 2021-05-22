@@ -1,12 +1,12 @@
 ; ---- BMI r
     ORG $3000
-    A NFLAG
-    B NFLAG
-    OP OVL
+    X NFLAG
+    X NFLAG
+    OP OVF
     SET TMP0
-    B TMP0
-    BBE BMI_r_nottaken
-    NEXT_RELATIVE BMI_r_taken2
+    X TMP0
+    BEV BMI_r_nottaken
+    NEXT_RELATIVE
 BMI_r_nottaken:
-    INC16 PCLO PCHI
+    SKIP
     NEXT

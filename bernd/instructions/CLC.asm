@@ -1,5 +1,5 @@
 ; ---- CLC i
     ORG $1800
-    GET0
+    GET V0
     SET CFLAG
     NEXT

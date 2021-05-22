@@ -89,22 +89,16 @@ def operator(tokens, tidx):
     if tidx >= len(tokens):
         raise AssemblerException("Missing operator")
     o = tokens[tidx];
-    if o=='OVL':
+    if o=='ADD':
         return 0
-    elif o=='ADD':
+    if o=='OVF':
         return 1
-    elif o=='INC':
-        return 2
     elif o=='CRY':
+        return 2
+    elif o=='AVG':
         return 3
-    elif o=='ROR':
+    elif o=='NAND':
         return 4
-    elif o=='NOR':
-        return 5
-#    elif o=='OR':
-#        return 6
-#    elif o=='EOR':
-#        return 7
     else:
         raise AssemblerException("Unknown operator")
 
@@ -179,11 +173,9 @@ def processline(identifiers, macros, finalpass, tokens, codeaddress, outbuffer,l
         bytes = [ 0x40 | op(I,G,T, 1, 5) ]
     elif T[0]=="OP":
         bytes = [ 0x60 | operator(T, 1) ]
-    elif T[0]=="A":
+    elif T[0]=="X":
         bytes = [ 0x80 | op(I,G,T, 1, 5) ]
-    elif T[0]=="B":
-        bytes = [ 0xA0 | op(I,G,T, 1, 5) ]
-    elif T[0]=="BBE":
+    elif T[0]=="BEV":
         addr = op(I,G,T, 1, 16)
         if finalpass:
             if (addr//256) != (pc//256):

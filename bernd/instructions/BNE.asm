@@ -1,16 +1,16 @@
 ; ---- BNE r
     ORG $D000
-    A ZFLAG
-    B ZFLAG
-    OP NOR
+    X ZFLAG
+    X ZFLAG
+    OP NAND
     SET TMP0     ; 255 if ZFLAG==0
-    A TMP0
-    B V0
+    X V0
+    X TMP0
     OP CRY
     SET TMP0     ; 1 if ZFLAG==0, 0 otherwise
-    B TMP0
-    BBE BNE_r_taken
-    INC16 PCLO PCHI
+    X TMP0
+    BEV BNE_r_taken
+    SKIP
     NEXT
 BNE_r_taken:
-    NEXT_RELATIVE BNE_r_taken2
+    NEXT_RELATIVE

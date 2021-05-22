@@ -2,7 +2,7 @@
 
 import sys
 
-mnemonic = [ "SET", " IN", "OUT", " OP", "  A", "  B", "BBZ", "JMP" ]
+mnemonic = [ "SET", " IN", "OUT", " OP", "  X", "  ?", "BBZ", "JMP" ]
 
 class Board:
     def __init__(self):
@@ -11,10 +11,7 @@ class Board:
     def wr(self,address,value):
         print(value,end='\n',flush=True)
         
-    def latcha(self,preva):
-        pass
-    
-    def latchb(self,prevb):
+    def latch(self,prevb):
         pass
     
     def rd(self,address):
@@ -51,8 +48,8 @@ class BreadBinBoard(Board):
 #        print(format(a,"06x"),"->",format(v,"02x"))
         return v
 
-    def latchb(self,prevb):
-        self.bank = prevb
+    def latch(self,bank):
+        self.bank = bank
     
     def output(self,value):
 #        print("OUT "+format(value,"08b"),end='\n',flush=True)
@@ -181,23 +178,18 @@ def execute(board,rom,stop,onlyjumps):
         param = ir & 0x1f
         didjump = didjump+1
         if instr==0x00:  # SET
-            result = 0
-            if op==0:      # OVL
-                result = 1 if a+b>255 else 0
-            elif op==1:    # ADD
+            if op==0:      # ADD
                 result = (a+b) & 0xff
-            elif op==2:    # INC
-                result = (a+1) & 0xff
-            elif op==3:    # CRY
+            elif op==1:    # OVF
+                result = 1 if a+b>255 else 0
+            elif op==2:    # CRY
                 result = ((b+1)&0xff) if a==255 else b
-            elif op==4:    # ROR
-                result = ((b&0x01)<<7) | ((a&0xfe)>>1)
-            elif op==5:    # NOR
-                result = 255 ^ (a | b)
-            elif op==6:    
-                result = 0 
-            elif op==7:    
-                result = 0 
+            elif op==3:    # AVG
+                result = (a+b) >> 1
+            elif op==4:    # NAND
+                result = 255 ^ (a & b)
+            else:
+                result = 0
             ram[param] = result
         elif instr==0x20:  # IN
             ram[param] = board.rd(b*256+a)
@@ -205,14 +197,14 @@ def execute(board,rom,stop,onlyjumps):
             board.wr(b*256+a,ram[param])
         elif instr==0x60:  # OP
             op = param & 0x07
-        elif instr==0x80:  # A
-            board.latcha(a)
+        elif instr==0x80:  # X
+            board.latch(b)
+            b = a
             a = ram[param]
-        elif instr==0xA0:  # B
-            board.latchb(b)
-            b = ram[param]
-        elif instr==0xC0:  # BBE
-            if (b%2)==0:
+        elif instr==0xA0:  # unused B
+            pass
+        elif instr==0xC0:  # BEV
+            if (a%2)==0:
                 nextpc = (pc & 0xff00) | (param<<3)
         elif instr==0xE0:  # JMP
             nextpc = ram[param]<<8

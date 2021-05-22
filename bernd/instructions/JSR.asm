@@ -4,10 +4,5 @@
     FETCH TMP3
     PUSH PCHI
     PUSH PCLO
-    A V0
-    OP CRY
-    B TMP2
-    SET PCLO
-    B TMP3
-    SET PCHI
+    COPY16 PCLO PCHI TMP2 TMP3
     NEXT

@@ -1,25 +1,3 @@
-; add source to destination, using the provided carry input 
-; and also set the output carry in CFLAG
-; set NFLAG and ZFLAG according to the result
-; uses storage: TMP0, TMP1
-MACRO ADC8 destination source carryin
-    A source
-    B destination
-    OP ADD
-    SET destination
-    OP OVL
-    SET TMP0  ; first carry possibility
-    A destination
-    B carryin
-    SET TMP1  ; second carry possibility
-    OP ADD
-    SET destination
-    SET NFLAG
-    SET ZFLAG
-    A TMP0
-    B TMP1
-    SET CFLAG ; compose carry (only one input can be 1)
-ENDMACRO
 
 ; ---- ADC #
     ORG $6900

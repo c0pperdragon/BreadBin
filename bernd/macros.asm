@@ -1,68 +1,64 @@
 
 ; provide the source value on the ALU output for setting
 MACRO GET source
-    A source
-    B V0
+    X source
+    X V0
     OP ADD
 ENDMACRO  
-  
-; provide a value 0 on the ALU output for setting
-MACRO GET0
-    A V255
-    OP INC
-ENDMACRO
-
-; provide a value 0 on the ALU output for setting
-MACRO GET1 
-    A V0
-    OP INC
-ENDMACRO
-  
+   
 ; Fetch the next operand byte of the program.
 ; After reading data into the position given as target, increase PC 
 MACRO FETCH target    
-    B PBR
-    A PCLO
-    B PCHI
+    X PBR
+    X PCHI
+    X PCLO
     IN target
-    OP INC
-    SET PCLO
     OP CRY
     SET PCHI
+    X V255
+    SET PCLO
 ENDMACRO
-  
+
+; increment program counter without fetching data
+MACRO SKIP
+    INC16 PCLO PCHI
+ENDMACRO
+
 ; Fetch the next command opcode from the program and
 ; Jump to the proper firmware segment. increase PC afterwards.
 ; Intermediate storage: TMP0
 MACRO NEXT
-    B PBR
-    A PCLO
-    B PCHI
+    X PBR
+    X PCHI
+    X PCLO
     IN TMP0
-    OP INC
-    SET PCLO
     OP CRY
+    SET PCHI
+    X V255
     JMP TMP0
-    SET PCHI  ; make use of delay slot
+    SET PCLO  ; make use of delay slot
 ENDMACRO
 
 ; Fetch next byte from program and treat this as a relative address
 ; Set program counter to target and fetch next command from there
-; Intermediate storage: TMP0 TMP1
-MACRO NEXT_RELATIVE freelabel
-    FETCH TMP1
-    A TMP1    ; determine if high bit is set -> backward branch
-    B TMP1
-    OP OVL
-    SET TMP0
-    B TMP0
-    BBE freelabel  
-    ; branching backward
-    ADD16 PCLO PCHI TMP1 V255
-    NEXT
-freelabel:    
-    ; branching forward
-    ADD16 PCLO PCHI TMP1 V0    
+; Intermediate storage: all temporaries
+MACRO NEXT_RELATIVE
+    FETCH TMP3    ; this is a signed 8-bit offset
+    ; tricky operation to sign-extend to a 16-bit value
+    X TMP3
+    X TMP3
+    OP OVF
+    SET TMP4  ; 0 if positive, 1 if negative
+    X TMP4
+    X TMP4
+    OP NAND
+    SET TMP4  ; 255 if positive, 254 if negative
+    X TMP4
+    X V1
+    OP ADD    
+    SET TMP4  ; 0 if positive, 255 if negative
+    ; do the relative jump
+    ADD16 PCLO PCHI TMP3 TMP4
     NEXT
 ENDMACRO
 
@@ -70,29 +66,29 @@ ENDMACRO
 ; add two 16-bit values (no carry out or carry in)
 ; temporary registers: TMP0
 MACRO ADD16 targetlo targethi sourcelo sourcehi
-    A targetlo
-    B sourcelo
-    OP OVL
+    X targetlo
+    X sourcelo
+    OP OVF
     SET TMP0
     OP ADD
     SET targetlo
-    A targethi
-    B sourcehi
+    X targethi
+    X sourcehi
     SET targethi
-    A targethi
-    B TMP0
+    X targethi
+    X TMP0
     SET targethi
 ENDMACRO
 
 
 ; Increment a 16-bit value.
 MACRO INC16 rlo rhi
-    A rlo
-    B rhi
-    OP INC
-    SET rlo
+    X rhi
+    X rlo
     OP CRY
     SET rhi
+    X V255
+    SET rlo
 ENDMACRO
 
 ; Decrement a 16-bit value.
@@ -104,19 +100,19 @@ ENDMACRO
 
 ; set 2 registers to the values of 2 other registers
 MACRO COPY16 targetlo targethi sourcelo sourcehi
-    OP CRY
-    A V0
-    B sourcelo
+    OP ADD
+    X sourcelo
+    X V0
     SET targetlo
-    B sourcehi
+    X sourcehi
     SET targethi
 ENDMACRO
 
 ; bit-invert the value of the operand
 MACRO INV8 operand
-    A operand
-    B operand
-    OP NOR
+    X operand
+    X operand
+    OP NAND
     SET operand
 ENDMACRO
 
@@ -125,14 +121,14 @@ ENDMACRO
 ; Intermediate storage: TMP0 
 MACRO FETCHADDRESS_d rlo rhi
     FETCH rlo
-    A rlo
-    B DLO
-    OP OVL
+    X DLO
+    X rlo
+    OP OVF
     SET TMP0
     OP ADD
     SET rlo
-    A DHI
-    B TMP0
+    X TMP0
+    X DHI
     SET rhi
 ENDMACRO
 
@@ -140,14 +136,14 @@ ENDMACRO
 ; Intermediate storage: TMP0 
 MACRO FETCHADDRESS_d_s rlo rhi
     FETCH rlo
-    A rlo
-    B SLO
-    OP OVL
+    X SLO
+    X rlo
+    OP OVF
     SET TMP0
     OP ADD
     SET rlo
-    A SHI
-    B TMP0
+    X TMP0
+    X SHI
     SET rhi
 ENDMACRO
 
@@ -205,51 +201,51 @@ ENDMACRO
 
 ; store a value into the specified memory location and bank 
 MACRO STORE rlo rhi bank value
-    B bank
-    A rlo
-    B rhi
+    X bank
+    X rhi
+    X rlo
     OUT value
-ENDMACRO 
+ENDMACRO
 
 ; load a 16-bit value from the specified memory location and bank 
 ; used temporary storage: TMP0, TMP1
 MACRO LOAD16 rlo rhi bank valuelo valuehi
-    B bank
-    A rlo
-    B rhi
+    X bank
+    X rhi
+    X rlo
     IN valuelo
-    OP INC
-    SET TMP0
     OP CRY
     SET TMP1
-    B bank
-    A TMP0
-    B TMP1
+    X V255
+    SET TMP0
+    X bank
+    X TMP1
+    X TMP0
     IN valuehi
 ENDMACRO 
 
 ; store a 16-bit value into the specified memory location and bank 
 ; used temporary storage: TMP0, TMP1
 MACRO STORE16 rlo rhi bank valuelo valuehi
-    B bank
-    A rlo
-    B rhi
+    X bank
+    X rhi
+    X rlo
     OUT valuelo
-    OP INC
-    SET TMP0
     OP CRY
     SET TMP1
-    B bank
-    A TMP0
-    B TMP1
+    X V255
+    SET TMP0
+    X bank
+    X TMP1
+    X TMP0
     OUT valuehi
 ENDMACRO 
 
 ; load a value from the specified memory location and bank 
 MACRO LOAD rlo rhi bank value
-    B bank
-    A rlo
-    B rhi
+    X bank
+    X rhi
+    X rlo
     IN value
 ENDMACRO 
 
@@ -268,20 +264,20 @@ ENDMACRO
 
 ; perform a branch if the A/M flag is set to 16 bit mode
 MACRO BRACCU16 branchtarget
-    B MFLAG
-    BBE branchtarget
+    X MFLAG
+    BEV branchtarget
 ENDMACRO
 
 ; perform a branch if the X flag is set to 16 bit mode
 MACRO BRINDEX16 branchtarget
-    B XFLAG
-    BBE branchtarget
+    X XFLAG
+    BEV branchtarget
 ENDMACRO
 
 ; decrement an 8-bit value and set ZFLAG and NFLAG accordingly
 MACRO DEC8ANDSETNZ r
-    A r
-    B V255
+    X r
+    X V255
     OP ADD
     SET r
     SET NFLAG
@@ -290,8 +286,9 @@ ENDMACRO
 
 ; increment an 8-bit value and set ZFLAG and NFLAG accordingly
 MACRO INC8ANDSETNZ r
-    A r
-    OP INC
+    X r
+    X V1
+    OP ADD
     SET r
     SET NFLAG
     SET ZFLAG
@@ -299,22 +296,116 @@ ENDMACRO
 
 ; join low and high byte of a 16-bit value to reflect the 
 ; zero-ness state of the value (basically doing an OR)
+; temporary: TMP0, TMP1
 MACRO COMPUTEZFLAG lo hi
-    A lo
-    B hi
-    OP NOR
-    SET ZFLAG
-    A ZFLAG
-    B ZFLAG
+    OP NAND
+    X lo
+    X V255
+    SET TMP0
+    X hi
+    SET TMP1
+    X TMP0
+    X TMP1
     SET ZFLAG
 ENDMACRO
 
 ; compute N and Z flags from a 16-bit value
+; temporary: TMP0, TMP1
 MACRO COMPUTENZFLAGS lo hi
     COMPUTEZFLAG lo hi
-    A lo
-    B V0
-    OP ADD
+    GET hi
     SET NFLAG    
+ENDMACRO
+
+; perform 8-bit logic shift right and set N,Z,C flags
+MACRO LSR8 r
+    ; extract bit 0 to get carry flag
+    X r
+    X V1
+    OP NAND
+    SET CFLAG
+    X CFLAG
+    X CFLAG
+    SET CFLAG
+    ; divide by 2 to perform right shift
+    X r
+    X V0
+    OP AVG  
+    SET r    
+    SET NFLAG
+    SET ZFLAG
+ENDMACRO
+
+; perform 8-bit logic shift right with incomming carry and set N,Z,C flags
+; temporary memory: TMP0
+MACRO ROR8 r
+    ; take previous carry flag and construct 128 or 0
+    X CFLAG
+    X V255
+    OP AVG
+    SET TMP0   ; 128 if carry was set, 127 otherwise
+    X TMP0
+    X V128
+    OP NAND    
+    SET TMP0   ; 127 if carry was set, 255 otherwise 
+    X TMP0
+    X TMP0
+    SET TMP0   ; 128 if carry was set, 0 otherwise
+    ; extract bit 0 to get new carry flag
+    X V1
+    X r
+    OP NAND
+    SET CFLAG
+    X CFLAG
+    X CFLAG
+    SET CFLAG
+    ; divide by 2 to perform right shift
+    X r
+    X V0
+    OP AVG  
+    SET r    
+    ; insert the incomming carry flag
+    X r
+    X TMP0
+    OP ADD
+    SET r
+    SET NFLAG
+    SET ZFLAG
+ENDMACRO
+
+; add source to destination, using the provided carry input 
+; and also set the output carry in CFLAG
+; set NFLAG and ZFLAG according to the result
+; uses storage: TMP0, TMP1
+MACRO ADC8 destination source carryin
+    X destination
+    X source
+    OP ADD
+    SET destination
+    OP OVF
+    SET TMP0  ; first carry possibility
+    X carryin
+    X destination
+    SET TMP1  ; second carry possibility
+    OP ADD
+    SET destination
+    SET NFLAG
+    SET ZFLAG
+    X TMP1
+    X TMP0
+    SET CFLAG ; compose carry (only one input can be 1)
+ENDMACRO
+
+; combine two 8-bit value with AND. also update ZFLAG and NFLAG.
+MACRO AND8 destination operand
+    OP NAND
+    X operand
+    X destination
+    SET destination
+    X destination
+    X destination
+    SET destination
+    SET NFLAG
+    SET ZFLAG
 ENDMACRO
 

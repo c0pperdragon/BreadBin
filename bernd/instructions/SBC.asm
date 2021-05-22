@@ -1,8 +1,7 @@
 ; subtraction just uses the addition operation by first just 
 ; inverting the operand. 
 ; to make this work, the meaning of the C flag needs to be considered
-; as inverted by the program.
-
+; as inverted by the user program.
 
 ; ---- SBC #
     ORG $E900
