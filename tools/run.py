@@ -2,7 +2,7 @@
 
 import sys
 
-mnemonic = [ "SET", " IN", "OUT", " OP", "  X", "  ?", "BBZ", "JMP" ]
+mnemonic = [ "SET", " IN", "OUT", " OP", "  X", "NOP", "BBZ", "JMP" ]
 
 class Board:
     def __init__(self):
@@ -118,23 +118,23 @@ def readromfile(filename):
 
 def printableram(ram):
     return ("{2:0>2X}{1:0>2X}{0:0>2X} "   # PC
-            "{4:0>2X}{3:0>2X} "          # A
-            "{5:0>2X} "                  # DBR
-            "{7:0>2X}{6:0>2X} "          # D
-            "{9:0>2X}{8:0>2X} "          # X
-            "{11:0>2X}{10:0>2X} "        # Y
-            "{13:0>2X}{12:0>2X} "        # S
-            "{14:0>2X} "                 # CFLAG
-            "{15:0>2X} "                 # NFLAG
-            "{16:0>2X} "                 # ZFLAG
-            "{17:0>2X} "                 # MFLAG
-            "{18:0>2X} "                 # XFLAG
-            "{19:0>2X} "                 # TMP0
-            "{20:0>2X} "                 # TMP1
-            "{21:0>2X} "                 # TMP2
-            "{22:0>2X} "                 # TMP3
-            "{23:0>2X} "                 # TMP4
-            "{24:0>2X} "                 # TMP5
+            "{4:0>2X}{3:0>2X} "           # A
+            "{5:0>2X} "                   # DBR
+            "{7:0>2X}{6:0>2X} "           # D
+            "{9:0>2X}{8:0>2X} "           # X
+            "{11:0>2X}{10:0>2X} "         # Y
+            "{13:0>2X}{12:0>2X} "         # S
+            "{14:0>2X} "                  # CFLAG
+            "{15:0>2X} "                  # NFLAG
+            "{16:0>2X} "                  # ZFLAG
+            "{17:0>2X} "                  # MFLAG
+            "{18:0>2X} "                  # XFLAG
+            "{19:0>2X} "                  # TMP0
+            "{20:0>2X} "                  # TMP1
+            "{21:0>2X} "                  # TMP2
+            "{22:0>2X} "                  # TMP3
+            "{23:0>2X} "                  # TMP4
+            "{24:0>2X} "                  # TMP5
             "{25:0>2X}{26:0>2X}{27:0>2X}" # consts 
             "{28:0>2X}{29:0>2X}{30:0>2X}" # consts
             "{31:0>2X}"
@@ -211,11 +211,8 @@ def execute(board,rom,stop,onlyjumps):
             board.latch(b)
             b = a
             a = ram[param]
-        elif instr==0xA0:  # SETX
-            ram[param] = alu(a,b,op)
-            board.latch(b)
-            b = a
-            a = ram[param]
+        elif instr==0xA0:  # NOP
+            pass
         elif instr==0xC0:  # BRE
             if (a%2)==0:
                 nextpc = (pc & 0xff00) | (param<<3)

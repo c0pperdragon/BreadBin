@@ -140,7 +140,7 @@ def processline(identifiers, macros, finalpass, tokens, codeaddress, outbuffer,l
 
     if len(tokens)>=2 and tokens[1]==":":
         pad = (8-(pc%8))%8
-        bytes = [0x60] * pad
+        bytes = [0xA0] * pad    # insert NOPs 
         if not finalpass:
             id = tokens[0]
             if id in identifiers:
@@ -175,8 +175,8 @@ def processline(identifiers, macros, finalpass, tokens, codeaddress, outbuffer,l
         bytes = [ 0x60 | operator(T, 1) ]
     elif T[0]=="X":
         bytes = [ 0x80 | op(I,G,T, 1, 5) ]
-#    elif T[0]=="SETX":
-#        bytes = [ 0xA0 | op(I,G,T, 1, 5) ]
+    elif T[0]=="NOP":
+        bytes = [ 0xA0 ]
     elif T[0]=="BRE":
         addr = op(I,G,T, 1, 16)
         if finalpass:

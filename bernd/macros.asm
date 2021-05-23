@@ -1,27 +1,45 @@
+; Collection of macros. For best interoperability, these macros 
+; specify the temporary variables they use.
+; Additionally all macros (except the branch macros themselves) are required to cause
+; no side-effects besides setting operation or operands when only the first instruction is executed. 
+; This is to allow for preceeding branch instructions that have a delayed branch.
+
+; perform a branch if the A/M flag is set to 16 bit mode
+MACRO BRACCU16 branchtarget
+    X MFLAG
+    BRE branchtarget
+ENDMACRO
+
+; perform a branch if the X flag is set to 16 bit mode
+MACRO BRINDEX16 branchtarget
+    X XFLAG
+    BRE branchtarget
+ENDMACRO
+
 
 ; provide the source value on the ALU output for setting
 MACRO GET source
+    OP ADD
     X source
     X V0
-    OP ADD
 ENDMACRO  
 
 ; quick way to provide various constants on the ALU output
 MACRO GET0
-    X V0
     OP REV
+    X V0
 ENDMACRO
 MACRO GET1
-    X V128
     OP REV
+    X V128
 ENDMACRO
 MACRO GET128
-    X V1
     OP REV
+    X V1
 ENDMACRO
 MACRO GET255
-    X V255
     OP REV
+    X V255
 ENDMACRO
 
    
@@ -85,9 +103,9 @@ ENDMACRO
 ; add two 16-bit values (no carry out or carry in)
 ; temporary registers: TMP0
 MACRO ADD16 targetlo targethi sourcelo sourcehi
+    OP OVF
     X targetlo
     X sourcelo
-    OP OVF
     SET TMP0
     OP ADD
     SET targetlo
@@ -102,9 +120,9 @@ ENDMACRO
 
 ; Increment a 16-bit value.
 MACRO INC16 rlo rhi
+    OP CRY
     X rhi
     X rlo
-    OP CRY
     SET rhi
     X V255
     SET rlo
@@ -129,9 +147,9 @@ ENDMACRO
 
 ; bit-invert the value of the operand
 MACRO INV8 operand
-    X operand
-    X operand
     OP NAND
+    X operand
+    X operand
     SET operand
 ENDMACRO
 
@@ -281,23 +299,12 @@ MACRO PULL value
     LOAD SLO SHI V0 value
 ENDMACRO
 
-; perform a branch if the A/M flag is set to 16 bit mode
-MACRO BRACCU16 branchtarget
-    X MFLAG
-    BRE branchtarget
-ENDMACRO
-
-; perform a branch if the X flag is set to 16 bit mode
-MACRO BRINDEX16 branchtarget
-    X XFLAG
-    BRE branchtarget
-ENDMACRO
 
 ; decrement an 8-bit value and set ZFLAG and NFLAG accordingly
 MACRO DEC8ANDSETNZ r
+    OP ADD
     X r
     X V255
-    OP ADD
     SET r
     SET NFLAG
     SET ZFLAG
@@ -305,9 +312,9 @@ ENDMACRO
 
 ; increment an 8-bit value and set ZFLAG and NFLAG accordingly
 MACRO INC8ANDSETNZ r
+    OP ADD
     X r
     X V1
-    OP ADD
     SET r
     SET NFLAG
     SET ZFLAG
@@ -340,9 +347,9 @@ ENDMACRO
 
 ; Perform left shift. Outgoing bit goes to CFLAG
 MACRO LSL8 r
-    X r
-    X r
     OP ADD
+    X r
+    X r
     SET r
     OP OVF
     SET CFLAG
@@ -351,9 +358,9 @@ ENDMACRO
 ; Perform left shift. Incomming bit from CFLAG, outgoing bit goes to CFLAG
 ; temporary: TMP0
 MACRO ROL8 r
+    OP ADD
     X CFLAG
     X V0
-    OP ADD
     SET TMP0
     X r
     X r
@@ -370,8 +377,8 @@ ENDMACRO
 
 ; perform 8-bit logic shift right. outgoing bit goes to CFLAG
 MACRO LSR8 r
-    X r
     OP REV
+    X r
     SET r
     LSL8 r
     X r
@@ -382,8 +389,8 @@ ENDMACRO
 ; perform 8-bit logic shift right with incomming CFLAG and outgoind CFLAG
 ; temporary memory: TMP0
 MACRO ROR8 r
-    X r
     OP REV
+    X r
     SET r
     ROL8 r
     X r
@@ -395,9 +402,9 @@ ENDMACRO
 ; and also set the output carry in CFLAG
 ; uses storage: TMP0, TMP1
 MACRO ADC8 destination source carryin
+    OP ADD
     X destination
     X source
-    OP ADD
     SET destination
     OP OVF
     SET TMP0  ; first carry possibility
@@ -413,9 +420,9 @@ ENDMACRO
 
 ; perform a 8-bit AND joining destination and source
 MACRO AND8 destination source
+    OP NAND
     X destination
     X source
-    OP NAND
     SET destination
     X destination
     X destination
