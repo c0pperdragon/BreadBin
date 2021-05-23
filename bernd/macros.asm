@@ -5,6 +5,25 @@ MACRO GET source
     X V0
     OP ADD
 ENDMACRO  
+
+; quick way to provide various constants on the ALU output
+MACRO GET0
+    X V0
+    OP REV
+ENDMACRO
+MACRO GET1
+    X V128
+    OP REV
+ENDMACRO
+MACRO GET128
+    X V1
+    OP REV
+ENDMACRO
+MACRO GET255
+    X V255
+    OP REV
+ENDMACRO
+
    
 ; Fetch the next operand byte of the program.
 ; After reading data into the position given as target, increase PC 
@@ -265,13 +284,13 @@ ENDMACRO
 ; perform a branch if the A/M flag is set to 16 bit mode
 MACRO BRACCU16 branchtarget
     X MFLAG
-    BEV branchtarget
+    BRE branchtarget
 ENDMACRO
 
 ; perform a branch if the X flag is set to 16 bit mode
 MACRO BRINDEX16 branchtarget
     X XFLAG
-    BEV branchtarget
+    BRE branchtarget
 ENDMACRO
 
 ; decrement an 8-bit value and set ZFLAG and NFLAG accordingly
@@ -294,88 +313,86 @@ MACRO INC8ANDSETNZ r
     SET ZFLAG
 ENDMACRO
 
-; join low and high byte of a 16-bit value to reflect the 
-; zero-ness state of the value (basically doing an OR)
+; compute N and Z flags from an 8-bit value.
 ; temporary: TMP0, TMP1
-MACRO COMPUTEZFLAG lo hi
+MACRO NZ16 lo hi
     OP NAND
     X lo
     X V255
-    SET TMP0
+    SET TMP0  ; inverted lo
     X hi
-    SET TMP1
+    SET TMP1  ; inverted hi
     X TMP0
     X TMP1
     SET ZFLAG
+    X V255
+    SET NFLAG
 ENDMACRO
 
-; compute N and Z flags from a 16-bit value
+; compute N and Z flags from an 8-bit value
 ; temporary: TMP0, TMP1
-MACRO COMPUTENZFLAGS lo hi
-    COMPUTEZFLAG lo hi
-    GET hi
-    SET NFLAG    
-ENDMACRO
-
-; perform 8-bit logic shift right and set N,Z,C flags
-MACRO LSR8 r
-    ; extract bit 0 to get carry flag
-    X r
-    X V1
-    OP NAND
-    SET CFLAG
-    X CFLAG
-    X CFLAG
-    SET CFLAG
-    ; divide by 2 to perform right shift
-    X r
-    X V0
-    OP AVG  
-    SET r    
+MACRO NZ8 r
+    GET r
     SET NFLAG
     SET ZFLAG
 ENDMACRO
 
-; perform 8-bit logic shift right with incomming carry and set N,Z,C flags
-; temporary memory: TMP0
-MACRO ROR8 r
-    ; take previous carry flag and construct 128 or 0
-    X CFLAG
-    X V255
-    OP AVG
-    SET TMP0   ; 128 if carry was set, 127 otherwise
-    X TMP0
-    X V128
-    OP NAND    
-    SET TMP0   ; 127 if carry was set, 255 otherwise 
-    X TMP0
-    X TMP0
-    SET TMP0   ; 128 if carry was set, 0 otherwise
-    ; extract bit 0 to get new carry flag
-    X V1
+
+; Perform left shift. Outgoing bit goes to CFLAG
+MACRO LSL8 r
     X r
-    OP NAND
-    SET CFLAG
-    X CFLAG
-    X CFLAG
-    SET CFLAG
-    ; divide by 2 to perform right shift
     X r
+    OP ADD
+    SET r
+    OP OVF
+    SET CFLAG
+ENDMACRO
+
+; Perform left shift. Incomming bit from CFLAG, outgoing bit goes to CFLAG
+; temporary: TMP0
+MACRO ROL8 r
+    X CFLAG
     X V0
-    OP AVG  
-    SET r    
-    ; insert the incomming carry flag
+    OP ADD
+    SET TMP0
+    X r
+    X r
+    OP ADD
+    SET r
+    OP OVF
+    SET CFLAG
     X r
     X TMP0
     OP ADD
     SET r
-    SET NFLAG
-    SET ZFLAG
+ENDMACRO
+
+
+; perform 8-bit logic shift right. outgoing bit goes to CFLAG
+MACRO LSR8 r
+    X r
+    OP REV
+    SET r
+    LSL8 r
+    X r
+    OP REV
+    SET r
+ENDMACRO
+
+; perform 8-bit logic shift right with incomming CFLAG and outgoind CFLAG
+; temporary memory: TMP0
+MACRO ROR8 r
+    X r
+    OP REV
+    SET r
+    ROL8 r
+    X r
+    OP REV
+    SET r
 ENDMACRO
 
 ; add source to destination, using the provided carry input 
 ; and also set the output carry in CFLAG
-; set NFLAG and ZFLAG according to the result
 ; uses storage: TMP0, TMP1
 MACRO ADC8 destination source carryin
     X destination
@@ -389,23 +406,18 @@ MACRO ADC8 destination source carryin
     SET TMP1  ; second carry possibility
     OP ADD
     SET destination
-    SET NFLAG
-    SET ZFLAG
     X TMP1
     X TMP0
     SET CFLAG ; compose carry (only one input can be 1)
 ENDMACRO
 
-; combine two 8-bit value with AND. also update ZFLAG and NFLAG.
-MACRO AND8 destination operand
+; perform a 8-bit AND joining destination and source
+MACRO AND8 destination source
+    X destination
+    X source
     OP NAND
-    X operand
-    X destination
     SET destination
     X destination
     X destination
     SET destination
-    SET NFLAG
-    SET ZFLAG
 ENDMACRO
-

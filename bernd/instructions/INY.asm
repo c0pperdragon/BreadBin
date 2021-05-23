@@ -5,5 +5,5 @@
     NEXT
 INY_i_16bit: 
     INC16 YLO YHI
-    COMPUTENZFLAGS YLO YHI
+    NZ16 YLO YHI
     NEXT

@@ -140,6 +140,28 @@ def printableram(ram):
             "{31:0>2X}"
             ).format(*ram)
 
+def alu(a,b,op):
+    if op==0:      # ADD
+        return (a+b)&0xff
+    elif op==1:    # OVF
+        return 1 if a+b>0xff else 0
+    elif op==2:    # CRY
+        return ((b+1)&0xff) if a==0xff else b
+    elif op==3:    # REV
+        return (
+            ((a&1)<<7)|
+            ((a&2)<<5)|
+            ((a&4)<<3)|
+            ((a&8)<<1)|
+            ((a&16)>>1)|
+            ((a&32)>>3)|
+            ((a&64)>>5)|
+            ((a&128)>>7))
+    elif op==4:    # NAND
+        return 0xff ^ (a & b)
+    else:
+        return 0
+
 def execute(board,rom,stop,onlyjumps):
     didjump = 0
     start = stop-5000 if onlyjumps else stop-200
@@ -177,20 +199,8 @@ def execute(board,rom,stop,onlyjumps):
         instr = ir & 0xe0
         param = ir & 0x1f
         didjump = didjump+1
-        if instr==0x00:  # SET
-            if op==0:      # ADD
-                result = (a+b) & 0xff
-            elif op==1:    # OVF
-                result = 1 if a+b>255 else 0
-            elif op==2:    # CRY
-                result = ((b+1)&0xff) if a==255 else b
-            elif op==3:    # AVG
-                result = (a+b) >> 1
-            elif op==4:    # NAND
-                result = 255 ^ (a & b)
-            else:
-                result = 0
-            ram[param] = result
+        if instr==0x00:    # SET
+            ram[param] = alu(a,b,op)
         elif instr==0x20:  # IN
             ram[param] = board.rd(b*256+a)
         elif instr==0x40:  # OUT
@@ -201,9 +211,12 @@ def execute(board,rom,stop,onlyjumps):
             board.latch(b)
             b = a
             a = ram[param]
-        elif instr==0xA0:  # unused B
-            pass
-        elif instr==0xC0:  # BEV
+        elif instr==0xA0:  # SETX
+            ram[param] = alu(a,b,op)
+            board.latch(b)
+            b = a
+            a = ram[param]
+        elif instr==0xC0:  # BRE
             if (a%2)==0:
                 nextpc = (pc & 0xff00) | (param<<3)
         elif instr==0xE0:  # JMP

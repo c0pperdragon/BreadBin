@@ -7,5 +7,5 @@
     NEXT
 DEC_A_16bit:    
     DEC16 ALO AHI
-    COMPUTENZFLAGS ALO AHI
+    NZ16 ALO AHI
     NEXT

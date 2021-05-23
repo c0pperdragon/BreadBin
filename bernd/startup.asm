@@ -8,7 +8,7 @@
     X TMP0
     X V255
     SET V255
-    X V255     ; construct o
+    X V255     ; construct 0
     X V255
     OP NAND
     SET V0
@@ -16,9 +16,8 @@
     X V255
     OP CRY  
     SET V1
-    X V255     ; construct 128
-    X V1
-    OP AVG
+    X V1       ; construct 128
+    OP REV  
     SET V128
     ; initialize emulated registers
     GET V0
@@ -32,7 +31,7 @@
     SET YLO
     SET YHI
     ; bernd starts execution at $80FFF8
-    GET V128
+    GET128
     SET PBR   ; $80
     GET V255
     SET PCHI  ; $FF
@@ -47,16 +46,16 @@
     X TMP0
     SET PCLO  ; $F8
     ; stack pointer starts at $01FF
-    GET V255
+    GET255
     SET SLO
-    GET V1
+    GET1
     SET SHI
     ; initialize flags
-    GET V0
+    GET0
     SET CFLAG
     SET NFLAG
     SET ZFLAG
-    GET V1
+    GET1
     SET MFLAG
     SET XFLAG
     ; fetch first instruction and continue with it

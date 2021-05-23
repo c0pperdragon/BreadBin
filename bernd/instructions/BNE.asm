@@ -9,7 +9,7 @@
     OP CRY
     SET TMP0     ; 1 if ZFLAG==0, 0 otherwise
     X TMP0
-    BEV BNE_r_taken
+    BRE BNE_r_taken
     SKIP
     NEXT
 BNE_r_taken:

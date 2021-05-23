@@ -95,7 +95,7 @@ def operator(tokens, tidx):
         return 1
     elif o=='CRY':
         return 2
-    elif o=='AVG':
+    elif o=='REV':
         return 3
     elif o=='NAND':
         return 4
@@ -175,7 +175,9 @@ def processline(identifiers, macros, finalpass, tokens, codeaddress, outbuffer,l
         bytes = [ 0x60 | operator(T, 1) ]
     elif T[0]=="X":
         bytes = [ 0x80 | op(I,G,T, 1, 5) ]
-    elif T[0]=="BEV":
+#    elif T[0]=="SETX":
+#        bytes = [ 0xA0 | op(I,G,T, 1, 5) ]
+    elif T[0]=="BRE":
         addr = op(I,G,T, 1, 16)
         if finalpass:
             if (addr//256) != (pc//256):

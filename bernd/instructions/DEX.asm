@@ -5,5 +5,5 @@
     NEXT
 DEX_i_16bit:    
     DEC16 XLO XHI
-    COMPUTENZFLAGS XLO XHI
+    NZ16 XLO XHI
     NEXT

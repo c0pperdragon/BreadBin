@@ -5,5 +5,5 @@
     NEXT
 INX_i_16bit: 
     INC16 XLO XHI
-    COMPUTENZFLAGS XLO XHI
+    NZ16 XLO XHI
     NEXT

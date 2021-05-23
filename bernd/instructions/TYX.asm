@@ -1,6 +1,12 @@
 ; ---- TYX i
     ORG $BB00
+    BRINDEX16 TYX_16to16
+    GET YLO
+    SET XLO
+    NZ8 XLO
+    NEXT
+TYX_16to16:    
     COPY16 XLO XHI YLO YHI
-    COMPUTENZFLAGS XLO XHI
+    NZ16 XLO XHI
     NEXT
     

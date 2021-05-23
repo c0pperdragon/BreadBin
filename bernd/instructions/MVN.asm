@@ -31,12 +31,12 @@ MVN_loop:
     OP CRY
     SET TMP0   ; 2 if C = 0.  1 otherwise
     X TMP0
-    BEV MVN_done
+    BRE MVN_done
     
     ; decrement C and keep going
     DEC16 ALO AHI
     X V0
-    BEV MVN_loop
+    BRE MVN_loop
     
 MVN_done:
     NEXT

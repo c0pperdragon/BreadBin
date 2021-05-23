@@ -1,6 +1,6 @@
 ; ---- TSC i
     ORG $3B00
     COPY16 ALO AHI SLO SHI
-    COMPUTENZFLAGS ALO AHI
+    NZ16 ALO AHI
     NEXT
     
