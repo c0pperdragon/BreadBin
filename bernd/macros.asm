@@ -320,7 +320,7 @@ MACRO INC8ANDSETNZ r
     SET ZFLAG
 ENDMACRO
 
-; compute N and Z flags from an 8-bit value.
+; compute N and Z flags from a 16-bit value.
 ; temporary: TMP0, TMP1
 MACRO NZ16 lo hi
     OP NAND
