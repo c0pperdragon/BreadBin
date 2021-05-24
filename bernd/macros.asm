@@ -26,8 +26,7 @@ ENDMACRO
 
 ; quick way to provide various constants on the ALU output
 MACRO GET0
-    OP REV
-    X V0
+    OP ZERO
 ENDMACRO
 MACRO GET1
     OP REV
@@ -38,8 +37,7 @@ MACRO GET128
     X V1
 ENDMACRO
 MACRO GET255
-    OP REV
-    X V255
+    OP FF
 ENDMACRO
 
    

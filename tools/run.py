@@ -145,8 +145,8 @@ def alu(a,b,op):
         return (a+b)&0xff
     elif op==1:    # OVF
         return 1 if a+b>0xff else 0
-    elif op==2:    # CRY
-        return ((b+1)&0xff) if a==0xff else b
+    elif op==2:    # NAND
+        return 0xff ^ (a & b)
     elif op==3:    # REV
         return (
             ((a&1)<<7)|
@@ -157,8 +157,14 @@ def alu(a,b,op):
             ((a&32)>>3)|
             ((a&64)>>5)|
             ((a&128)>>7))
-    elif op==4:    # NAND
-        return 0xff ^ (a & b)
+    elif op==4:    # CRY
+        return ((b+1)&0xff) if a==0xff else b
+    elif op==5:    # TOP
+        return 1 if a==0xff and b==0xff else 0
+    elif op==6:    # FF
+        return 0xff
+    elif op==7:    # ZERO
+        return 0
     else:
         return 0
 

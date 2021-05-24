@@ -93,12 +93,18 @@ def operator(tokens, tidx):
         return 0
     if o=='OVF':
         return 1
-    elif o=='CRY':
+    elif o=='NAND':
         return 2
     elif o=='REV':
         return 3
-    elif o=='NAND':
+    elif o=='CRY':
         return 4
+    elif o=='TOP':
+        return 5
+    elif o=='FF':
+        return 6
+    elif o=='ZERO':
+        return 7
     else:
         raise AssemblerException("Unknown operator")
 

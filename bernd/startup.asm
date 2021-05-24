@@ -1,17 +1,10 @@
 ; ---- STARTUP ----
     ORG $0000
     ; create constant values after cold start
-    X V255     ; construct a 255 from arbitary start values
-    X V255
-    OP NAND
-    SET TMP0
-    X TMP0
-    X V255
-    SET V255
-    X V255     ; construct 0
-    X V255
-    OP NAND
+    OP ZERO    ; get 0
     SET V0
+    OP FF      ; get 255
+    SET V255 
     X V0       ; construct 1
     X V255
     OP CRY  
@@ -33,7 +26,7 @@
     ; bernd starts execution at $80FFF8
     GET128
     SET PBR   ; $80
-    GET V255
+    GET255
     SET PCHI  ; $FF
     X V255
     X V255
