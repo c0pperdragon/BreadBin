@@ -89,22 +89,30 @@ def operator(tokens, tidx):
     if tidx >= len(tokens):
         raise AssemblerException("Missing operator")
     o = tokens[tidx];
-    if o=='ADD':
-        return 0b1000
-    if o=='OVF':
-        return 0b1001
-    elif o=='NAND':
-        return 0b1010
-    elif o=='REV':
-        return 0b1011
+    if o=='B':
+        return 0b0000
+    elif o=='ZERO':
+        return 0b0001
+    elif o=='FF':
+        return 0b0010
+    elif o=='HALF':
+        return 0b0011
     elif o=='CRY':
         return 0b0100
     elif o=='TOP':
         return 0b0101
-    elif o=='FF':
-        return 0b0110
-    elif o=='ZERO':
-        return 0b0111
+    elif o=='ADD':
+        return 0b1000
+    elif o=='OVF':
+        return 0b1001
+    elif o=='NAND':
+        return 0b1010
+    elif o=='AVG':
+        return 0b1011
+    elif o=='AVG':
+        return 0b1011
+    elif o=='ROR':
+        return 0b1111
     else:
         raise AssemblerException("Unknown operator")
 

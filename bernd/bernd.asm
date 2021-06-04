@@ -30,8 +30,7 @@
     TMP4 = 23
     TMP5 = 24
 ; useful constant values
-    V255 = 28
-    V128 = 29
+    V255 = 29
     V1 = 30
     V0 = 31   ; with register 31 holding 0, executing a 
               ; $FF instruction will jump to $0000, 

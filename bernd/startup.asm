@@ -1,17 +1,14 @@
 ; ---- STARTUP ----
     ORG $0000
     ; create constant values after cold start
-    OP ZERO    ; get 0
-    SET V0
-    OP FF      ; get 255
+    OP FF      ; construct 255
     SET V255 
+    OP ZERO    ; construct 0
+    SET V0
     X V0       ; construct 1
     X V255
     OP CRY  
     SET V1
-    X V1       ; construct 128
-    OP REV  
-    SET V128
     ; initialize emulated registers
     GET V0
     SET ALO
@@ -24,7 +21,9 @@
     SET YLO
     SET YHI
     ; bernd starts execution at $80FFF8
-    GET128
+    X V0       ; construct 128
+    X V255
+    OP ROR
     SET PBR   ; $80
     GET255
     SET PCHI  ; $FF

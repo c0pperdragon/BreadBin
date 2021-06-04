@@ -29,12 +29,10 @@ MACRO GET0
     OP ZERO
 ENDMACRO
 MACRO GET1
-    OP REV
-    X V128
+    GET V1
 ENDMACRO
 MACRO GET128
-    OP REV
-    X V1
+    GET V128
 ENDMACRO
 MACRO GET255
     OP FF
@@ -375,24 +373,43 @@ ENDMACRO
 
 ; perform 8-bit logic shift right. outgoing bit goes to CFLAG
 MACRO LSR8 r
-    OP REV
+    OP NAND
     X r
-    SET r
-    LSL8 r
+    X V1
+    SET CFLAG
+    X CFLAG
+    X CFLAG
+    SET CFLAG
+    X V0
     X r
-    OP REV
+    OP AVG
     SET r
 ENDMACRO
 
-; perform 8-bit logic shift right with incomming CFLAG and outgoind CFLAG
+; perform 8-bit logic shift right with incomming CFLAG and outgoing CFLAG
 ; temporary memory: TMP0
 MACRO ROR8 r
-    OP REV
+    ; expand CFLAG to 8 bits 
+    X CFLAG
+    X V255
+    OP ADD
+    SET TMP0
+    X TMP0
+    X TMP0
+    OP NAND
+    SET TMP0   ; 255 if CFLAG was 1, else 0
+    ; outgoing CFLAG
+    OP NAND
     X r
-    SET r
-    ROL8 r
+    X V1
+    SET CFLAG
+    X CFLAG
+    X CFLAG
+    SET CFLAG
+    ; do the rotation
     X r
-    OP REV
+    X TMP0
+    OP ROR
     SET r
 ENDMACRO
 

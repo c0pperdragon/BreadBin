@@ -150,16 +150,8 @@ def alu(a,b,op):
         return 1 if x+b+c>0xff else 0
     elif m==0b0010:    # NAND
         return 0xff ^ (x & b)
-    else:              # REV
-        return (
-            ((x&1)<<7)|
-            ((x&2)<<5)|
-            ((x&4)<<3)|
-            ((x&8)<<1)|
-            ((x&16)>>1)|
-            ((x&32)>>3)|
-            ((x&64)>>5)|
-            ((x&128)>>7))
+    else:              # AVG
+        return (x+b+c)>>1
 
 def execute(board,rom,stop,onlyjumps):
     didjump = 0

@@ -1,7 +1,8 @@
 ; ---- BMI r
     ORG $3000
     X NFLAG
-    OP REV
+    X NFLAG
+    OP OVF
     SET TMP0
     X TMP0
     BRE BMI_r_nottaken

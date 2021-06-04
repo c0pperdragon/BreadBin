@@ -15,9 +15,11 @@
     X TMP5
     X TMP5
     SET TMP4
+    OP OVF
     X TMP4
-    OP REV
+    X TMP4
     SET TMP4  ; X
+    X TMP5
     X TMP5
     SET TMP5  ; M
         

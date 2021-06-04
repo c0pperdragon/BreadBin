@@ -461,7 +461,7 @@ NND1
 Text Label 7450 2100 1    50   Italic 0
 GND
 Text Label 7650 2100 1    50   Italic 0
-X6
+ADD2
 Wire Wire Line
 	7350 2100 7350 1900
 Wire Wire Line
@@ -477,7 +477,7 @@ NND2
 Text Label 8150 2100 1    50   Italic 0
 GND
 Text Label 8350 2100 1    50   Italic 0
-X5
+ADD3
 Wire Wire Line
 	8050 2100 8050 1900
 Wire Wire Line
@@ -491,9 +491,9 @@ ADD0
 Text Label 7550 3500 1    50   ~ 0
 NND0
 Text Label 7450 3500 1    50   Italic 0
-GND
+OVF
 Text Label 7650 3500 1    50   Italic 0
-X7
+ADD1
 Wire Wire Line
 	7350 3500 7350 3300
 Wire Wire Line
@@ -509,7 +509,7 @@ NND3
 Text Label 8150 3500 1    50   Italic 0
 GND
 Text Label 8350 3500 1    50   Italic 0
-X4
+ADD4
 Wire Wire Line
 	8050 3500 8050 3300
 Wire Wire Line
@@ -525,7 +525,7 @@ NND5
 Text Label 7450 4900 1    50   Italic 0
 GND
 Text Label 7650 4900 1    50   Italic 0
-X2
+ADD6
 Wire Wire Line
 	7350 4900 7350 4700
 Wire Wire Line
@@ -541,7 +541,7 @@ NND6
 Text Label 8150 4900 1    50   Italic 0
 GND
 Text Label 8350 4900 1    50   Italic 0
-X1
+ADD7
 Wire Wire Line
 	8050 4900 8050 4700
 Wire Wire Line
@@ -557,7 +557,7 @@ NND4
 Text Label 7450 6250 1    50   Italic 0
 GND
 Text Label 7650 6250 1    50   Italic 0
-X3
+ADD5
 Wire Wire Line
 	7350 6250 7350 6050
 Wire Wire Line
@@ -573,7 +573,7 @@ NND7
 Text Label 8150 6250 1    50   Italic 0
 GND
 Text Label 8350 6250 1    50   Italic 0
-X0
+OVF
 Wire Wire Line
 	8050 6250 8050 6050
 Wire Wire Line
@@ -1231,7 +1231,7 @@ F 3 "" H 4150 6500 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Text Notes 9350 6500 0    50   ~ 0
-        ALU operation summary\n0000   B \n0001   ZERO        \n0010   FF              \n0011   ZERO                \n0100   CRY       B+1 if A=255, else B \n0101   TOP       1, if A=255 and B=255\n0110   FF          \n0111   ZERO    \n1000   ADD      (A+B) mod 255\n1001   OVF       1, if A+B>255\n1010   NAND     A NAND B\n1011   REV       revert bit order of A\n1100   CRY1    A+B+1  if A=255, else A+B\n1101   OVF1    1, if A+B+1>255\n1110   NAND\n1111   REV\n
+        ALU operation summary\n0000   B            B\n0001   ZERO     always 0   \n0010   FF           always 255   \n0011   HALF      B/2 (rounded down)         \n0100   CRY       B+1 if A=255, else B \n0101   TOP       1, if A=255 and B=255\n0110   FF           always 255\n0111                ?\n1000   ADD      (A+B) mod 255\n1001   OVF       1, if A+B>255\n1010   NAND     A NAND B\n1011   AVG       (A+B)/2  (rounded down)\n1100                ?\n1101                ?\n1110   NAND\n1111   ROR      \n
 $Comp
 L 74xx:74LS08 AND2
 U 5 1 61CDBD6E
