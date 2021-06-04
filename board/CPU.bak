@@ -386,11 +386,11 @@ Text Label 10450 1500 1    50   ~ 0
 PAR1
 Text Label 10550 1500 1    50   ~ 0
 PAR0
-Text Label 4950 6850 2    50   ~ 0
+Text Label 4950 7150 2    50   ~ 0
 PAR0
-Text Label 4950 6950 2    50   ~ 0
-PAR1
 Text Label 4950 7050 2    50   ~ 0
+PAR1
+Text Label 4950 6950 2    50   ~ 0
 PAR2
 Text Label 10250 6450 1    50   ~ 0
 PAR0
@@ -1699,7 +1699,7 @@ Wire Wire Line
 	9150 1300 9150 2300
 Wire Wire Line
 	8850 2050 9350 2050
-Text Label 4950 7150 2    50   ~ 0
+Text Label 4950 6850 2    50   ~ 0
 PAR3
 Wire Wire Line
 	4950 6950 4750 6950
@@ -1728,23 +1728,23 @@ Wire Wire Line
 Connection ~ 5200 6550
 Wire Wire Line
 	3650 5250 3600 5250
-Wire Wire Line
-	3600 5250 3600 7150
-Wire Wire Line
-	3600 7150 3750 7150
-Wire Wire Line
-	3750 7050 3550 7050
-Wire Wire Line
-	3550 5150 3550 7050
-Wire Wire Line
-	3750 6950 3500 6950
-Wire Wire Line
-	3500 5050 3500 6950
-Wire Wire Line
-	3750 6850 3450 6850
-Wire Wire Line
-	3450 4950 3450 6850
 NoConn ~ 3750 6650
 NoConn ~ 3750 6550
 NoConn ~ 3750 6450
+Wire Wire Line
+	3450 7150 3750 7150
+Wire Wire Line
+	3500 7050 3750 7050
+Wire Wire Line
+	3500 5050 3500 7050
+Wire Wire Line
+	3450 4950 3450 7150
+Wire Wire Line
+	3600 5250 3600 6850
+Wire Wire Line
+	3600 6850 3750 6850
+Wire Wire Line
+	3550 5150 3550 6950
+Wire Wire Line
+	3550 6950 3750 6950
 $EndSCHEMATC

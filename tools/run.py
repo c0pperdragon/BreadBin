@@ -141,32 +141,25 @@ def printableram(ram):
             ).format(*ram)
 
 def alu(a,b,op):
-    if op==0:      # ADD
-        return (a+b)&0xff
-    elif op==1:    # OVF
-        return 1 if a+b>0xff else 0
-    elif op==2:    # NAND
-        return 0xff ^ (a & b)
-    elif op==3:    # REV
+    x = a if (op&0b1000)!=0 else 0
+    c = 1 if a==0xff and (op&0b0100)!=0 else 0
+    m = op&0b0011
+    if m==0b0000:      # ADD
+        return (x+b+c)&0xff
+    elif m==0b0001:    # OVF
+        return 1 if x+b+c>0xff else 0
+    elif m==0b0010:    # NAND
+        return 0xff ^ (x & b)
+    else:              # REV
         return (
-            ((a&1)<<7)|
-            ((a&2)<<5)|
-            ((a&4)<<3)|
-            ((a&8)<<1)|
-            ((a&16)>>1)|
-            ((a&32)>>3)|
-            ((a&64)>>5)|
-            ((a&128)>>7))
-    elif op==4:    # CRY
-        return ((b+1)&0xff) if a==0xff else b
-    elif op==5:    # TOP
-        return 1 if a==0xff and b==0xff else 0
-    elif op==6:    # FF
-        return 0xff
-    elif op==7:    # ZERO
-        return 0
-    else:
-        return 0
+            ((x&1)<<7)|
+            ((x&2)<<5)|
+            ((x&4)<<3)|
+            ((x&8)<<1)|
+            ((x&16)>>1)|
+            ((x&32)>>3)|
+            ((x&64)>>5)|
+            ((x&128)>>7))
 
 def execute(board,rom,stop,onlyjumps):
     didjump = 0
@@ -212,7 +205,7 @@ def execute(board,rom,stop,onlyjumps):
         elif instr==0x40:  # OUT
             board.wr(b*256+a,ram[param])
         elif instr==0x60:  # OP
-            op = param & 0x07
+            op = param & 0b1111
         elif instr==0x80:  # X
             board.latch(b)
             b = a

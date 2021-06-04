@@ -128,19 +128,13 @@ Wire Wire Line
 Wire Wire Line
 	7350 650  9550 650 
 Wire Wire Line
-	9550 650  9550 2150
-Wire Wire Line
 	8050 900  8050 800 
 Wire Wire Line
 	8050 800  9450 800 
 Wire Wire Line
-	9450 800  9450 2250
-Wire Wire Line
 	7350 2300 7350 2200
 Wire Wire Line
 	7350 2200 9350 2200
-Wire Wire Line
-	9350 2200 9350 2350
 Wire Wire Line
 	7350 3700 7350 3600
 Wire Wire Line
@@ -270,15 +264,9 @@ Wire Wire Line
 Wire Wire Line
 	8050 3700 9350 3700
 Wire Wire Line
-	9350 2650 9350 3700
-Wire Wire Line
 	7350 3600 9250 3600
 Wire Wire Line
-	9250 2550 9250 3600
-Wire Wire Line
 	7350 4950 9450 4950
-Wire Wire Line
-	9450 4950 9450 2750
 Wire Wire Line
 	8050 5050 9550 5050
 Wire Wire Line
@@ -405,7 +393,7 @@ L Library:74HC00 LOGIC1
 U 1 1 611AD906
 P 5350 4200
 F 0 "LOGIC1" V 5350 4500 50  0000 R CNN
-F 1 "74AC00" V 5450 4500 50  0000 R CNN
+F 1 "74HC00" V 5450 4500 50  0000 R CNN
 F 2 "Package_DIP:DIP-14_W7.62mm" H 5350 4200 50  0001 C CNN
 F 3 "" H 5350 4200 50  0001 C CNN
 	1    5350 4200
@@ -416,7 +404,7 @@ L Library:74HC00 LOGIC2
 U 1 1 611AD9E1
 P 5350 5550
 F 0 "LOGIC2" V 5350 5850 50  0000 R CNN
-F 1 "74AC00" V 5450 5850 50  0000 R CNN
+F 1 "74HC00" V 5450 5850 50  0000 R CNN
 F 2 "Package_DIP:DIP-14_W7.62mm" H 5350 5550 50  0001 C CNN
 F 3 "" H 5350 5550 50  0001 C CNN
 	1    5350 5550
@@ -459,21 +447,21 @@ Wire Wire Line
 Wire Wire Line
 	6200 3500 6200 3300
 Text Label 6050 3600 3    50   ~ 0
-NND0
-Text Label 5750 3600 3    50   ~ 0
-NND1
-Text Label 5950 4800 1    50   ~ 0
-NND2
-Text Label 5650 4800 1    50   ~ 0
 NND3
-Text Label 7350 2100 1    50   ~ 0
-ADD0
-Text Label 7550 2100 1    50   ~ 0
+Text Label 5750 3600 3    50   ~ 0
+NND2
+Text Label 5950 4800 1    50   ~ 0
 NND0
+Text Label 5650 4800 1    50   ~ 0
+NND1
+Text Label 7350 2100 1    50   ~ 0
+ADD1
+Text Label 7550 2100 1    50   ~ 0
+NND1
 Text Label 7450 2100 1    50   Italic 0
-OVF
+GND
 Text Label 7650 2100 1    50   Italic 0
-X7
+X6
 Wire Wire Line
 	7350 2100 7350 1900
 Wire Wire Line
@@ -483,13 +471,13 @@ Wire Wire Line
 Wire Wire Line
 	7650 2100 7650 1900
 Text Label 8050 2100 1    50   ~ 0
-ADD1
+ADD2
 Text Label 8250 2100 1    50   ~ 0
-NND1
+NND2
 Text Label 8150 2100 1    50   Italic 0
 GND
 Text Label 8350 2100 1    50   Italic 0
-X6
+X5
 Wire Wire Line
 	8050 2100 8050 1900
 Wire Wire Line
@@ -499,13 +487,13 @@ Wire Wire Line
 Wire Wire Line
 	8350 2100 8350 1900
 Text Label 7350 3500 1    50   ~ 0
-ADD2
+ADD0
 Text Label 7550 3500 1    50   ~ 0
-NND2
+NND0
 Text Label 7450 3500 1    50   Italic 0
 GND
 Text Label 7650 3500 1    50   Italic 0
-X5
+X7
 Wire Wire Line
 	7350 3500 7350 3300
 Wire Wire Line
@@ -531,13 +519,13 @@ Wire Wire Line
 Wire Wire Line
 	8350 3500 8350 3300
 Text Label 7350 4900 1    50   ~ 0
-ADD4
+ADD5
 Text Label 7550 4900 1    50   ~ 0
-NND4
+NND5
 Text Label 7450 4900 1    50   Italic 0
 GND
 Text Label 7650 4900 1    50   Italic 0
-X3
+X2
 Wire Wire Line
 	7350 4900 7350 4700
 Wire Wire Line
@@ -547,13 +535,13 @@ Wire Wire Line
 Wire Wire Line
 	7650 4900 7650 4700
 Text Label 8050 4900 1    50   ~ 0
-ADD5
+ADD6
 Text Label 8250 4900 1    50   ~ 0
-NND5
+NND6
 Text Label 8150 4900 1    50   Italic 0
 GND
 Text Label 8350 4900 1    50   Italic 0
-X2
+X1
 Wire Wire Line
 	8050 4900 8050 4700
 Wire Wire Line
@@ -563,13 +551,13 @@ Wire Wire Line
 Wire Wire Line
 	8350 4900 8350 4700
 Text Label 7350 6250 1    50   ~ 0
-ADD6
+ADD4
 Text Label 7550 6250 1    50   ~ 0
-NND6
+NND4
 Text Label 7450 6250 1    50   Italic 0
 GND
 Text Label 7650 6250 1    50   Italic 0
-X1
+X3
 Wire Wire Line
 	7350 6250 7350 6050
 Wire Wire Line
@@ -603,13 +591,13 @@ Wire Wire Line
 Wire Wire Line
 	5650 4800 5650 4550
 Text Label 6050 4950 3    50   Italic 0
-NND4
-Text Label 5750 4950 3    50   Italic 0
-NND5
-Text Label 5950 6150 1    50   Italic 0
-NND6
-Text Label 5650 6150 1    50   Italic 0
 NND7
+Text Label 5750 4950 3    50   Italic 0
+NND6
+Text Label 5950 6150 1    50   Italic 0
+NND4
+Text Label 5650 6150 1    50   Italic 0
+NND5
 Wire Wire Line
 	5650 6150 5650 5900
 Wire Wire Line
@@ -689,37 +677,37 @@ Wire Wire Line
 Wire Wire Line
 	5500 2200 5500 2300
 Text Label 5950 3600 3    50   Italic 0
-X0
-Text Label 5850 3600 3    50   Italic 0
-B0
-Text Label 5650 3600 3    50   Italic 0
-X1
-Text Label 5550 3600 3    50   Italic 0
-B1
-Text Label 5850 4800 1    50   Italic 0
-X2
-Text Label 5750 4800 1    50   Italic 0
-B2
-Text Label 5550 4800 1    50   Italic 0
 X3
-Text Label 5450 4800 1    50   Italic 0
+Text Label 5850 3600 3    50   Italic 0
 B3
+Text Label 5650 3600 3    50   Italic 0
+X2
+Text Label 5550 3600 3    50   Italic 0
+B2
+Text Label 5850 4800 1    50   Italic 0
+X0
+Text Label 5750 4800 1    50   Italic 0
+B0
+Text Label 5550 4800 1    50   Italic 0
+X1
+Text Label 5450 4800 1    50   Italic 0
+B1
 Text Label 5950 4950 3    50   Italic 0
-X4
-Text Label 5850 4950 3    50   Italic 0
-B4
-Text Label 5650 4950 3    50   Italic 0
-X5
-Text Label 5550 4950 3    50   Italic 0
-B5
-Text Label 5850 6150 1    50   Italic 0
-X6
-Text Label 5750 6150 1    50   Italic 0
-B6
-Text Label 5550 6150 1    50   Italic 0
 X7
-Text Label 5450 6150 1    50   Italic 0
+Text Label 5850 4950 3    50   Italic 0
 B7
+Text Label 5650 4950 3    50   Italic 0
+X6
+Text Label 5550 4950 3    50   Italic 0
+B6
+Text Label 5850 6150 1    50   Italic 0
+X4
+Text Label 5750 6150 1    50   Italic 0
+B4
+Text Label 5550 6150 1    50   Italic 0
+X5
+Text Label 5450 6150 1    50   Italic 0
+B5
 Wire Wire Line
 	5850 6150 5850 5900
 Wire Wire Line
@@ -869,45 +857,45 @@ Wire Wire Line
 $Comp
 L 74xx:74LS08 AND1
 U 1 1 614EAA5B
-P 3800 2350
-F 0 "AND1" H 3800 2675 50  0000 C CNN
-F 1 "74AC08" H 3800 2584 50  0000 C CNN
-F 2 "Package_DIP:DIP-14_W7.62mm" H 3800 2350 50  0001 C CNN
-F 3 "http://www.ti.com/lit/gpn/sn74LS08" H 3800 2350 50  0001 C CNN
-	1    3800 2350
+P 3800 2900
+F 0 "AND1" H 3800 3225 50  0000 C CNN
+F 1 "74HC08" H 3800 3134 50  0000 C CNN
+F 2 "Package_DIP:DIP-14_W7.62mm" H 3800 2900 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn74LS08" H 3800 2900 50  0001 C CNN
+	1    3800 2900
 	1    0    0    -1  
 $EndComp
 $Comp
 L 74xx:74LS08 AND1
 U 2 1 614EAACC
-P 3800 2900
-F 0 "AND1" H 3800 3225 50  0000 C CNN
-F 1 "74AC08" H 3800 3134 50  0000 C CNN
-F 2 "Package_DIP:DIP-14_W7.62mm" H 3800 2900 50  0001 C CNN
-F 3 "http://www.ti.com/lit/gpn/sn74LS08" H 3800 2900 50  0001 C CNN
-	2    3800 2900
+P 3800 2350
+F 0 "AND1" H 3800 2675 50  0000 C CNN
+F 1 "74HC08" H 3800 2584 50  0000 C CNN
+F 2 "Package_DIP:DIP-14_W7.62mm" H 3800 2350 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn74LS08" H 3800 2350 50  0001 C CNN
+	2    3800 2350
 	1    0    0    -1  
 $EndComp
 $Comp
 L 74xx:74LS08 AND1
 U 3 1 614EAB33
-P 3800 3450
-F 0 "AND1" H 3800 3775 50  0000 C CNN
-F 1 "74AC08" H 3800 3684 50  0000 C CNN
-F 2 "Package_DIP:DIP-14_W7.62mm" H 3800 3450 50  0001 C CNN
-F 3 "http://www.ti.com/lit/gpn/sn74LS08" H 3800 3450 50  0001 C CNN
-	3    3800 3450
+P 3800 4000
+F 0 "AND1" H 3800 4325 50  0000 C CNN
+F 1 "74HC08" H 3800 4234 50  0000 C CNN
+F 2 "Package_DIP:DIP-14_W7.62mm" H 3800 4000 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn74LS08" H 3800 4000 50  0001 C CNN
+	3    3800 4000
 	1    0    0    -1  
 $EndComp
 $Comp
 L 74xx:74LS08 AND1
 U 4 1 614EAB90
-P 3800 4000
-F 0 "AND1" H 3800 4325 50  0000 C CNN
-F 1 "74AC08" H 3800 4234 50  0000 C CNN
-F 2 "Package_DIP:DIP-14_W7.62mm" H 3800 4000 50  0001 C CNN
-F 3 "http://www.ti.com/lit/gpn/sn74LS08" H 3800 4000 50  0001 C CNN
-	4    3800 4000
+P 3800 3450
+F 0 "AND1" H 3800 3775 50  0000 C CNN
+F 1 "74HC08" H 3800 3684 50  0000 C CNN
+F 2 "Package_DIP:DIP-14_W7.62mm" H 3800 3450 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn74LS08" H 3800 3450 50  0001 C CNN
+	4    3800 3450
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -915,7 +903,7 @@ L 74xx:74LS08 AND1
 U 5 1 614EAC23
 P 6400 7000
 F 0 "AND1" H 6630 7046 50  0000 L CNN
-F 1 "74AC08" H 6630 6955 50  0000 L CNN
+F 1 "74HC08" H 6630 6955 50  0000 L CNN
 F 2 "Package_DIP:DIP-14_W7.62mm" H 6400 7000 50  0001 C CNN
 F 3 "http://www.ti.com/lit/gpn/sn74LS08" H 6400 7000 50  0001 C CNN
 	5    6400 7000
@@ -924,45 +912,45 @@ $EndComp
 $Comp
 L 74xx:74LS08 AND2
 U 1 1 614EAC84
-P 3800 4550
-F 0 "AND2" H 3800 4875 50  0000 C CNN
-F 1 "74AC08" H 3800 4784 50  0000 C CNN
-F 2 "Package_DIP:DIP-14_W7.62mm" H 3800 4550 50  0001 C CNN
-F 3 "http://www.ti.com/lit/gpn/sn74LS08" H 3800 4550 50  0001 C CNN
-	1    3800 4550
+P 3800 5100
+F 0 "AND2" H 3800 5425 50  0000 C CNN
+F 1 "74HC08" H 3800 5334 50  0000 C CNN
+F 2 "Package_DIP:DIP-14_W7.62mm" H 3800 5100 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn74LS08" H 3800 5100 50  0001 C CNN
+	1    3800 5100
 	1    0    0    -1  
 $EndComp
 $Comp
 L 74xx:74LS08 AND2
 U 2 1 614EACF7
-P 3800 5100
-F 0 "AND2" H 3800 5425 50  0000 C CNN
-F 1 "74AC08" H 3800 5334 50  0000 C CNN
-F 2 "Package_DIP:DIP-14_W7.62mm" H 3800 5100 50  0001 C CNN
-F 3 "http://www.ti.com/lit/gpn/sn74LS08" H 3800 5100 50  0001 C CNN
-	2    3800 5100
+P 3800 4550
+F 0 "AND2" H 3800 4875 50  0000 C CNN
+F 1 "74HC08" H 3800 4784 50  0000 C CNN
+F 2 "Package_DIP:DIP-14_W7.62mm" H 3800 4550 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn74LS08" H 3800 4550 50  0001 C CNN
+	2    3800 4550
 	1    0    0    -1  
 $EndComp
 $Comp
 L 74xx:74LS08 AND2
 U 3 1 614EAD62
-P 3800 5650
-F 0 "AND2" H 3800 5975 50  0000 C CNN
-F 1 "74AC08" H 3800 5884 50  0000 C CNN
-F 2 "Package_DIP:DIP-14_W7.62mm" H 3800 5650 50  0001 C CNN
-F 3 "http://www.ti.com/lit/gpn/sn74LS08" H 3800 5650 50  0001 C CNN
-	3    3800 5650
+P 3800 6200
+F 0 "AND2" H 3800 6525 50  0000 C CNN
+F 1 "74HC08" H 3800 6434 50  0000 C CNN
+F 2 "Package_DIP:DIP-14_W7.62mm" H 3800 6200 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn74LS08" H 3800 6200 50  0001 C CNN
+	3    3800 6200
 	1    0    0    -1  
 $EndComp
 $Comp
 L 74xx:74LS08 AND2
 U 4 1 614EADCD
-P 3800 6200
-F 0 "AND2" H 3800 6525 50  0000 C CNN
-F 1 "74AC08" H 3800 6434 50  0000 C CNN
-F 2 "Package_DIP:DIP-14_W7.62mm" H 3800 6200 50  0001 C CNN
-F 3 "http://www.ti.com/lit/gpn/sn74LS08" H 3800 6200 50  0001 C CNN
-	4    3800 6200
+P 3800 5650
+F 0 "AND2" H 3800 5975 50  0000 C CNN
+F 1 "74HC08" H 3800 5884 50  0000 C CNN
+F 2 "Package_DIP:DIP-14_W7.62mm" H 3800 5650 50  0001 C CNN
+F 3 "http://www.ti.com/lit/gpn/sn74LS08" H 3800 5650 50  0001 C CNN
+	4    3800 5650
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
@@ -1249,7 +1237,7 @@ L 74xx:74LS08 AND2
 U 5 1 61CDBD6E
 P 5650 7000
 F 0 "AND2" H 5880 7046 50  0000 L CNN
-F 1 "74AC08" H 5880 6955 50  0000 L CNN
+F 1 "74HC08" H 5880 6955 50  0000 L CNN
 F 2 "Package_DIP:DIP-14_W7.62mm" H 5650 7000 50  0001 C CNN
 F 3 "http://www.ti.com/lit/gpn/sn74LS08" H 5650 7000 50  0001 C CNN
 	5    5650 7000
@@ -1282,17 +1270,7 @@ Wire Wire Line
 Wire Wire Line
 	9450 2750 9900 2750
 Wire Wire Line
-	9350 2650 9900 2650
-Wire Wire Line
-	9250 2550 9900 2550
-Wire Wire Line
 	9250 2450 9900 2450
-Wire Wire Line
-	9350 2350 9900 2350
-Wire Wire Line
-	9450 2250 9900 2250
-Wire Wire Line
-	9550 2150 9900 2150
 $Comp
 L 74xx:74LS11 AND3
 U 1 1 60BAA425
@@ -1469,4 +1447,28 @@ Wire Wire Line
 	3050 7450 3050 7350
 NoConn ~ 3700 7350
 NoConn ~ 2850 7350
+Wire Wire Line
+	9550 2250 9900 2250
+Wire Wire Line
+	9550 650  9550 2250
+Wire Wire Line
+	9450 800  9450 2350
+Wire Wire Line
+	9450 2350 9900 2350
+Wire Wire Line
+	9350 2200 9350 2150
+Wire Wire Line
+	9350 2150 9900 2150
+Wire Wire Line
+	9250 2650 9250 3600
+Wire Wire Line
+	9450 2750 9350 2750
+Wire Wire Line
+	9350 2750 9350 3700
+Wire Wire Line
+	9250 2650 9900 2650
+Wire Wire Line
+	9450 2550 9900 2550
+Wire Wire Line
+	9450 2550 9450 4950
 $EndSCHEMATC
