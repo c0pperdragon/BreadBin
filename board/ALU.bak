@@ -1231,7 +1231,7 @@ F 3 "" H 4150 6500 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Text Notes 9350 6500 0    50   ~ 0
-        ALU operation summary\n0000   B \n0001   ZERO        \n0010   FF              \n0011   ZERO                \n0100   CRY       B+1 if A=255, else B \n0101   TOP       1, if A=255 and B=255\n0110   FF          \n0111   ZERO    \n1000   ADD      (A+B) mod 255\n1001   OVF       1, if A+B>255\n1010   NAND     A NAND B\n1011   REV       revert bit order of A\n1100   CRY1    A+B+1  if A=255, else A+B\n1101   OVF1    1, if A+B+1>255\n1110   NAND\n1111   REV\n
+        ALU operation summary\n0000   B            B\n0001   ZERO     always 0   \n0010   FF           always 255   \n0011   HALF      B/2 (rounded down)         \n0100   CRY       B+1 if A=255, else B \n0101   TOP       1, if A=255 and B=255\n0110   FF           always 255\n0111                ?\n1000   ADD      (A+B) mod 255\n1001   OVF       1, if A+B>255\n1010   NAND     A NAND B\n1011   AVG       (A+B)/2  (rounded down)\n1100                ?\n1101                ?\n1110   NAND\n1111   ROR      \n
 $Comp
 L 74xx:74LS08 AND2
 U 5 1 61CDBD6E

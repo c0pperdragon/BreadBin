@@ -10,10 +10,7 @@ class Board:
 
     def wr(self,address,value):
         print(value,end='\n',flush=True)
-        
-    def latch(self,prevb):
-        pass
-    
+            
     def rd(self,address):
         return 0xff
 
@@ -22,34 +19,28 @@ class BreadBinBoard(Board):
         Board.__init__(self)
         self.extraram = [255]*(1<<19)
         self.extrarom = extrarom
-        self.bank = 0
         self.collectedbits = 0
         self.rts = 1
         self.inputcharacters = []
         self.inputbits = []
         
     def wr(self,address,value):
-        a = (self.bank<<16)+address;
 #        print(format(a,"06x"),"<-",format(value,"02x"))
-        if (a & 0xC00000) == 0x000000:    # writing to RAM
-            self.extraram[a&0x7ffff] = value
-        elif (a & 0xC00000) == 0x400000:  # writing to IO
-            self.output((a>>8) & 0xff)   # use bits 8-15 of address as data
+        if (address & 0xC00000) == 0x000000:    # writing to RAM
+            self.extraram[address&0x7ffff] = value
+        elif (address & 0xC00000) == 0x400000:  # writing to IO
+            self.output(value)
         
     def rd(self,address):
         v = 0
-        a = (self.bank<<16)+address;
-        if (a & 0xC00000) == 0x000000:     # reading from RAM 
-            v = self.extraram[a & 0x7ffff]
-        elif (a & 0xC00000) == 0x400000:   # reading from IO
+        if (address & 0xC00000) == 0x000000:     # reading from RAM 
+            v = self.extraram[address & 0x7ffff]
+        elif (address & 0xC00000) == 0x400000:   # reading from IO
             v = self.input()
         else:
-            v = self.extrarom[a & 0x7ffff] # reading from ROM
+            v = self.extrarom[address & 0x7ffff] # reading from ROM
 #        print(format(a,"06x"),"->",format(v,"02x"))
         return v
-
-    def latch(self,bank):
-        self.bank = bank
     
     def output(self,value):
 #        print("OUT "+format(value,"08b"),end='\n',flush=True)
@@ -158,17 +149,18 @@ def execute(board,rom,stop,onlyjumps):
     start = stop-5000 if onlyjumps else stop-200
 
     # state of the controller, start with dummy values
-    ram = [255]*32
+    reg = [42]*32
     a = 47
     b = 11
+    c = 33
     op = 8
     ir = 77
     pc = 55 
     
     # start values after reset sequence
-    ir = 0xe0   
+    reg[0] = 0
+    ir = 0xe0
     pc = 0
-    ram[0] = 0
 
     # only run for the desired number of steps
     for step in range(stop):
@@ -184,31 +176,31 @@ def execute(board,rom,stop,onlyjumps):
                    "A:",format(a, "x").zfill(2),
                    "B:",format(b, "x").zfill(2),
                    "OP:",format(op, "x").zfill(1),
-                   "M:",printableram(ram))
+                   "M:",printableram(reg))
 
         # execution
         instr = ir & 0xe0
         param = ir & 0x1f
         didjump = didjump+1
         if instr==0x00:    # SET
-            ram[param] = alu(a,b,op)
+            reg[param] = alu(a,b,op)
         elif instr==0x20:  # IN
-            ram[param] = board.rd(b*256+a)
+            reg[param] = board.rd((c<<16)|(b<<8)|a)
         elif instr==0x40:  # OUT
-            board.wr(b*256+a,ram[param])
+            board.wr((c<<16)|(b<<8)|a,reg[param])
         elif instr==0x60:  # OP
             op = param & 0b1111
         elif instr==0x80:  # X
-            board.latch(b)
+            c = b
             b = a
-            a = ram[param]
+            a = reg[param]
         elif instr==0xA0:  # NOP
             pass
         elif instr==0xC0:  # BRE
             if (a%2)==0:
                 nextpc = (pc & 0xff00) | (param<<3)
         elif instr==0xE0:  # JMP
-            nextpc = ram[param]<<8
+            nextpc = reg[param]<<8
             didjump = 0
         
         # for debugging: reading a 0xFF instruction halts the processor

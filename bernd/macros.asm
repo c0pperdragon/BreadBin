@@ -443,3 +443,18 @@ MACRO AND8 destination source
     X destination
     SET destination
 ENDMACRO
+
+; perform a 8-bit OR joining destination and source
+; temporary: TMP0
+MACRO OR8 destination source
+    OP NAND
+    X destination
+    X destination
+    SET destination
+    X source
+    X source
+    SET TMP0
+    X destination
+    X TMP0
+    SET destination
+ENDMACRO

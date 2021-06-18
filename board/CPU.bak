@@ -834,7 +834,6 @@ F 3 "http://www.ti.com/lit/gpn/sn74LS32" H 5000 1150 50  0001 C CNN
 	4    5000 1150
 	0    -1   -1   0   
 $EndComp
-NoConn ~ 6850 2800
 Wire Wire Line
 	6200 4800 6200 7350
 Wire Wire Line
@@ -1747,4 +1746,8 @@ Wire Wire Line
 	3550 5150 3550 6950
 Wire Wire Line
 	3550 6950 3750 6950
+Text Label 6450 2800 0    50   ~ 0
+CMDNOP#
+Wire Wire Line
+	6450 2800 6850 2800
 $EndSCHEMATC

@@ -534,7 +534,7 @@ Text Label 4300 1750 1    50   ~ 0
 CLK
 Text Label 4500 1800 1    50   ~ 0
 CMDOUT#
-Text Label 5100 1750 1    50   ~ 0
+Text Label 4900 1750 1    50   ~ 0
 CMDIN#
 $Comp
 L 74xx:74LS32 OR1
@@ -691,7 +691,7 @@ Wire Wire Line
 Connection ~ 5900 4500
 Wire Wire Line
 	4300 1750 4300 1450
-Text Label 4900 1750 1    50   ~ 0
+Text Label 5100 1750 1    50   ~ 0
 CLK
 Wire Wire Line
 	4900 1750 4900 1450
@@ -834,7 +834,6 @@ F 3 "http://www.ti.com/lit/gpn/sn74LS32" H 5000 1150 50  0001 C CNN
 	4    5000 1150
 	0    -1   -1   0   
 $EndComp
-NoConn ~ 6850 2800
 Wire Wire Line
 	6200 4800 6200 7350
 Wire Wire Line
@@ -1387,17 +1386,6 @@ Wire Wire Line
 	8350 3850 8750 3850
 Wire Wire Line
 	4750 6850 4950 6850
-$Comp
-L power:GND #PWR0138
-U 1 1 60ADF2EE
-P 5200 6800
-F 0 "#PWR0138" H 5200 6550 50  0001 C CNN
-F 1 "GND" H 5250 6650 50  0000 R CNN
-F 2 "" H 5200 6800 50  0001 C CNN
-F 3 "" H 5200 6800 50  0001 C CNN
-	1    5200 6800
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	3150 2900 3300 2900
 Wire Wire Line
@@ -1708,14 +1696,11 @@ Wire Wire Line
 Wire Wire Line
 	4950 7150 4750 7150
 Wire Wire Line
-	5200 6750 5200 6800
-Wire Wire Line
 	4750 6750 5200 6750
 Wire Wire Line
 	5200 6650 5200 6750
 Wire Wire Line
 	4750 6650 5200 6650
-Connection ~ 5200 6750
 Wire Wire Line
 	5200 6550 5200 6650
 Wire Wire Line
@@ -1747,4 +1732,22 @@ Wire Wire Line
 	3550 5150 3550 6950
 Wire Wire Line
 	3550 6950 3750 6950
+Text Label 6450 2800 0    50   ~ 0
+CMDNOP#
+Wire Wire Line
+	6450 2800 6850 2800
+$Comp
+L power:+5V #PWR?
+U 1 1 60D0ACA7
+P 5200 6400
+F 0 "#PWR?" H 5200 6250 50  0001 C CNN
+F 1 "+5V" H 5215 6573 50  0000 C CNN
+F 2 "" H 5200 6400 50  0001 C CNN
+F 3 "" H 5200 6400 50  0001 C CNN
+	1    5200 6400
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5200 6450 5200 6400
+Connection ~ 5200 6450
 $EndSCHEMATC

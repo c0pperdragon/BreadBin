@@ -66,6 +66,7 @@ include instructions/LDX.asm
 include instructions/LDY.asm
 include instructions/LSR.asm
 include instructions/MVN.asm
+include instructions/ORA.asm
 include instructions/PEA.asm
 include instructions/PEI.asm
 include instructions/PHA.asm
@@ -74,6 +75,7 @@ include instructions/PLA.asm
 include instructions/PLD.asm
 include instructions/REP.asm
 include instructions/ROR.asm
+include instructions/ROL.asm
 include instructions/RTL.asm
 include instructions/RTS.asm
 include instructions/SBC.asm
