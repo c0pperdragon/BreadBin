@@ -91,6 +91,19 @@ LDA_d_s_16bit:
     NZ16 ALO AHI
     NEXT
     
+    ; ---- LDA [d],y
+    ORG $B700
+    FETCHADDRESS_[d]_y TMP2 TMP3 TMP4
+    LOAD TMP2 TMP3 TMP4 ALO
+    BRACCU16 LDA_[d]_y_16bit
+    NZ8 ALO 
+    NEXT
+LDA_[d]_y_16bit:    
+    INC16 TMP2 TMP3
+    LOAD TMP2 TMP3 TMP4 AHI
+    NZ16 ALO AHI
+    NEXT
+    
 ; ---- LDA #
     ORG $A900
     FETCH ALO

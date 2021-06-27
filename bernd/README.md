@@ -14,7 +14,7 @@ some rarely used features and unused features are ommited.
 * Interrupts (and I flag)
 * Decimal mode (and D flag)
 * Overflow flag (V)
-
+* Access 16/24-bit values accross bank boundaries
 
 ## Missing instructions
 

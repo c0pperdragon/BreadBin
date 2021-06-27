@@ -96,6 +96,20 @@ MACRO NEXT_RELATIVE
 ENDMACRO
 
 
+; add a 8-bit value to a 16-bit value
+; temporary variable: TMP0
+MACRO ADD16_8 targetlo targethi source
+    OP OVF
+    X targetlo
+    X source
+    SET TMP0
+    OP ADD
+    SET targetlo
+    X targethi
+    X TMP0
+    SET targethi
+ENDMACRO
+
 ; add two 16-bit values (no carry out or carry in)
 ; temporary registers: TMP0
 MACRO ADD16 targetlo targethi sourcelo sourcehi
@@ -111,6 +125,20 @@ MACRO ADD16 targetlo targethi sourcelo sourcehi
     X targethi
     X TMP0
     SET targethi
+ENDMACRO
+
+; add a 16-bit value to a 24-bit value (no carry out or carry in)
+; temporary registers: TMP0,TMP1
+MACRO ADD24_16 targetlo targethi targetxhi sourcelo sourcehi
+    ; combine lower 8 bits
+    OP OVF
+    X targetlo
+    X sourcelo
+    SET TMP1
+    OP ADD
+    SET targetlo
+    ADD16_8 targethi targetxhi TMP1
+    ADD16_8 targethi targetxhi sourcehi
 ENDMACRO
 
 
@@ -150,6 +178,43 @@ MACRO INV8 operand
 ENDMACRO
 
 
+; fetch address consisting of two bytes (3rd byte is DBR or PBR)
+MACRO FETCHADDRESS_a rlo rhi
+    FETCH rlo
+    FETCH rhi
+ENDMACRO
+
+; fetch two bytes from program and combine with X to get 16-bit address (3rd is DBR or PBR
+; Intermediate storage: TMP0 
+MACRO FETCHADDRESS_a_x rlo rhi
+    FETCH rlo
+    FETCH rhi
+    ADD16 rlo rhi XLO XHI
+ENDMACRO
+
+; fetch two bytes from program and combine with Y to get 16-bit address (3rd is DBR or PBR
+; Intermediate storage: TMP0 
+MACRO FETCHADDRESS_a_y rlo rhi
+    FETCH rlo
+    FETCH rhi
+    ADD16 rlo rhi YLO YHI
+ENDMACRO
+
+; fetch address consisting of three bytes
+MACRO FETCHADDRESS_al rlo rhi rbank
+    FETCHADDRESS_a rlo rhi
+    FETCH rbank
+ENDMACRO
+
+; fetch three bytes from program and combine with X to get 24-bit address
+; Intermediate storage: TMP0, TMP1
+MACRO FETCHADDRESS_al_x rlo rhi rbank
+    FETCH rlo
+    FETCH rhi
+    FETCH rbank
+    ADD24_16 rlo rhi rbank XLO XHI
+ENDMACRO
+
 ; fetch next byte from program and construct the 16-bit address with DHI/DLO
 ; Intermediate storage: TMP0 
 MACRO FETCHADDRESS_d rlo rhi
@@ -180,35 +245,9 @@ MACRO FETCHADDRESS_d_s rlo rhi
     SET rhi
 ENDMACRO
 
-; fetch two bytes from program and combine with X to get 16-bit address
-; Intermediate storage: TMP0 
-MACRO FETCHADDRESS_a_x rlo rhi
-    FETCH rlo
-    FETCH rhi
-    ADD16 rlo rhi XLO XHI
-ENDMACRO
-
-; fetch three bytes from program and combine with X to get 16-bit address
-; Intermediate storage: TMP0 
-MACRO FETCHADDRESS_al_x rlo rhi rbank
-    FETCHADDRESS_a_x rlo rhi
-    FETCH rbank
-ENDMACRO
-
-; fetch address consisting of two bytes
-MACRO FETCHADDRESS_a rlo rhi
-    FETCH rlo
-    FETCH rhi
-ENDMACRO
-
-; fetch address consisting of three bytes
-MACRO FETCHADDRESS_al rlo rhi rbank
-    FETCHADDRESS_a rlo rhi
-    FETCH rbank
-ENDMACRO
-
 ; fetch address indirect long. For this, combine the
 ; next program byte with the DLO,DHI to get the address of the long pointer
+; This pointer is fetched
 ; Intermediate storage: TMP0, TMP1
 MACRO FETCHADDRESS_[d] rlo rhi rbank
     FETCHADDRESS_d TMP1 rbank  ; use target register as temporary storage
@@ -221,6 +260,7 @@ ENDMACRO
 
 ; fetch address indirect long. For this, combine the
 ; next program byte with the DLO,DHI to get the address of the long pointer
+; Then this pointer if fetched and Y is added to give the effective address.
 ; Intermediate storage: TMP0, TMP1
 MACRO FETCHADDRESS_[d]_y rlo rhi rbank
     FETCHADDRESS_d TMP1 rbank  ; use target register as temporary storage
@@ -229,8 +269,9 @@ MACRO FETCHADDRESS_[d]_y rlo rhi rbank
     LOAD TMP1 rbank V0 rhi
     INC16 TMP1 rbank
     LOAD TMP1 rbank V0 rbank
-    ADD16 rlo rhi YLO YHI
+    ADD24_16 rlo rhi rbank YLO YHI
 ENDMACRO
+
 
 ; store a value into the specified memory location and bank 
 MACRO STORE rlo rhi bank value
