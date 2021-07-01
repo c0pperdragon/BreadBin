@@ -9,11 +9,9 @@ table = bytearray(256*256)
 for a in range(256):
     table[a] = 7<<5              # JMP R0
 for page in range(1,256):
-    table[page*256+0] = 4<<5     # A R0
-    table[page*256+1] = 5<<5     # B R0
-    table[page*256+2] = (3<<5) + 7 # OP EOR
-    table[page*256+3] = 0<<5     # SET R0
-    for a in range(4,256):
+    table[page*256+0] = (3<<5) + 1 # OP ZERO
+    table[page*256+1] = 0<<5     # SET R0
+    for a in range(2,256):
         table[page*256+a] = 7<<5 # JMP R0
 
 dest = open("resetcode.bin", "wb")
