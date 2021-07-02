@@ -1,8 +1,16 @@
 # BreadBin computer
 A CPU made of 7400 logic on breadboards - inside a bread bin ;-) 
 
-![alt text](gallery/Logo.jpg "Emulator logo")
+![alt text](gallery/assembly.jpg "Breadboard build")
 
+## Computer case
+
+With the CPU already built so nicely on an actual wooden board, I had the idea to put it together with
+the rest of the computer into a matching bread bin. Because the machine will not require any ventilation this
+will keep the dust out quite reliably.
+
+![alt text](gallery/Case.jpg "Generic wooden bread bin")
+ 
 
 ## On bread boards
 
@@ -30,21 +38,13 @@ So far this works pretty good.
 When using this kind of setup it is important to also use a matching logic family of chips. 74AC, 74ACT, 74LVC or 
 others have a very fast switching characteristics. This is great for many applications but in a large build with
 long and unshielded cables, their brutally steep signal edges wreck havoc with signal integritiy.
-So I settled for the moderately fast and well-behaved 74HC logic ICs.
+So I settled for the moderately fast and well-behaved 74HC logic ICs with only a few 74AC parts to speed up the ALU.
 
 ## Software
 
 One of the hardest parts of home-made computers is to actually build all the software to make the machine useful.
-To get the benefit of existing software the bread board computer core is intended to emulate an existing CPU
+To get the benefit of existing software the breadboard computer core is intended to emulate an existing CPU
 (specifically the 65C816). This emulated CPU can then interface to some additional RAM and ROM and other
 parts to become a full computer to execute code that was originally written for my OS816 system.
 
 
-## Computer case
-
-With the CPU already built so nicely on an actual wodden board, I had the idea to put it together with
-the rest of the computer into a matching bread bin. Because the machine will not require any ventilation this
-will keep the dust out quite reliably.
-
-![alt text](gallery/Case.jpg "Generic wooden bread bin")
- 

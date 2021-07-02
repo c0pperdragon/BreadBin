@@ -5,6 +5,8 @@ emulation of the 65C816 CPU. Execution speed is of course pretty slow compared t
 but you would not expect top-performance from a bread with such short arms and legs. 
 But as long as it gets the job done eventually, this is totally fine by me.
 
+![alt text](../gallery/Logo.jpg "Bernd logo")
+
 ## Unsupported features
 
 To keep the complexity down for the specific purpose of running C programs on the breadbin computer,
@@ -20,7 +22,6 @@ some rarely used features and unused features are ommited.
 
 As a consequence of unsupported features, some opcodes would create a wrong result or are useless anyway.
 These opcodes are by design missing from the Bernd emulator and will just cause an immediate processor halt. 
-If this happens on the breadboard machine, the opcode that caused the halt can be seen on the microprogam counter.
 
 * BVC (branch if overflow clear)
 * BVS (branch if overflow set)
@@ -45,7 +46,7 @@ emulator just to restart, which also resets the emulated 65c816 processor.
 
 ## Special use of XCE
 
-Even though emulation is missing and the E flag is not implemented, programmes still
+Even though emulation is missing and the E flag is not implemented, programms still
 need to be able to use the XCE instruction to get into native mode when running on a genuine
 65C816 processor. 
 To allow this, the XCE instruction when executed by Bernd, does not change anything 
