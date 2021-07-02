@@ -45,7 +45,6 @@ MACRO FETCH target
     X PBR
     X PCHI
     X PCLO
-    NOP
     IN target
     OP CRY
     SET PCHI
@@ -65,7 +64,6 @@ MACRO NEXT
     X PBR
     X PCHI
     X PCLO
-    NOP
     IN TMP0
     OP CRY
     SET PCHI
@@ -289,7 +287,6 @@ MACRO LOAD16 rlo rhi bank valuelo valuehi
     X bank
     X rhi
     X rlo
-    NOP
     IN valuelo
     OP CRY
     SET TMP1
@@ -298,7 +295,6 @@ MACRO LOAD16 rlo rhi bank valuelo valuehi
     X bank
     X TMP1
     X TMP0
-    NOP
     IN valuehi
 ENDMACRO 
 
@@ -324,7 +320,6 @@ MACRO LOAD rlo rhi bank value
     X bank
     X rhi
     X rlo
-    NOP
     IN value
 ENDMACRO 
 

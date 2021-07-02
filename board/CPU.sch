@@ -132,9 +132,9 @@ F 3 "" H 4250 5850 50  0001 C CNN
 	-1   0    0    1   
 $EndComp
 Text Label 4900 6250 2    50   ~ 0
-CLK
+CLKA
 Text Label 5100 4900 2    50   ~ 0
-CLK
+CLKA
 NoConn ~ 3750 6750
 $Comp
 L Library:IDT71256 REG1
@@ -170,7 +170,7 @@ F 3 "" H 8000 1600 50  0001 C CNN
 	1    0    0    1   
 $EndComp
 Text Label 7200 1800 1    50   ~ 0
-CLK
+CLKB
 $Comp
 L 74xx:74LS138 UDEC?
 U 1 1 60ADF26F
@@ -265,13 +265,13 @@ Wire Wire Line
 Wire Wire Line
 	9950 4950 9950 3850
 Text Label 6500 3900 0    50   ~ 0
-CLK
+CLKB
 Text Label 7850 6450 1    50   ~ 0
-CLK
+CLKB
 Wire Wire Line
 	7850 6250 7850 6450
 Text Label 9750 6450 1    50   ~ 0
-CLK
+CLKB
 Wire Wire Line
 	9750 6250 9750 6450
 Wire Wire Line
@@ -531,7 +531,7 @@ F 3 "http://www.ti.com/lit/gpn/sn74LS32" H 4400 1150 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 Text Label 4300 1750 1    50   ~ 0
-CLK
+CLKA
 Text Label 4500 1800 1    50   ~ 0
 CMDOUT#
 Text Label 4900 1750 1    50   ~ 0
@@ -692,7 +692,7 @@ Connection ~ 5900 4500
 Wire Wire Line
 	4300 1750 4300 1450
 Text Label 5100 1750 1    50   ~ 0
-CLK
+CLKA
 Wire Wire Line
 	4900 1750 4900 1450
 Wire Wire Line
@@ -723,7 +723,7 @@ F 3 "http://www.ti.com/lit/gpn/sn74LS574" H 10350 2050 50  0001 C CNN
 	0    -1   -1   0   
 $EndComp
 Text Label 10750 2750 1    50   ~ 0
-CLK
+CLKB
 $Comp
 L power:GND #PWR0151
 U 1 1 60ADF504
@@ -1050,7 +1050,7 @@ Wire Wire Line
 Text Label 2400 5950 3    50   ~ 0
 CMDX#
 Text Label 2300 5950 3    50   ~ 0
-CLK
+CLKA
 Connection ~ 1400 5200
 Connection ~ 1500 5300
 Connection ~ 1600 5400
@@ -1078,7 +1078,7 @@ Wire Wire Line
 Text Label 2400 3900 3    50   ~ 0
 CMDX#
 Text Label 2300 3900 3    50   ~ 0
-CLK
+CLKA
 Wire Wire Line
 	2300 4100 2300 3900
 Wire Wire Line
@@ -1086,7 +1086,7 @@ Wire Wire Line
 Text Label 2400 1850 3    50   ~ 0
 CMDX#
 Text Label 2300 1850 3    50   ~ 0
-CLK
+CLKA
 Wire Wire Line
 	2300 2050 2300 1850
 Wire Wire Line
@@ -1270,11 +1270,11 @@ Wire Wire Line
 Wire Wire Line
 	5000 850  5000 800 
 Text HLabel 3750 800  1    50   Input ~ 0
-CLK
+CLKA
 Text HLabel 3950 800  1    50   Input ~ 0
 RES#
 Text Label 3750 1050 1    50   ~ 0
-CLK
+CLKA
 Text Label 3950 1050 1    50   ~ 0
 RES#
 Wire Wire Line
@@ -1737,10 +1737,10 @@ CMDNOP#
 Wire Wire Line
 	6450 2800 6850 2800
 $Comp
-L power:+5V #PWR?
+L power:+5V #PWR0193
 U 1 1 60D0ACA7
 P 5200 6400
-F 0 "#PWR?" H 5200 6250 50  0001 C CNN
+F 0 "#PWR0193" H 5200 6250 50  0001 C CNN
 F 1 "+5V" H 5215 6573 50  0000 C CNN
 F 2 "" H 5200 6400 50  0001 C CNN
 F 3 "" H 5200 6400 50  0001 C CNN
@@ -1750,4 +1750,11 @@ $EndComp
 Wire Wire Line
 	5200 6450 5200 6400
 Connection ~ 5200 6450
+Text HLabel 3600 800  1    50   Input ~ 0
+CLKB
+Text Label 3600 1050 1    50   ~ 0
+CLKB
+Wire Wire Line
+	3600 1050 3600 800 
+NoConn ~ 6450 2800
 $EndSCHEMATC
