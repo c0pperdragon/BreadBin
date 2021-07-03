@@ -29,6 +29,7 @@
     TMP3 = 22
     TMP4 = 23
     TMP5 = 24
+    TMP6 = 25
 ; useful constant values
     V255 = 29
     V1 = 30
@@ -55,6 +56,7 @@ include instructions/CLC.asm
 include instructions/CMP.asm
 include instructions/DEC.asm
 include instructions/DEX.asm
+include instructions/DEY.asm
 include instructions/INC.asm
 include instructions/INX.asm
 include instructions/INY.asm

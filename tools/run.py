@@ -2,7 +2,7 @@
 
 import sys
 
-mnemonic = [ "SET", " IN", "OUT", " OP", "  X", "NOP", "BBZ", "JMP" ]
+mnemonic = [ "SET", " IN", "OUT", " OP", "  X", "NOP", "BRE", "JMP" ]
 
 class Board:
     def __init__(self):
@@ -126,7 +126,8 @@ def printableram(ram):
             "{22:0>2X} "                  # TMP3
             "{23:0>2X} "                  # TMP4
             "{24:0>2X} "                  # TMP5
-            "{25:0>2X}{26:0>2X}{27:0>2X}" # consts 
+            "{25:0>2X} "                  # TMP6
+            "{26:0>2X}{27:0>2X}"          # consts 
             "{28:0>2X}{29:0>2X}{30:0>2X}" # consts
             "{31:0>2X}"
             ).format(*ram)
@@ -144,7 +145,7 @@ def alu(a,b,op):
     else:              # AVG
         return (x+b+c)>>1
 
-def execute(board,rom,stop,onlyjumps):
+def execute(board,rom,stop,onlyjumps,afterjump):
     didjump = 0
     start = stop-5000 if onlyjumps else stop-200
 
@@ -202,13 +203,15 @@ def execute(board,rom,stop,onlyjumps):
         elif instr==0xE0:  # JMP
             nextpc = reg[param]<<8
             didjump = 0
+            if reg[param]==afterjump:
+                start=0
         
         # for debugging: reading a 0xFF instruction halts the processor
         if rom[pc]==0xFF:
             print ("Hit the 0xFF instruction after",step,"steps at:",
                    format(pc,"x").zfill(4) )            
             return
-
+        
         # fetch instruction and progress program counter
         ir = rom[pc]
         pc = nextpc
@@ -219,17 +222,20 @@ def execute(board,rom,stop,onlyjumps):
 # decode parameters
 stop = 100000000000
 onlyjumps = False
+afterjump = -1
 breadbin = None
 for i in range(len(sys.argv)-1):
     if sys.argv[i]=='-stop':
         stop = int(sys.argv[i+1])
     elif sys.argv[i]=='-jumps':
         onlyjumps = True
+    elif sys.argv[i]=='-jump':
+        afterjump = int(sys.argv[i+1])
     elif sys.argv[i]=='-breadbin':
         breadbin = sys.argv[i+1]
 
 # execute
 rom = readromfile(sys.argv[len(sys.argv)-1])
 board = Board() if breadbin==None else BreadBinBoard(readromfile(breadbin))
-execute(board,rom,stop,onlyjumps)
+execute(board,rom,stop,onlyjumps,afterjump)
     
