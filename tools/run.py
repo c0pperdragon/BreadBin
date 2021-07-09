@@ -14,15 +14,11 @@ class Board:
     def rd(self,address):
         return 0xff
 
-class BreadBinBoard(Board):
+class BreadBoard(Board):
     def __init__(self, extrarom):
         Board.__init__(self)
         self.extraram = [255]*(1<<19)
         self.extrarom = extrarom
-        self.collectedbits = 0
-        self.rts = 1
-        self.inputcharacters = []
-        self.inputbits = []
         
     def wr(self,address,value):
 #        print(format(a,"06x"),"<-",format(value,"02x"))
@@ -42,6 +38,20 @@ class BreadBinBoard(Board):
 #        print(format(a,"06x"),"->",format(v,"02x"))
         return v
     
+    def output(self,value):
+        print("OUT "+format(value,"08b"),end='\n',flush=True)
+
+    def input(self):
+        return 0xff
+
+class BreadBinBoard(BreadBoard):
+    def __init__(self, extrarom):
+        BreadBoard.__init__(self, extrarom)
+        self.collectedbits = 0
+        self.rts = 1
+        self.inputcharacters = []
+        self.inputbits = []
+        
     def output(self,value):
 #        print("OUT "+format(value,"08b"),end='\n',flush=True)
         # collect serial bits and print
@@ -223,6 +233,7 @@ def execute(board,rom,stop,onlyjumps,afterjump):
 stop = 100000000000
 onlyjumps = False
 afterjump = -1
+breadboard =  None
 breadbin = None
 for i in range(len(sys.argv)-1):
     if sys.argv[i]=='-stop':
@@ -231,11 +242,13 @@ for i in range(len(sys.argv)-1):
         onlyjumps = True
     elif sys.argv[i]=='-jump':
         afterjump = int(sys.argv[i+1])
+    elif sys.argv[i]=='-breadboard':
+        breadboard = sys.argv[i+1]
     elif sys.argv[i]=='-breadbin':
         breadbin = sys.argv[i+1]
 
 # execute
 rom = readromfile(sys.argv[len(sys.argv)-1])
-board = Board() if breadbin==None else BreadBinBoard(readromfile(breadbin))
+board = BreadBinBoard(readromfile(breadbin)) if breadbin!=None else BreadBoard(readromfile(breadboard)) if breadboard!=None else Board()
 execute(board,rom,stop,onlyjumps,afterjump)
     
