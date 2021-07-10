@@ -1,88 +1,39 @@
-; ---- STA d
-    ORG $8500
-    FETCHADDRESS_d TMP2 TMP3
-    STORE TMP2 TMP3 V0 ALO
-    BRACCU16 STA_d_16bit
-    NEXT
-STA_d_16bit:    
-    INC16 TMP2 TMP3
-    STORE TMP2 TMP3 V0 AHI
-    NEXT
 
-; ---- STA d,s
-    ORG $8300
-    FETCHADDRESS_d_s TMP2 TMP3
+MACRO STA_near amode opcode
+    ORG opcode >< 00    
+    FETCHADDRESS_ >< amode TMP2 TMP3
     STORE TMP2 TMP3 V0 ALO
-    BRACCU16 STA_d_s_16bit
+    BRACCU16 STA_ >< amode >< _16bit
     NEXT
-STA_d_s_16bit:    
+STA_ >< amode >< _16bit:    
     INC16 TMP2 TMP3 
     STORE TMP2 TMP3 V0 AHI
     NEXT
+ENDMACRO
     
-; ---- STA a
-    ORG $8D00
-    FETCHADDRESS_a TMP2 TMP3 
-    STORE TMP2 TMP3 DBR ALO
-    BRACCU16 STA_a_16bit
-    NEXT
-STA_a_16bit:    
-    INC16 TMP2 TMP3
-    STORE TMP2 TMP3 DBR AHI
-    NEXT
-
-; ---- STA a,x
-    ORG $9D00
-    FETCHADDRESS_a_x TMP2 TMP3 
-    STORE TMP2 TMP3 DBR ALO
-    BRACCU16 STA_a_x_16bit
-    NEXT
-STA_a_x_16bit:    
-    INC16 TMP2 TMP3
-    STORE TMP2 TMP3 DBR AHI
-    NEXT
-
-; ---- STA al
-    ORG $8F00
-    FETCHADDRESS_al TMP2 TMP3 TMP4
+MACRO STA_far amode opcode
+    ORG opcode >< 00    
+    FETCHADDRESS_ >< amode TMP2 TMP3 TMP4
     STORE TMP2 TMP3 TMP4 ALO
-    BRACCU16 STA_al_16bit
+    BRACCU16 STA_ >< amode >< _16bit
     NEXT
-STA_al_16bit:    
-    INC16 TMP2 TMP3
+STA_ >< amode >< _16bit:    
+    INC24 TMP2 TMP3 TMP4
     STORE TMP2 TMP3 TMP4 AHI
     NEXT
+ENDMACRO
 
-; ---- STA al,x
-    ORG $9F00
-    FETCHADDRESS_al_x TMP2 TMP3 TMP4
-    STORE TMP2 TMP3 TMP4 ALO
-    BRACCU16 STA_al_x_16bit
-    NEXT
-STA_al_x_16bit:    
-    INC16 TMP2 TMP3
-    STORE TMP2 TMP3 TMP4 AHI
-    NEXT
-
-; ---- STA [d]
-    ORG $8700
-    FETCHADDRESS_[d] TMP2 TMP3 TMP4
-    STORE TMP2 TMP3 TMP4 ALO
-    BRACCU16 STA_[d]_16bit
-    NEXT
-STA_[d]_16bit:    
-    INC16 TMP2 TMP3
-    STORE TMP2 TMP3 TMP4 AHI
-    NEXT
-
-; ---- STA [d],y
-    ORG $9700
-    FETCHADDRESS_[d]_y TMP2 TMP3 TMP4
-    STORE TMP2 TMP3 TMP4 ALO
-    BRACCU16 STA_[d]_y_16bit
-    NEXT
-STA_[d]_y_16bit:    
-    INC16 TMP2 TMP3
-    STORE TMP2 TMP3 TMP4 AHI
-    NEXT
-    
+    STA_far  a        $8D
+    STA_far  a_x      $9D
+    STA_far  a_y      $99
+    STA_far  al       $8F
+    STA_far  al_x     $9F
+    STA_near d        $85
+    STA_near d_s      $83
+    STA_near d_x      $95
+    STA_far  (d)      $92
+    STA_far  [d]      $87
+    STA_far  (d_s)_y  $93
+    STA_far  (d_x)    $81
+    STA_far  (d)_y    $91
+    STA_far  [d]_y    $97

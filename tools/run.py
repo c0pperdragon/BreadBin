@@ -21,7 +21,7 @@ class BreadBoard(Board):
         self.extrarom = extrarom
         
     def wr(self,address,value):
-#        print(format(a,"06x"),"<-",format(value,"02x"))
+ #       print(format(address,"06x"),"<-",format(value,"02x"))
         if (address & 0xC00000) == 0x000000:    # writing to RAM
             self.extraram[address&0x7ffff] = value
         elif (address & 0xC00000) == 0x400000:  # writing to IO

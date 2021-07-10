@@ -1,109 +1,3 @@
-; MODES: a  a,x  a,y  al  al,x  d  d,s  d,x  (d>  [d]  (d,s),y  (d,y)  (d),y  [d],y  #
-
-; ---- LDA a
-    ORG $AD00
-    FETCHADDRESS_a TMP2 TMP3
-    LOAD TMP2 TMP3 DBR ALO
-    BRACCU16 LDA_a_16bit
-    NZ8 ALO
-    NEXT
-LDA_a_16bit:    
-    INC16 TMP2 TMP3
-    LOAD TMP2 TMP3 DBR AHI
-    NZ16 ALO AHI
-    NEXT
-    
-; ---- LDA a,x
-    ORG $BD00
-    FETCHADDRESS_a_x TMP2 TMP3
-    LOAD TMP2 TMP3 DBR ALO
-    BRACCU16 LDA_a_x_16bit
-    NZ8 ALO
-    NEXT
-LDA_a_x_16bit:    
-    INC16 TMP2 TMP3
-    LOAD TMP2 TMP3 DBR AHI
-    NZ16 ALO AHI
-    NEXT
-
-; ---- LDA al
-    ORG $AF00
-    FETCHADDRESS_al TMP2 TMP3 TMP4
-    LOAD TMP2 TMP3 TMP4 ALO
-    BRACCU16 LDA_al_16bit
-    NZ8 ALO 
-    NEXT
-LDA_al_16bit:    
-    INC16 TMP2 TMP3
-    LOAD TMP2 TMP3 TMP4 AHI
-    NZ16 ALO AHI
-    NEXT
-
-; ---- LDA al,x
-    ORG $BF00
-    FETCHADDRESS_al_x TMP2 TMP3 TMP4
-    LOAD TMP2 TMP3 TMP4 ALO
-    BRACCU16 LDA_alx_16bit
-    NZ8 ALO 
-    NEXT
-LDA_alx_16bit:    
-    INC16 TMP2 TMP3
-    LOAD TMP2 TMP3 TMP4 AHI
-    NZ16 ALO AHI
-    NEXT
-        
-; ---- LDA d
-    ORG $A500
-    FETCHADDRESS_d TMP2 TMP3
-    LOAD TMP2 TMP3 V0 ALO
-    BRACCU16 LDA_d_16bit
-    NZ8 ALO 
-    NEXT
-LDA_d_16bit:    
-    INC16 TMP2 TMP3
-    LOAD TMP2 TMP3 V0 AHI
-    NZ16 ALO AHI
-    NEXT
-
-; ---- LDA [d]
-    ORG $A700
-    FETCHADDRESS_[d] TMP2 TMP3 TMP4
-    LOAD TMP2 TMP3 TMP4 ALO
-    BRACCU16 LDA_[d]_16bit
-    NZ8 ALO 
-    NEXT
-LDA_[d]_16bit:    
-    INC16 TMP2 TMP3
-    LOAD TMP2 TMP3 TMP4 AHI
-    NZ16 ALO AHI
-    NEXT
-    
-    ; ---- LDA d,s
-    ORG $A300
-    FETCHADDRESS_d_s TMP2 TMP3
-    LOAD TMP2 TMP3 V0 ALO
-    BRACCU16 LDA_d_s_16bit
-    NZ8 ALO 
-    NEXT
-LDA_d_s_16bit:    
-    INC16 TMP2 TMP3
-    LOAD TMP2 TMP3 V0 AHI
-    NZ16 ALO AHI
-    NEXT
-    
-    ; ---- LDA [d],y
-    ORG $B700
-    FETCHADDRESS_[d]_y TMP2 TMP3 TMP4
-    LOAD TMP2 TMP3 TMP4 ALO
-    BRACCU16 LDA_[d]_y_16bit
-    NZ8 ALO 
-    NEXT
-LDA_[d]_y_16bit:    
-    INC16 TMP2 TMP3
-    LOAD TMP2 TMP3 TMP4 AHI
-    NZ16 ALO AHI
-    NEXT
-    
 ; ---- LDA #
     ORG $A900
     FETCH ALO
@@ -115,5 +9,47 @@ LDA_#_16bit:
     NZ16 ALO AHI
     NEXT
 
+
+MACRO LDA_near amode opcode
+    ORG opcode >< 00    
+    FETCHADDRESS_ >< amode TMP2 TMP3
+    LOAD TMP2 TMP3 V0 ALO
+    BRACCU16 LDA_ >< amode >< _16bit
+    NZ8 ALO
+    NEXT
+LDA_ >< amode >< _16bit:    
+    INC16 TMP2 TMP3
+    LOAD TMP2 TMP3 V0 AHI
+    NZ16 ALO AHI
+    NEXT
+ENDMACRO
+
+MACRO LDA_far amode opcode
+    ORG opcode >< 00    
+    FETCHADDRESS_ >< amode TMP2 TMP3 TMP4
+    LOAD TMP2 TMP3 TMP4 ALO
+    BRACCU16 LDA_ >< amode >< _16bit
+    NZ8 ALO
+    NEXT
+LDA_ >< amode >< _16bit:    
+    INC24 TMP2 TMP3 TMP4
+    LOAD TMP2 TMP3 TMP4 AHI
+    NZ16 ALO AHI
+    NEXT
+ENDMACRO
     
     
+    LDA_far  a        $AD
+    LDA_far  a_x      $BD
+    LDA_far  a_y      $B9
+    LDA_far  al       $AF
+    LDA_far  al_x     $BF
+    LDA_near d        $A5
+    LDA_near d_s      $A3
+    LDA_near d_x      $B5
+    LDA_far  (d)      $B2
+    LDA_far  [d]      $A7
+    LDA_far  (d_s)_y  $B3
+    LDA_far  (d_x)    $A1
+    LDA_far  (d)_y    $B1
+    LDA_far  [d]_y    $B7

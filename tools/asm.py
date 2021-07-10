@@ -13,11 +13,17 @@ class Macro:
 
 def replaceall(list, identifiers, values):
     l2 = []
+    joinnext = False
     for t in list:
-        if t in identifiers:
-            l2.append(values[identifiers.index(t)])
+        if t == "><":
+            joinnext = True
         else:
-            l2.append(t)
+            x = values[identifiers.index(t)] if t in identifiers else t
+            if joinnext and len(l2)>0:
+                l2[-1] += x 
+            else:
+                l2.append(x)
+            joinnext = False
     return l2
     
 
@@ -300,6 +306,12 @@ def pagefills(rom):
         else:
             fills[a//256] = (a%256)+1
     return fills
+
+def printunused(rom):
+    for p in range(256):
+        if rom[p*256]==None:
+            print ("{:02x} ".format(p), end="")
+    print()
         
 def asm(sourcefile,hexfile,listfile):
     try:
@@ -319,6 +331,7 @@ def asm(sourcefile,hexfile,listfile):
         fills = pagefills(rom);
         m = max(fills)
         print ("HIGHEST PAGE FILL",m,"FOR",fills.index(m))
+        printunused(rom)
     except AssemblerException as e:
         print (e,file=sys.stderr) 
 

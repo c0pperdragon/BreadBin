@@ -10,28 +10,37 @@ LDY_#_16bit:
     NZ16 YLO XHI
     NEXT
 
-; ---- LDY a
-    ORG $AC00
-    FETCHADDRESS_a TMP2 TMP3
-    LOAD TMP2 TMP3 DBR YLO
-    BRINDEX16 LDY_a_16bit
-    NZ8 YLO
-    NEXT
-LDY_a_16bit:    
-    INC16 TMP2 TMP3
-    LOAD TMP2 TMP3 DBR YHI
-    NZ16 YLO YHI
-    NEXT
-    
-    ; ---- LDY d
-    ORG $A400
-    FETCHADDRESS_d TMP2 TMP3
+MACRO LDY_near amode opcode    
+    ORG opcode >< 00    
+    FETCHADDRESS_ >< amode TMP2 TMP3 
     LOAD TMP2 TMP3 V0 YLO
-    BRINDEX16 LDY_d_16bit
+    BRINDEX16 LDY_ >< amode >< _16bit
     NZ8 YLO
     NEXT
-LDY_d_16bit:    
+LDY_ >< amode >< _16bit:    
     INC16 TMP2 TMP3
     LOAD TMP2 TMP3 V0 YHI
     NZ16 YLO YHI
     NEXT
+ENDMACRO
+    
+MACRO LDY_far amode opcode    
+    ORG opcode >< 00    
+    FETCHADDRESS_ >< amode TMP2 TMP3 TMP4 
+    LOAD TMP2 TMP3 TMP4 YLO
+    BRINDEX16 LDY_ >< amode >< _16bit
+    NZ8 YLO
+    NEXT
+LDY_ >< amode >< _16bit:    
+    INC24 TMP2 TMP3 TMP4
+    LOAD TMP2 TMP3 TMP4 YHI
+    NZ16 YLO YHI
+    NEXT
+ENDMACRO
+
+
+    LDY_far  a     $AC
+    LDY_far  a_x   $BC
+    LDY_near d     $A4
+    LDY_near d_x   $56
+    

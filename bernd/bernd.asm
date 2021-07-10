@@ -73,8 +73,11 @@ include instructions/PEA.asm
 include instructions/PEI.asm
 include instructions/PHA.asm
 include instructions/PHD.asm
+include instructions/PHX.asm
 include instructions/PLA.asm
 include instructions/PLD.asm
+include instructions/PLX.asm
+include instructions/PLY.asm
 include instructions/REP.asm
 include instructions/ROR.asm
 include instructions/ROL.asm
@@ -84,6 +87,7 @@ include instructions/SBC.asm
 include instructions/SEC.asm
 include instructions/SEP.asm
 include instructions/STA.asm
+include instructions/STX.asm
 include instructions/STY.asm
 include instructions/STZ.asm
 include instructions/TAX.asm

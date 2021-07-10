@@ -10,28 +10,37 @@ LDX_#_16bit:
     NZ16 XLO XHI
     NEXT
 
-; ---- LDX a
-    ORG $AE00
-    FETCHADDRESS_a TMP2 TMP3
-    LOAD TMP2 TMP3 DBR XLO
-    BRINDEX16 LDX_a_16bit
-    NZ8 XLO
-    NEXT
-LDX_a_16bit:    
-    INC16 TMP2 TMP3
-    LOAD TMP2 TMP3 DBR XHI
-    NZ16 XLO XHI
-    NEXT
-
-; ---- LDX d
-    ORG $A600
-    FETCHADDRESS_d TMP2 TMP3
+MACRO LDX_near amode opcode    
+    ORG opcode >< 00    
+    FETCHADDRESS_ >< amode TMP2 TMP3 
     LOAD TMP2 TMP3 V0 XLO
-    BRINDEX16 LDX_d_16bit
+    BRINDEX16 LDX_ >< amode >< _16bit
     NZ8 XLO
     NEXT
-LDX_d_16bit:    
+LDX_ >< amode >< _16bit:    
     INC16 TMP2 TMP3
     LOAD TMP2 TMP3 V0 XHI
     NZ16 XLO XHI
     NEXT
+ENDMACRO
+    
+MACRO LDX_far amode opcode    
+    ORG opcode >< 00    
+    FETCHADDRESS_ >< amode TMP2 TMP3 TMP4 
+    LOAD TMP2 TMP3 TMP4 XLO
+    BRINDEX16 LDX_ >< amode >< _16bit
+    NZ8 XLO
+    NEXT
+LDX_ >< amode >< _16bit:    
+    INC24 TMP2 TMP3 TMP4
+    LOAD TMP2 TMP3 TMP4 XHI
+    NZ16 XLO XHI
+    NEXT
+ENDMACRO
+
+    
+    LDX_far  a     $AE
+    LDX_far  a_y   $BE
+    LDX_near d     $A6
+    LDX_near d_y   $B6
+    
