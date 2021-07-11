@@ -14,26 +14,17 @@ BVS_r_stop:
     BRE BVS_r_stop
     BRE BVS_r_stop
 
-; ---- CLI i
-    ORG $5800
-    X V0
-CLI_i_stop:
-    BRE CLI_i_stop
-    BRE CLI_i_stop
-
 ; ---- CLD i
     ORG $D800
-    X V0
-CLD_i_stop:
-    BRE CLD_i_stop
-    BRE CLD_i_stop
+    NEXT    ; not supported, but harmless
+
+; ---- CLI i
+    ORG $5800
+    NEXT    ; not supported, but harmless
 
 ; ---- CLV i
     ORG $B800
-    X V0
-CLV_i_stop:
-    BRE CLV_i_stop
-    BRE CLV_i_stop
+    NEXT   ; not supported, but harmless
 
 ; ---- COP s
     ORG $0200
@@ -72,10 +63,7 @@ SED_i_stop:
 
 ; ---- SEI i
     ORG $7800
-    X V0
-SEI_i_stop:
-    BRE SEI_i_stop
-    BRE SEI_i_stop
+    NEXT    ; not supported, but harmless
 
 ; ---- WAI i
     ORG $CB00

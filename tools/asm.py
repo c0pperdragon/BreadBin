@@ -115,8 +115,6 @@ def operator(tokens, tidx):
         return 0b1010
     elif o=='AVG':
         return 0b1011
-    elif o=='AVG':
-        return 0b1011
     elif o=='ROR':
         return 0b1111
     else:

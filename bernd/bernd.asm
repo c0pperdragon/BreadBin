@@ -21,7 +21,7 @@
     ZFLAG = 16   ; result of previous alu operation converning z
     MFLAG = 17   ; 1 if using 8-bit memory and accu. 0 otherwise
     XFLAG = 18   ; 1 if using 8-bit x,y. 0 otherwise
-                 ; as long as XFLAG is set, XHI and XLO must be kept at 0
+                 ; as long as XFLAG is set, XHI and YHI must be kept at 0
 ; temporary storage 
     TMP0 = 19
     TMP1 = 20
