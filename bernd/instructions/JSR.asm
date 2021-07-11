@@ -1,3 +1,4 @@
+
 ; ---- JSR a
     ORG $2000
     FETCH TMP2
@@ -5,4 +6,16 @@
     PUSH PCHI
     PUSH PCLO
     COPY16 PCLO PCHI TMP2 TMP3
+    NEXT
+
+; ---- JSR (a,x)
+    ORG $FC00
+    FETCH TMP2
+    FETCH TMP3    
+    PUSH PCHI
+    PUSH PCLO
+    ADD16 TMP2 TMP3 XLO XHI
+    LOAD TMP2 TMP3 V0 PCLO
+    INC16 TMP2 TMP3
+    LOAD TMP2 TMP3 V0 PCHI    
     NEXT

@@ -42,5 +42,5 @@ ENDMACRO
     LDY_far  a     $AC
     LDY_far  a_x   $BC
     LDY_near d     $A4
-    LDY_near d_x   $56
+    LDY_near d_x   $B4
     

@@ -7,7 +7,7 @@
     INV8 TMP2
     ADC8 TMP2 ALO V1
     BRACCU16 CMP_#_16bit
-    NZ8 ALO
+    NZ8 TMP2
     NEXT
 CMP_#_16bit:    
     FETCH TMP3

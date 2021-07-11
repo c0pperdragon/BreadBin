@@ -142,24 +142,41 @@ MACRO ADD24_16 targetlo targethi targetxhi sourcelo sourcehi
 ENDMACRO
 
 
-; Increment a 16-bit value.
-MACRO INC16 rlo rhi
+; Increment a 16-bit value and store in new location.
+; (target may also be source)
+MACRO CPINC16 targetlo targethi sourcelo sourcehi
     OP CRY
-    X rhi
-    X rlo
-    SET rhi
+    X sourcehi
+    X sourcelo
+    SET targethi
     X V255
-    SET rlo
+    SET targetlo
 ENDMACRO
 
-; Increment a 24-bit value (not implemented yet)
-MACRO INC24 rlo rhi rxhi
-    OP CRY
-    X rhi
-    X rlo
-    SET rhi
-    X V255
-    SET rlo
+; Increment a 24-bit value and store in new location
+; (target may also be source)
+; temporary storage: TMP0
+MACRO CPINC24 targetlo targethi targetbank sourcelo sourcehi sourcebank
+    X sourcelo
+    X sourcehi
+    OP TOP
+    SET TMP0
+    X sourcebank
+    X TMP0
+    OP ADD
+    SET targetbank
+    CPINC16 targetlo targethi sourcelo sourcehi
+ENDMACRO
+
+; Increment a 16-bit value.
+MACRO INC16 rlo rhi
+    CPINC16 rlo rhi rlo rhi
+ENDMACRO
+
+; Increment a 24-bit value.
+; temporary storage : TMP0
+MACRO INC24 rlo rhi rbank
+    CPINC24 rlo rhi rbank rlo rhi rbank
 ENDMACRO
 
 ; Decrement a 16-bit value.
@@ -178,6 +195,23 @@ MACRO INC_IF_ZERO target test
     X target
     X TMP0
     OP CRY
+    SET target
+ENDMACRO
+
+; decrement a register if another register is 255
+; Intermediate store TMP0
+MACRO DEC_IF_255 target test
+    X V255
+    X test
+    OP CRY
+    SET TMP0
+    X TMP0
+    X TMP0
+    OP NAND
+    SET TMP0
+    X target
+    X TMP0
+    OP ADD
     SET target
 ENDMACRO
 
@@ -439,8 +473,9 @@ MACRO INC8ANDSETNZ r
 ENDMACRO
 
 ; compute N and Z flags from a 16-bit value.
+; do not store N yet, but prepare for subsequent SET
 ; temporary: TMP0, TMP1
-MACRO NZ16 lo hi
+MACRO NZ16_PREPARE_N lo hi
     OP NAND
     X lo
     X V255
@@ -451,14 +486,56 @@ MACRO NZ16 lo hi
     X TMP1
     SET ZFLAG
     X V255
+ENDMACRO 
+
+; compute N and Z flags from a 16-bit value.
+; temporary: TMP0, TMP1
+MACRO NZ16 lo hi
+    NZ16_PREPARE_N lo hi
     SET NFLAG
 ENDMACRO
 
 ; compute N and Z flags from an 8-bit value
-; temporary: TMP0, TMP1
-MACRO NZ8 r
+; do not store N yet, but prepare for subsequent SET
+MACRO NZ8_PREPARE_N r
     GET r
+    SET ZFLAG
+ENDMACRO
+
+; compute N and Z flags from an 8-bit value
+MACRO NZ8 r
+    NZ8_PREPARE_N r
     SET NFLAG
+ENDMACRO
+
+; combine two 8-bit values with AND and set the Z flag accordingly
+; nothing but the Z is modified
+MACRO TEST8 a b
+    OP NAND
+    X a
+    X b
+    SET ZFLAG
+    X ZFLAG
+    X ZFLAG
+    SET ZFLAG
+ENDMACRO
+
+; combine two 16-bit values with AND and set the Z flag accordingly
+; nothing but the Z is modified
+; temporary TMP0
+MACRO TEST16 alo ahi blo bhi
+    OP NAND
+    X alo
+    X blo
+    SET TMP0
+    X ahi
+    X bhi
+    SET ZFLAG
+    X TMP0
+    X ZFLAG
+    SET ZFLAG
+    X ZFLAG
+    X ZFLAG
     SET ZFLAG
 ENDMACRO
 
@@ -555,7 +632,7 @@ MACRO ADC8 destination source carryin
     SET CFLAG ; compose carry (only one input can be 1)
 ENDMACRO
 
-; perform a 8-bit AND joining destination and source
+; perform a 8-bit AND combining destination and source
 MACRO AND8 destination source
     OP NAND
     X destination
@@ -566,7 +643,7 @@ MACRO AND8 destination source
     SET destination
 ENDMACRO
 
-; perform a 8-bit OR joining destination and source
+; perform a 8-bit OR combining destination and source
 ; temporary: TMP0
 MACRO OR8 destination source
     OP NAND
@@ -577,6 +654,43 @@ MACRO OR8 destination source
     X source
     SET TMP0
     X destination
+    X TMP0
+    SET destination
+ENDMACRO
+
+; perform a 8-bit X-OR combining destination and source
+; temporary: TMP0,TMP1
+MACRO EOR8 destination source
+    OP NAND
+    X destination
+    X destination
+    SET TMP0
+    X TMP0
+    X source
+    SET TMP0
+    X source
+    X source
+    SET TMP1
+    X TMP1
+    X destination
+    SET TMP1
+    X TMP0
+    X TMP1
+    SET destination
+ENDMACRO
+
+; perform a 8-bit AND combining destination and inverted source
+; (without changing source itself)
+; temporary TMP0
+MACRO ANDINV8 destination source
+    OP NAND
+    X source
+    X source
+    SET TMP0
+    X destination
+    X TMP0
+    SET TMP0
+    X TMP0
     X TMP0
     SET destination
 ENDMACRO

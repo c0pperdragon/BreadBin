@@ -172,7 +172,7 @@ def execute(board,rom,stop,onlyjumps,afterjump):
     reg[0] = 0
     ir = 0xe0
     pc = 0
-
+    
     # only run for the desired number of steps
     for step in range(stop):
          # unless instruction overrides this, the pc just increments
@@ -210,6 +210,9 @@ def execute(board,rom,stop,onlyjumps,afterjump):
         elif instr==0xC0:  # BRE
             if (a%2)==0:
                 nextpc = (pc & 0xff00) | (param<<3)
+                if nextpc==pc:
+                    print ("Execution stops at {0:0>4X}".format(pc));
+                    return
         elif instr==0xE0:  # JMP
             nextpc = reg[param]<<8
             didjump = 0

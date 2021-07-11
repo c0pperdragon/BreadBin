@@ -30,6 +30,9 @@
     TMP4 = 23
     TMP5 = 24
     TMP6 = 25
+    TMP7 = 26
+    TMP8 = 27
+    TMP9 = 28
 ; useful constant values
     V255 = 29
     V1 = 30
@@ -48,18 +51,24 @@ include instructions/ASL.asm
 include instructions/BCC.asm
 include instructions/BCS.asm
 include instructions/BEQ.asm
+include instructions/BIT.asm
 include instructions/BMI.asm
 include instructions/BNE.asm
+include instructions/BPL.asm
 include instructions/BRA.asm
 include instructions/BRL.asm
 include instructions/CLC.asm
 include instructions/CMP.asm
+include instructions/CPX.asm
+include instructions/CPY.asm
 include instructions/DEC.asm
 include instructions/DEX.asm
 include instructions/DEY.asm
+include instructions/EOR.asm
 include instructions/INC.asm
 include instructions/INX.asm
 include instructions/INY.asm
+include instructions/JML.asm
 include instructions/JMP.asm
 include instructions/JSL.asm
 include instructions/JSR.asm
@@ -67,26 +76,34 @@ include instructions/LDA.asm
 include instructions/LDX.asm
 include instructions/LDY.asm
 include instructions/LSR.asm
+include instructions/NOP.asm
 include instructions/MVN.asm
+include instructions/MVP.asm
 include instructions/ORA.asm
 include instructions/PEA.asm
 include instructions/PEI.asm
+include instructions/PER.asm
 include instructions/PHA.asm
+include instructions/PHB.asm
 include instructions/PHD.asm
+include instructions/PHK.asm
 include instructions/PHX.asm
+include instructions/PHY.asm
 include instructions/PLA.asm
+include instructions/PLB.asm
 include instructions/PLD.asm
 include instructions/PLX.asm
 include instructions/PLY.asm
 include instructions/REP.asm
-include instructions/ROR.asm
 include instructions/ROL.asm
+include instructions/ROR.asm
 include instructions/RTL.asm
 include instructions/RTS.asm
 include instructions/SBC.asm
 include instructions/SEC.asm
 include instructions/SEP.asm
 include instructions/STA.asm
+include instructions/STP.asm
 include instructions/STX.asm
 include instructions/STY.asm
 include instructions/STZ.asm
@@ -95,10 +112,15 @@ include instructions/TAY.asm
 include instructions/TCD.asm
 include instructions/TCS.asm
 include instructions/TDC.asm
+include instructions/TRB.asm
+include instructions/TSB.asm
 include instructions/TSC.asm
+include instructions/TSX.asm
 include instructions/TXA.asm
+include instructions/TXS.asm
 include instructions/TXY.asm
 include instructions/TYA.asm
 include instructions/TYX.asm
+include instructions/WDM.asm
+include instructions/XBA.asm
 include instructions/XCE.asm
-

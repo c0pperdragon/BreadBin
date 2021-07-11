@@ -14,6 +14,13 @@ BVS_r_stop:
     BRE BVS_r_stop
     BRE BVS_r_stop
 
+; ---- CLI i
+    ORG $5800
+    X V0
+CLI_i_stop:
+    BRE CLI_i_stop
+    BRE CLI_i_stop
+
 ; ---- CLD i
     ORG $D800
     X V0
@@ -69,13 +76,6 @@ SED_i_stop:
 SEI_i_stop:
     BRE SEI_i_stop
     BRE SEI_i_stop
-
-; ---- STP i
-    ORG $DB00
-    X V0
-STP_i_stop:
-    BRE STP_i_stop
-    BRE STP_i_stop
 
 ; ---- WAI i
     ORG $CB00

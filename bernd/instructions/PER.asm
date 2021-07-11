@@ -1,0 +1,8 @@
+; ---- PER s
+    ORG $6200
+    FETCH TMP3
+    FETCH TMP4
+    ADD16 TMP3 TMP4 PCLO PCHI
+    PUSH TMP4
+    PUSH TMP3
+    NEXT

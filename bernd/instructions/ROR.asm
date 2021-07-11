@@ -10,3 +10,49 @@ ROR_A_16bit:
     ROR8 ALO
     NZ16 ALO AHI
     NEXT
+
+MACRO ROR_near amode opcode
+    ORG opcode >< 00
+    FETCHADDRESS_ >< amode TMP2 TMP3
+    LOAD TMP2 TMP3 V0 TMP5
+    BRACCU16 ROR_ >< amode >< _16bit
+    ROR8 TMP5
+    STORE TMP2 TMP3 V0 TMP5
+    NZ8 TMP5
+    NEXT
+ROR_ >< amode >< _16bit:    
+    CPINC16 TMP7 TMP8 TMP2 TMP3
+    LOAD TMP7 TMP8 V0 TMP6
+    ROR8 TMP6
+    ROR8 TMP5
+    STORE TMP2 TMP3 V0 TMP5
+    STORE TMP7 TMP8 V0 TMP6
+    NZ16 TMP5 TMP6
+    NEXT
+ENDMACRO
+
+MACRO ROR_far amode opcode
+    ORG opcode >< 00
+    FETCHADDRESS_ >< amode TMP2 TMP3 TMP4
+    LOAD TMP2 TMP3 TMP4 TMP5
+    BRACCU16 ROR_ >< amode >< _16bit
+    ROR8 TMP5
+    STORE TMP2 TMP3 TMP4 TMP5
+    NZ8 TMP5
+    NEXT
+ROR_ >< amode >< _16bit:    
+    CPINC24 TMP7 TMP8 TMP9 TMP2 TMP3 TMP4
+    LOAD TMP7 TMP8 TMP9 TMP6
+    ROR8 TMP6
+    ROR8 TMP5
+    STORE TMP2 TMP3 TMP4 TMP5
+    STORE TMP7 TMP8 TMP9 TMP6
+    NZ16 TMP5 TMP6
+    NEXT
+ENDMACRO
+
+    ROR_far  a        $6E
+    ROR_far  a_x      $7E
+    ROR_near d        $66
+    ROR_near d_x      $76
+    
