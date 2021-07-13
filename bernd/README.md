@@ -15,21 +15,17 @@ some rarely used features and unused features are ommited.
 * Emulation mode
 * Interrupts (and I flag)
 * Decimal mode (and D flag)
-* Overflow flag (V)
 
 ## Missing instructions
 
 As a consequence of unsupported features, some opcodes would result in a wrong behaviour.
 These opcodes are by design missing from the Bernd emulator and will just cause an immediate processor halt. 
 
-* BVC (branch if overflow clear)
-* BVS (branch if overflow set)
 * COP (co-processor interrupt) 
-* PHP (push processor status) 
-* PLP (pull processor status) 
+* PLP attempting to set D or I 
 * RTI (return from interrupt)
 * SED (set decimal)
-* SEP attempting to set decimal mode
+* SEP attempting to set D or I
 * WAI (wait for interrupt)
 * XCE attempting to turn on emulation
 

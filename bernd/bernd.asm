@@ -17,22 +17,22 @@
     SHI = 13
 ; emulated flags (individually addressable)
     CFLAG = 14   ; 1 if carry. 0 otherwise
-    NFLAG = 15   ; result of previous alu operation concerning n
-    ZFLAG = 16   ; result of previous alu operation converning z
-    MFLAG = 17   ; 1 if using 8-bit memory and accu. 0 otherwise
-    XFLAG = 18   ; 1 if using 8-bit x,y. 0 otherwise
+    ZFLAG = 15   ; result of previous alu operation converning z
+    XFLAG = 16   ; 1 if using 8-bit x,y. 0 otherwise
                  ; as long as XFLAG is set, XHI and YHI must be kept at 0
+    MFLAG = 17   ; 1 if using 8-bit memory and accu. 0 otherwise
+    VFLAG = 18   ; 1 if overflow, 0 otherwise
+    NFLAG = 19   ; result of previous alu operation concerning n
 ; temporary storage 
-    TMP0 = 19
-    TMP1 = 20
-    TMP2 = 21
-    TMP3 = 22
-    TMP4 = 23
-    TMP5 = 24
-    TMP6 = 25
-    TMP7 = 26
-    TMP8 = 27
-    TMP9 = 28
+    TMP0 = 20
+    TMP1 = 21
+    TMP2 = 22
+    TMP3 = 23
+    TMP4 = 24
+    TMP5 = 25
+    TMP6 = 26
+    TMP7 = 27
+    TMP8 = 28
 ; useful constant values
     V255 = 29
     V1 = 30
@@ -57,7 +57,10 @@ include instructions/BNE.asm
 include instructions/BPL.asm
 include instructions/BRA.asm
 include instructions/BRL.asm
+include instructions/BVC.asm
+include instructions/BVS.asm
 include instructions/CLC.asm
+include instructions/CLV.asm
 include instructions/CMP.asm
 include instructions/CPX.asm
 include instructions/CPY.asm
@@ -87,11 +90,13 @@ include instructions/PHA.asm
 include instructions/PHB.asm
 include instructions/PHD.asm
 include instructions/PHK.asm
+include instructions/PHP.asm
 include instructions/PHX.asm
 include instructions/PHY.asm
 include instructions/PLA.asm
 include instructions/PLB.asm
 include instructions/PLD.asm
+include instructions/PLP.asm
 include instructions/PLX.asm
 include instructions/PLY.asm
 include instructions/REP.asm

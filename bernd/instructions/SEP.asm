@@ -1,5 +1,5 @@
 ; Set various processor status flags.
-; V, I are not supported, D is forbidden
+; I and D are forbidden
 
 ; ---- SEP #
     ORG $E200
@@ -37,6 +37,12 @@
     SET NFLAG
 SEP_skip_N:    
 
+    X TMP6          ; V flag
+    BRE SEP_skip_V
+    GET1
+    SET VFLAG
+SEP_skip_V:    
+
     X TMP5          ; M flag
     BRE SEP_skip_M
     GET1    
@@ -55,10 +61,14 @@ SEP_skip_X:
     X TMP3            ; D flag (causes halt)
     BRE SEP_skip_D
     X V0
-SEP_halt:
-    BRE  SEP_halt
-    BRE  SEP_halt
+    BRE SEP_halt
 SEP_skip_D:
+
+    X TMP2            ; I flag (causes halt)
+    BRE SEP_skip_I
+    X V0
+    BRE SEP_halt
+SEP_skip_I:
 
     X TMP1          ; Z flag
     BRE SEP_skip_Z
@@ -73,3 +83,8 @@ SEP_skip_Z:
 SEP_skip_C:    
 
     NEXT
+
+SEP_halt:
+    BRE  SEP_halt
+    BRE  SEP_halt
+    

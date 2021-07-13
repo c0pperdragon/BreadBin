@@ -44,10 +44,11 @@
     SET SHI
     ; initialize flags
     GET0
-    SET CFLAG
     SET NFLAG
-    SET ZFLAG
+    SET VFLAG
+    SET CFLAG
     GET1
+    SET ZFLAG
     SET MFLAG
     SET XFLAG
     ; fetch first instruction and continue with it

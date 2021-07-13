@@ -1,5 +1,5 @@
 ; Clear various processor status flags.
-; V, I, D are not supported
+; I, D are not supported
 
 ; ---- REP #
     ORG $C200
@@ -36,6 +36,12 @@
     OP ZERO
     SET NFLAG
 REP_skip_N:    
+
+    X TMP6          ; V flag
+    BRE REP_skip_V
+    OP ZERO
+    SET VFLAG
+REP_skip_V:
 
     X TMP5          ; M flag
     BRE REP_skip_M

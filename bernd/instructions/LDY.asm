@@ -7,7 +7,7 @@
     NEXT
 LDY_#_16bit:    
     FETCH YHI
-    NZ16 YLO XHI
+    NZ16 YLO YHI
     NEXT
 
 MACRO LDY_near amode opcode    

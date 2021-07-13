@@ -3,6 +3,24 @@
 import sys
 
 mnemonic = [ "SET", " IN", "OUT", " OP", "  X", "NOP", "BRE", "JMP" ]
+asm =[
+"BRK","ORA","COP","ORA","TSB","ORA","ASL","ORA","PHP","ORA","ASL","PHD","TSB","ORA","ASL","ORA",
+"BPL","ORA","ORA","ORA","TRB","ORA","ASL","ORA","CLC","ORA","INC","TCS","TRB","ORA","ASL","ORA",
+"JSR","AND","JSL","AND","BIT","AND","ROL","AND","PLP","AND","ROL","PLD","BIT","AND","ROL","AND",
+"BMI","AND","AND","AND","BIT","AND","ROL","AND","SEC","AND","DEC","TSC","BIT","AND","ROL","AND",
+"RTI","EOR","WDM","EOR","MVP","EOR","LSR","EOR","PHA","EOR","LSR","PHK","JMP","EOR","LSR","EOR",
+"BVC","EOR","EOR","EOR","MVN","EOR","LSR","EOR","CLI","EOR","PHY","TCD","JMP","EOR","LSR","EOR",
+"RTS","ADC","PER","ADC","STZ","ADC","ROR","ADC","PLA","ADC","ROR","RTL","JMP","ADC","ROR","ADC",
+"BVS","ADC","ADC","ADC","STZ","ADC","ROR","ADC","SEI","ADC","PLY","TDC","JMP","ADC","ROR","ADC",
+"BRA","STA","BRL","STA","STY","STA","STX","STA","DEY","BIT","TXA","PHB","STY","STA","STX","STA",
+"BCC","STA","STA","STA","STY","STA","STX","STA","TYA","STA","TXS","TXY","STZ","STA","STZ","STA",
+"LDY","LDA","LDX","LDA","LDY","LDA","LDX","LDA","TAY","LDA","TAX","PLB","LDY","LDA","LDX","LDA",
+"BCS","LDA","LDA","LDA","LDY","LDA","LDX","LDA","CLV","LDA","TSX","TYX","LDY","LDA","LDX","LDA",
+"CPY","CMP","REP","CMP","CPY","CMP","DEC","CMP","INY","CMP","DEX","WAI","CPY","CMP","DEC","CMP",
+"BNE","CMP","CMP","CMP","PEI","CMP","DEC","CMP","CLD","CMP","PHX","STP","JML","CMP","DEC","CMP",
+"CPX","SBC","SEP","SBC","CPX","SBC","INC","SBC","INX","SBC","NOP","XBA","CPX","SBC","INC","SBC",
+"BEQ","SBC","SBC","SBC","PEA","SBC","INC","SBC","SED","SBC","PLX","XCE","JSR","SBC","INC","SBC"
+]
 
 class Board:
     def __init__(self):
@@ -13,6 +31,9 @@ class Board:
             
     def rd(self,address):
         return 0xff
+
+    def dump(self,address,len):
+        pass
 
 class BreadBoard(Board):
     def __init__(self, extrarom):
@@ -44,6 +65,19 @@ class BreadBoard(Board):
     def input(self):
         return 0xff
 
+    def dump(self,a,len):
+        s = ""
+        for address in range(a,a+len):
+            v = 0
+            if (address & 0xC00000) == 0x000000:     # reading from RAM 
+                v = self.extraram[address & 0x7ffff]
+            elif (address & 0xC00000) == 0x400000:   # reading from IO
+                v = self.input()
+            else:
+                v = self.extrarom[address & 0x7ffff] # reading from ROM
+            s = s + format(v,"02x")
+        return s
+
 class BreadBinBoard(BreadBoard):
     def __init__(self, extrarom):
         BreadBoard.__init__(self, extrarom)
@@ -72,6 +106,7 @@ class BreadBinBoard(BreadBoard):
             # if necessary fetch new line from console
             if len(self.inputcharacters)==0:
                 self.inputcharacters.extend(list(input()))
+                self.inputcharacters.append("\r")
                 self.inputcharacters.append("\n")
             # bit serialization
             bitserialize(self.inputbits, self.inputcharacters.pop(0))
@@ -126,20 +161,21 @@ def printableram(ram):
             "{11:0>2X}{10:0>2X} "         # Y
             "{13:0>2X}{12:0>2X} "         # S
             "{14:0>2X} "                  # CFLAG
-            "{15:0>2X} "                  # NFLAG
-            "{16:0>2X} "                  # ZFLAG
+            "{15:0>2X} "                  # ZFLAG
+            "{16:0>2X} "                  # XFLAG
             "{17:0>2X} "                  # MFLAG
-            "{18:0>2X} "                  # XFLAG
-            "{19:0>2X} "                  # TMP0
-            "{20:0>2X} "                  # TMP1
-            "{21:0>2X} "                  # TMP2
-            "{22:0>2X} "                  # TMP3
-            "{23:0>2X} "                  # TMP4
-            "{24:0>2X} "                  # TMP5
-            "{25:0>2X} "                  # TMP6
-            "{26:0>2X}{27:0>2X}"          # consts 
-            "{28:0>2X}{29:0>2X}{30:0>2X}" # consts
-            "{31:0>2X}"
+            "{18:0>2X} "                  # VFLAG
+            "{19:0>2X} "                  # NFLAG
+            "{20:0>2X} "                  # TMP0
+            "{21:0>2X} "                  # TMP1
+            "{22:0>2X} "                  # TMP2
+            "{23:0>2X} "                  # TMP3
+            "{24:0>2X} "                  # TMP4
+            "{25:0>2X} "                  # TMP5
+            "{26:0>2X} "                  # TMP6
+            "{27:0>2X} "                  # TMP7
+            "{28:0>2X} "                  # TMP8
+            "{29:0>2X}{30:0>2X}{31:0>2X}" # consts
             ).format(*ram)
 
 def alu(a,b,op):
@@ -180,8 +216,9 @@ def execute(board,rom,stop,onlyjumps,afterjump):
 
         # basic tracing
         if (step>=start) and ((didjump==1) or not onlyjumps):
+            mempos = reg[0] | (reg[1]<<8) | (reg[2]<<16)
             print (step,
-                   format(pc,"x").zfill(4),
+                   (board.dump(mempos-1,3) + " "+ asm[pc>>8]+" " if onlyjumps else format(pc,"x").zfill(4) ),
                    mnemonic[ir//32],
                    format(ir&31, "x").zfill(2),
                    "A:",format(a, "x").zfill(2),
@@ -211,7 +248,7 @@ def execute(board,rom,stop,onlyjumps,afterjump):
             if (a%2)==0:
                 nextpc = (pc & 0xff00) | (param<<3)
                 if nextpc==pc:
-                    print ("Execution stops at {0:0>4X}".format(pc));
+                    print ("Execution stops after",step,"steps at {0:0>4X}".format(pc));
                     return
         elif instr==0xE0:  # JMP
             nextpc = reg[param]<<8

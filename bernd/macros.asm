@@ -97,7 +97,7 @@ ENDMACRO
 
 
 ; add a 8-bit value to a 16-bit value
-; temporary variable: TMP0
+; temporary variable: TMP0  (source may be TMP0)
 MACRO ADD16_8 targetlo targethi source
     OP OVF
     X targetlo
@@ -128,16 +128,16 @@ MACRO ADD16 targetlo targethi sourcelo sourcehi
 ENDMACRO
 
 ; add a 16-bit value to a 24-bit value (no carry out or carry in)
-; temporary registers: TMP0,TMP1
+; temporary registers: TMP0
 MACRO ADD24_16 targetlo targethi targetxhi sourcelo sourcehi
     ; combine lower 8 bits
     OP OVF
     X targetlo
     X sourcelo
-    SET TMP1
+    SET TMP0
     OP ADD
     SET targetlo
-    ADD16_8 targethi targetxhi TMP1
+    ADD16_8 targethi targetxhi TMP0
     ADD16_8 targethi targetxhi sourcehi
 ENDMACRO
 
@@ -244,7 +244,7 @@ MACRO FETCHADDRESS_a rlo rhi rbank
 ENDMACRO
 
 ; fetch two bytes from program and combine with X to get 16-bit address (3rd is DBR)
-; Intermediate storage: TMP0, TMP1
+; Intermediate storage: TMP0
 MACRO FETCHADDRESS_a_x rlo rhi rbank
     FETCH rlo
     FETCH rhi
@@ -254,7 +254,7 @@ MACRO FETCHADDRESS_a_x rlo rhi rbank
 ENDMACRO
 
 ; fetch two bytes from program and combine with Y to get 16-bit address (3rd is DBR)
-; Intermediate storage: TMP0, TMP1
+; Intermediate storage: TMP0
 MACRO FETCHADDRESS_a_y rlo rhi rbank
     FETCH rlo
     FETCH rhi
@@ -271,7 +271,7 @@ MACRO FETCHADDRESS_al rlo rhi rbank
 ENDMACRO
 
 ; fetch three bytes from program and combine with X to get 24-bit address
-; Intermediate storage: TMP0, TMP1
+; Intermediate storage: TMP0
 MACRO FETCHADDRESS_al_x rlo rhi rbank
     FETCH rlo
     FETCH rhi
@@ -312,32 +312,14 @@ ENDMACRO
 ; fetch next byte from program and construct the 16-bit address with DHI/DLO + XHI/XLO (3rd byte is 0)
 ; Intermediate storage: TMP0 
 MACRO FETCHADDRESS_d_x rlo rhi
-    FETCH rlo
-    X DLO
-    X rlo
-    OP OVF
-    SET TMP0
-    OP ADD
-    SET rlo
-    X TMP0
-    X DHI
-    SET rhi
+    FETCHADDRESS_d rlo rhi
     ADD16 rlo rhi XLO XHI
 ENDMACRO
 
 ; fetch next byte from program and construct the 16-bit address with DHI/DLO + YHI/YLO (3rd byte is 0)
 ; Intermediate storage: TMP0 
 MACRO FETCHADDRESS_d_y rlo rhi
-    FETCH rlo
-    X DLO
-    X rlo
-    OP OVF
-    SET TMP0
-    OP ADD
-    SET rlo
-    X TMP0
-    X DHI
-    SET rhi
+    FETCHADDRESS_d rlo rhi
     ADD16 rlo rhi YLO YHI
 ENDMACRO
 
@@ -386,10 +368,10 @@ ENDMACRO
 ; always DBR 
 ; temporary storage: TMP0 TMP1
 MACRO FETCHADDRESS_(d_x) rlo rhi rbank
-    FETCHADDRESS_d_x TMP1 rhi  ; use as temporary storage
-    LOAD TMP1 rhi V0 rlo
-    INC16 TMP1 rhi
-    LOAD TMP1 rhi V0 rhi
+    FETCHADDRESS_d_x TMP0 TMP1
+    LOAD TMP0 TMP0 V0 rlo
+    INC16 TMP0 TMP1
+    LOAD TMP0 TMP1 V0 rhi
     GET DBR
     SET rbank
 ENDMACRO
@@ -399,10 +381,10 @@ ENDMACRO
 ; Then this pointer if fetched and exteded with DBR. Then Y is added to give the effective address.
 ; Intermediate storage: TMP0, TMP1
 MACRO FETCHADDRESS_(d)_y rlo rhi rbank
-    FETCHADDRESS_d TMP1 rbank  ; use target register as temporary storage
-    LOAD TMP1 rbank V0 rlo
+    FETCHADDRESS_d TMP0 TMP1
+    LOAD TMP0 TMP1 V0 rlo
     INC16 TMP1 rbank
-    LOAD TMP1 rbank V0 rhi
+    LOAD TMP0 TMP1  V0 rhi
     GET DBR
     SET rbank
     ADD24_16 rlo rhi rbank YLO YHI
@@ -413,12 +395,12 @@ ENDMACRO
 ; Then this pointer if fetched and Y is added to give the effective address.
 ; Intermediate storage: TMP0, TMP1
 MACRO FETCHADDRESS_[d]_y rlo rhi rbank
-    FETCHADDRESS_d TMP1 rbank  ; use target register as temporary storage
-    LOAD TMP1 rbank V0 rlo
-    INC16 TMP1 rbank
-    LOAD TMP1 rbank V0 rhi
-    INC16 TMP1 rbank
-    LOAD TMP1 rbank V0 rbank
+    FETCHADDRESS_d TMP0 TMP1
+    LOAD TMP0 TMP1 V0 rlo
+    INC16 TMP0 TMP1
+    LOAD TMP0 TMP1 V0 rhi
+    INC16 TMP0 TMP1
+    LOAD TMP0 TMP1 V0 rbank
     ADD24_16 rlo rhi rbank YLO YHI
 ENDMACRO
 
@@ -472,10 +454,24 @@ MACRO INC8ANDSETNZ r
     SET ZFLAG
 ENDMACRO
 
-; compute N and Z flags from a 16-bit value.
-; do not store N yet, but prepare for subsequent SET
+
+; compute Z flag from a 16-bit value.
 ; temporary: TMP0, TMP1
-MACRO NZ16_PREPARE_N lo hi
+MACRO Z16 lo hi
+    OP NAND
+    X lo
+    X V255
+    SET TMP0  ; inverted lo
+    X hi
+    SET TMP1  ; inverted hi
+    X TMP0
+    X TMP1
+    SET ZFLAG
+ENDMACRO
+
+; compute N and Z flags from a 16-bit value.
+; temporary: TMP0, TMP1
+MACRO NZ16 lo hi
     OP NAND
     X lo
     X V255
@@ -486,25 +482,19 @@ MACRO NZ16_PREPARE_N lo hi
     X TMP1
     SET ZFLAG
     X V255
-ENDMACRO 
-
-; compute N and Z flags from a 16-bit value.
-; temporary: TMP0, TMP1
-MACRO NZ16 lo hi
-    NZ16_PREPARE_N lo hi
     SET NFLAG
 ENDMACRO
 
-; compute N and Z flags from an 8-bit value
-; do not store N yet, but prepare for subsequent SET
-MACRO NZ8_PREPARE_N r
+; compute the Z flag from an 8-bit value
+MACRO Z8 r
     GET r
     SET ZFLAG
 ENDMACRO
 
 ; compute N and Z flags from an 8-bit value
 MACRO NZ8 r
-    NZ8_PREPARE_N r
+    GET r
+    SET ZFLAG
     SET NFLAG
 ENDMACRO
 
@@ -632,6 +622,36 @@ MACRO ADC8 destination source carryin
     SET CFLAG ; compose carry (only one input can be 1)
 ENDMACRO
 
+; like ADC, but also sets the VFLAG accordingly
+; uses storage: TMP0, TMP1
+MACRO ADC8V destination source carryin
+    ; compute the carry from bit 6 to bit 7 in the sum
+    ; this is done by shifting both operands by one bit and
+    ; inserting the carry on both of them (to force a carry propagation)
+    ; then use the OVF operation to check if a carry is produced
+    OP ADD
+    X destination
+    X destination
+    SET TMP0
+    X source
+    X source
+    SET TMP1
+    X TMP0
+    X carryin
+    SET TMP0
+    X TMP1
+    X carryin
+    SET TMP1
+    OP OVF
+    X TMP0
+    X TMP1
+    SET VFLAG  ; preliminary: only carry from bit 6
+
+    ADC8 destination source carryin    
+    
+    EOR8 VFLAG CFLAG ; combine carry from bit7 with carry from bit6 
+ENDMACRO
+
 ; perform a 8-bit AND combining destination and source
 MACRO AND8 destination source
     OP NAND
@@ -693,4 +713,20 @@ MACRO ANDINV8 destination source
     X TMP0
     X TMP0
     SET destination
+ENDMACRO
+
+
+; Use bits 7 and 6 from the operand and set the
+; N and V flags.
+MACRO SETNVFROMHIGHBITS r
+    X r
+    X r
+    OP OVF
+    SET NFLAG
+    OP ADD
+    SET VFLAG
+    X VFLAG
+    X VFLAG
+    OP OVF
+    SET VFLAG
 ENDMACRO
