@@ -5,5 +5,6 @@
     GET AHI
     SET ALO
     GET TMP0
-    GET AHI
+    SET AHI
+    NZ16 ALO AHI
     NEXT

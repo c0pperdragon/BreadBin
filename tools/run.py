@@ -109,7 +109,6 @@ class BreadBinBoard(BreadBoard):
             # if necessary fetch new line from console
             if len(self.inputcharacters)==0:
                 self.inputcharacters.extend(list(input()))
-                self.inputcharacters.append("\r")
                 self.inputcharacters.append("\n")
             # bit serialization
             bitserialize(self.inputbits, self.inputcharacters.pop(0))
