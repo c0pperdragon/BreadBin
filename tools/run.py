@@ -38,7 +38,7 @@ class Board:
 class BreadBoard(Board):
     def __init__(self, extrarom):
         Board.__init__(self)
-        self.extraram = [255]*(1<<19)
+        self.extraram = [-1]*(1<<19)
         self.extrarom = extrarom
         
     def wr(self,address,value):
@@ -52,6 +52,9 @@ class BreadBoard(Board):
         v = 0
         if (address & 0xC00000) == 0x000000:     # reading from RAM 
             v = self.extraram[address & 0x7ffff]
+            if v<0:
+                print("read uninitialized from "+format(address,"06x"))
+                v=0
         elif (address & 0xC00000) == 0x400000:   # reading from IO
             v = self.input()
         else:
@@ -193,7 +196,7 @@ def alu(a,b,op):
 
 def execute(board,rom,stop,onlyjumps,afterjump):
     didjump = 0
-    start = stop-5000 if onlyjumps else stop-200
+    start = stop-200000 if onlyjumps else stop-1000
 
     # state of the controller, start with dummy values
     reg = [42]*32
@@ -232,6 +235,8 @@ def execute(board,rom,stop,onlyjumps,afterjump):
         didjump = didjump+1
         if instr==0x00:    # SET
             reg[param] = alu(a,b,op)
+  #          if param==18:
+  #              print ("Set V = "+format(reg[param], "x"));
         elif instr==0x20:  # IN
             reg[param] = board.rd((c<<16)|(b<<8)|a)
         elif instr==0x40:  # OUT
