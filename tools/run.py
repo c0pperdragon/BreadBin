@@ -53,7 +53,7 @@ class BreadBoard(Board):
         if (address & 0xC00000) == 0x000000:     # reading from RAM 
             v = self.extraram[address & 0x7ffff]
             if v<0:
-                print("read uninitialized from "+format(address,"06x"))
+#                print("read uninitialized from "+format(address,"06x"))
                 v=0
         elif (address & 0xC00000) == 0x400000:   # reading from IO
             v = self.input()
