@@ -139,12 +139,15 @@ def readromfile(filename):
     if filename.lower().endswith(".hex"):
         f = open(filename, "r")
         rom = [255]*(1<<19)
+        segment = 0
         for line in f:
             b = hextobytes(line.strip())
-            if len(b)>4 and b[3]==0 and len(b)>=b[0]+4:
+            if len(b)>=6 and b[3]==2:
+                segment = (b[4]*256+b[5]) * 16
+            elif len(b)>4 and b[3]==0 and len(b)>=b[0]+4:
                 a = b[1]*256 + b[2];
                 for i in range(b[0]):
-                    rom[a+i] = b[4+i]
+                    rom[segment+a+i] = b[4+i]
         f.close()
         return rom
     else:
