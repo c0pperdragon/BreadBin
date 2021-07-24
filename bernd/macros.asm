@@ -376,14 +376,14 @@ MACRO FETCHADDRESS_(d_x) rlo rhi rbank
     SET rbank
 ENDMACRO
 
-; fetch address indirect long. For this, combine the
+; fetch address indirect with y. For this, combine the
 ; next program byte with the DLO,DHI to get the address of the 16-bit pointer
 ; Then this pointer if fetched and exteded with DBR. Then Y is added to give the effective address.
 ; Intermediate storage: TMP0, TMP1
 MACRO FETCHADDRESS_(d)_y rlo rhi rbank
     FETCHADDRESS_d TMP0 TMP1
     LOAD TMP0 TMP1 V0 rlo
-    INC16 TMP1 rbank
+    INC16 TMP0 TMP1
     LOAD TMP0 TMP1  V0 rhi
     GET DBR
     SET rbank
