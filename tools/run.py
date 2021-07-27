@@ -126,7 +126,8 @@ def bitserialize(bitlist, c):
     for i in range(8):
         bitlist.append(b & 0x01)
         b = b>>1
-    bitlist.append(1);  # stop bit    
+    bitlist.append(1);  # stop bit
+#    print ("bitlist:", bitlist)
 
 def hextobytes(line):
     b = []

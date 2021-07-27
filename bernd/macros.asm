@@ -38,18 +38,37 @@ MACRO GET255
     OP FF
 ENDMACRO
 
+; load a value from the specified memory location and bank 
+; and increment location (but not bank) afterwards
+MACRO LOAD_POSTINC rlo rhi bank value
+    X bank
+    X rhi
+    X rlo
+    IN value
+    OP CRY
+    SET rhi
+    X V255
+    SET rlo
+ENDMACRO 
+
+; store a value to the specified memory location and bank 
+; and increment location (but not bank) afterwards
+MACRO STORE_POSTINC rlo rhi bank value
+    X bank
+    X rhi
+    X rlo
+    OUT value
+    OP CRY
+    SET rhi
+    X V255
+    SET rlo
+ENDMACRO 
+
    
 ; Fetch the next operand byte of the program.
 ; After reading data into the position given as target, increase PC 
 MACRO FETCH target    
-    X PBR
-    X PCHI
-    X PCLO
-    IN target
-    OP CRY
-    SET PCHI
-    X V255
-    SET PCLO
+    LOAD_POSTINC PCLO PCHI PBR target
 ENDMACRO
 
 ; increment program counter without fetching data
@@ -419,6 +438,8 @@ MACRO LOAD rlo rhi bank value
     X rlo
     IN value
 ENDMACRO 
+
+
 
 ; store an 8-bit value on the stack
 ; Intermediate storage: TMP0 
