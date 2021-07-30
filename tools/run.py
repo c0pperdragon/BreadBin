@@ -1,6 +1,21 @@
 # BreadBin emulator.  ROM definition as Intel HEX format or binary. 
 
 import sys
+import msvcrt
+
+
+# Facility to get a single character from input (Windows only)
+win_encoding = "mbcs"
+XE0_OR_00 = "\x00\xe0"
+def read8bitchar():
+    ch = msvcrt.getch()
+    b = ord(ch) & 0xFF
+    if b==3:  # support for Ctrl-C
+        sys.exit()
+    if b==13: # use \n throught
+        return 10
+    return b
+
 
 mnemonic = [ "SET", " IN", "OUT", " OP", "  X", "NOP", "BRE", "JMP" ]
 asm =[
@@ -86,7 +101,6 @@ class BreadBinBoard(BreadBoard):
         BreadBoard.__init__(self, extrarom)
         self.collectedbits = 0
         self.rts = 1
-        self.inputcharacters = []
         self.inputbits = []
         
     def output(self,value):
@@ -106,12 +120,9 @@ class BreadBinBoard(BreadBoard):
         # when the bit buffer has run empty and program still wants to get
         # data, next character is fetched and prepared
         if self.rts==0 and len(self.inputbits)==0:
-            # if necessary fetch new line from console
-            if len(self.inputcharacters)==0:
-                self.inputcharacters.extend(list(input()))
-                self.inputcharacters.append("\n")
+            b = read8bitchar()
             # bit serialization
-            bitserialize(self.inputbits, self.inputcharacters.pop(0))
+            bitserialize(self.inputbits, b)
         # as long as there is stuff in the serialized buffer, receive it
         bit = 1  # idle state of input line
         if len(self.inputbits)>0:
@@ -120,8 +131,7 @@ class BreadBinBoard(BreadBoard):
 #        print("IN  "+format(value,"08b"),end='\n',flush=True)
         return value
 
-def bitserialize(bitlist, c):
-    b = ord(c) & 0xFF
+def bitserialize(bitlist, b):
     bitlist.append(0);  # start bit
     for i in range(8):
         bitlist.append(b & 0x01)
