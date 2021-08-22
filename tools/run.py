@@ -55,15 +55,27 @@ class BreadBoard(Board):
         Board.__init__(self)
         self.extraram = [-1]*(1<<19)
         self.extrarom = extrarom
+        self.romwritesequence = 0
         
     def wr(self,address,value):
- #       print(format(address,"06x"),"<-",format(value,"02x"))
+#        print(format(address,"06x"),"<-",format(value,"02x"))
         if (address & 0xC00000) == 0x000000:    # writing to RAM
             self.extraram[address&0x7ffff] = value
         elif (address & 0xC00000) == 0x400000:  # writing to IO
             self.output(value)
-        
+        elif (address & 0xC00000) == 0x800000:  # writing to ROM
+            if self.romwritesequence == 0:
+                self.romwritesequence = 1 if address==0x805555 and value==0xAA else 0
+            elif self.romwritesequence == 1:
+                self.romwritesequence = 2 if address==0x802AAA and value==0x55 else 0
+            elif self.romwritesequence == 2:
+                self.romwritesequence = 3 if address==0x805555 and value==0xA0 else 0
+            elif self.romwritesequence == 3:
+#                print("ROM",format(address,"06x"),"<-",format(value,"02x"))
+                self.extrarom[address&0x7ffff] = value
+                self.romwritesequence = 4
     def rd(self,address):
+#        print(format(address,"06x"),"-> ", end="")
         v = 0
         if (address & 0xC00000) == 0x000000:     # reading from RAM 
             v = self.extraram[address & 0x7ffff]
@@ -74,7 +86,12 @@ class BreadBoard(Board):
             v = self.input()
         else:
             v = self.extrarom[address & 0x7ffff] # reading from ROM
-#        print(format(a,"06x"),"->",format(v,"02x"))
+            if self.romwritesequence<4 or self.romwritesequence>10:
+                self.romwritesequence=0
+            else:
+                self.romwritesequence = self.romwritesequence+1
+                v = (self.romwritesequence & 1) << 6
+#        print(format(v,"02x"))
         return v
     
     def output(self,value):
