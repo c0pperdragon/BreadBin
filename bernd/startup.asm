@@ -47,10 +47,10 @@
     SET NFLAG
     SET VFLAG
     SET CFLAG
-    GET1
-    SET ZFLAG
     SET MFLAG
     SET XFLAG
+    GET1
+    SET ZFLAG
     ; fetch first instruction and continue with it
     NEXT
     

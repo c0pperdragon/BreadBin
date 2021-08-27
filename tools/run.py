@@ -162,11 +162,10 @@ def hextobytes(line):
         for i in range ((len(line)-3)>>1):
             b.append(int(line[1+2*i:3+2*i],16))
     return b        
-    
-def readromfile(filename):
+
+def readtoromfile(rom, filename):
     if filename.lower().endswith(".hex"):
         f = open(filename, "r")
-        rom = [255]*(1<<19)
         segment = 0
         for line in f:
             b = hextobytes(line.strip())
@@ -175,14 +174,21 @@ def readromfile(filename):
             elif len(b)>4 and b[3]==0 and len(b)>=b[0]+4:
                 a = b[1]*256 + b[2];
                 for i in range(b[0]):
-                    rom[segment+a+i] = b[4+i]
+                    addr = segment+a+i
+                    if rom[addr]!=255:
+                        print ("Rom definition conflict:",addr)
+                    else:
+                        rom[addr] = b[4+i]
         f.close()
-        return rom
     else:
-        f = open(filename, "rb")
-        rom = f.read(1<<19)
-        f.close()
-        return rom
+        print ("Can not read format: "+filename);
+   
+    
+def readromfile(filename):
+    rom = [255]*(1<<19)
+    for n in filename.split(','):
+        readtoromfile(rom,n)
+    return rom
         
 
 def printableram(ram):
