@@ -144,7 +144,7 @@ class BreadBinBoard(BreadBoard):
         bit = 1  # idle state of input line
         if len(self.inputbits)>0:
             bit = self.inputbits.pop(0)
-        value = 0xFC | bit   # additionally keep CTS input asserted
+        value = 0x3F | (bit<<7)   # additionally keep CTS input asserted
 #        print("IN  "+format(value,"08b"),end='\n',flush=True)
         return value
 
