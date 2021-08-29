@@ -5,17 +5,17 @@ import msvcrt
 
 
 # Facility to get a single character from input (Windows only)
-win_encoding = "mbcs"
-XE0_OR_00 = "\x00\xe0"
 def read8bitchar():
-    ch = msvcrt.getch()
-    b = ord(ch) & 0xFF
-    if b==3:  # support for Ctrl-C
-        sys.exit()
-    if b==13: # use \n throught
-        return 10
-    return b
-
+    if msvcrt.kbhit():
+        ch = msvcrt.getch()
+        b = ord(ch) & 0xFF
+        if b==3:  # support for Ctrl-C
+            sys.exit()
+        if b==13: # use \n throught
+            return 10
+        return b
+    else:
+        return -1
 
 mnemonic = [ "SET", " IN", "OUT", " OP", "  X", "NOP", "BRE", "JMP" ]
 asm =[
@@ -139,7 +139,8 @@ class BreadBinBoard(BreadBoard):
         if self.rts==0 and len(self.inputbits)==0:
             b = read8bitchar()
             # bit serialization
-            bitserialize(self.inputbits, b)
+            if b>=0:
+                bitserialize(self.inputbits, b)
         # as long as there is stuff in the serialized buffer, receive it
         bit = 1  # idle state of input line
         if len(self.inputbits)>0:

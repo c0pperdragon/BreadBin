@@ -742,7 +742,7 @@ ENDMACRO
 MACRO SETNVFROMHIGHBITS r
     X r
     X r
-    OP OVF
+    OP B
     SET NFLAG
     OP ADD
     SET VFLAG
