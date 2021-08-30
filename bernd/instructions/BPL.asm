@@ -1,12 +1,12 @@
 ; ---- BPL r
-    ORG $1000
-    X NFLAG
-    X NFLAG
-    OP OVF
-    SET TMP0
-    X TMP0
-    BRE BPL_r_taken
-    SKIP
-    NEXT
+    ORG $1000            ; = 21 (not taken), 47 (taken)
+    X NFLAG              ; 1
+    X NFLAG              ; 1
+    OP OVF               ; 1
+    SET TMP0             ; 1
+    X TMP0               ; 1
+    BRE BPL_r_taken      ; 1
+    SKIP                 ; 6
+    NEXT                 ; 9
 BPL_r_taken:
-    NEXT_RELATIVE
+    NEXT_RELATIVE        ; 41

@@ -1,11 +1,11 @@
 
 ; ---- ADC #
-    ORG $6900
-    FETCH TMP4
-    BRACCU16 ADC_#_16bit
-    ADC8V ALO TMP4 CFLAG
-    NZ8 ALO
-    NEXT
+    ORG $6900               ; = 71
+    FETCH TMP4              ; 8
+    BRACCU16 ADC_#_16bit    ; 2
+    ADC8V ALO TMP4 CFLAG    ; 47
+    NZ8 ALO                 ; 5
+    NEXT                    ; 9
 ADC_#_16bit:    
     ADC8 ALO TMP4 CFLAG
     FETCH TMP4

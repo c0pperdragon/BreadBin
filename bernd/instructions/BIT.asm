@@ -36,14 +36,14 @@ BIT_ >< amode >< _16bit:
 ENDMACRO
 
 MACRO BIT_far amode opcode
-    ORG opcode >< 00
-    FETCHADDRESS_ >< amode TMP2 TMP3 TMP4
-    LOAD TMP2 TMP3 TMP4 TMP5
-    BRACCU16 BIT_ >< amode >< _16bit
-    SETNVFROMHIGHBITS TMP5
-    AND8 TMP5 ALO
-    Z8 TMP5
-    NEXT
+    ORG opcode >< 00                          ; = 55
+    FETCHADDRESS_ >< amode TMP2 TMP3 TMP4     ; 20
+    LOAD TMP2 TMP3 TMP4 TMP5                  ;  3
+    BRACCU16 BIT_ >< amode >< _16bit          ;  2
+    SETNVFROMHIGHBITS TMP5                    ; 10
+    AND8 TMP5 ALO                             ;  7
+    Z8 TMP5                                   ;  4
+    NEXT                                      ;  9
 BIT_ >< amode >< _16bit:
     INC24 TMP2 TMP3 TMP4
     LOAD TMP2 TMP3 TMP4 TMP6

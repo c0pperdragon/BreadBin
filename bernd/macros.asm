@@ -5,7 +5,7 @@
 ; This is to allow for preceeding branch instructions that have a delayed branch.
 
 ; perform a branch if the A/M flag is set to 16 bit mode
-MACRO BRACCU16 branchtarget
+MACRO BRACCU16 branchtarget                 ; 2
     X MFLAG
     BRE branchtarget
 ENDMACRO
@@ -67,7 +67,7 @@ ENDMACRO
    
 ; Fetch the next operand byte of the program.
 ; After reading data into the position given as target, increase PC 
-MACRO FETCH target    
+MACRO FETCH target      ; = 8
     LOAD_POSTINC PCLO PCHI PBR target
 ENDMACRO
 
@@ -79,7 +79,7 @@ ENDMACRO
 ; Fetch the next command opcode from the program and
 ; Jump to the proper firmware segment. increase PC afterwards.
 ; Intermediate storage: TMP0
-MACRO NEXT
+MACRO NEXT        ; = 9
     X PBR
     X PCHI
     X PCLO
@@ -94,15 +94,15 @@ ENDMACRO
 ; Fetch next byte from program and treat this as a relative address
 ; Set program counter to target and fetch next command from there
 ; Intermediate storage: all temporaries
-MACRO NEXT_RELATIVE
-    FETCH TMP3    ; this is a signed 8-bit offset
+MACRO NEXT_RELATIVE                       ; = 41
+    FETCH TMP3   ; this is a signed 8-bit offset     ; 8
     ; tricky operation to sign-extend to a 16-bit value
-    X TMP3
-    X TMP3
-    OP OVF
+    X TMP3         
+    X TMP3         
+    OP OVF         
     SET TMP4  ; 0 if positive, 1 if negative
-    X TMP4
-    X TMP4
+    X TMP4         
+    X TMP4       
     OP NAND
     SET TMP4  ; 255 if positive, 254 if negative
     X TMP4
@@ -110,8 +110,8 @@ MACRO NEXT_RELATIVE
     OP ADD    
     SET TMP4  ; 0 if positive, 255 if negative
     ; do the relative jump
-    ADD16 PCLO PCHI TMP3 TMP4
-    NEXT
+    ADD16 PCLO PCHI TMP3 TMP4     ; 12
+    NEXT                          ; 9
 ENDMACRO
 
 
@@ -131,7 +131,7 @@ ENDMACRO
 
 ; add two 16-bit values (no carry out or carry in)
 ; temporary registers: TMP0
-MACRO ADD16 targetlo targethi sourcelo sourcehi
+MACRO ADD16 targetlo targethi sourcelo sourcehi   ; = 12
     OP OVF
     X targetlo
     X sourcelo
@@ -255,11 +255,11 @@ ENDMACRO
 
 
 ; fetch address consisting of two bytes and add the 3rd byte from DBR
-MACRO FETCHADDRESS_a rlo rhi rbank
-    FETCH rlo
-    FETCH rhi
-    GET DBR
-    SET rbank
+MACRO FETCHADDRESS_a rlo rhi rbank        ; = 20
+    FETCH rlo                             ; 8
+    FETCH rhi                             ; 8
+    GET DBR                               ; 3
+    SET rbank                             ; 1
 ENDMACRO
 
 ; fetch two bytes from program and combine with X to get 16-bit address (3rd is DBR)
@@ -432,7 +432,7 @@ MACRO STORE rlo rhi bank value
 ENDMACRO
 
 ; load a value from the specified memory location and bank 
-MACRO LOAD rlo rhi bank value
+MACRO LOAD rlo rhi bank value      ; 4
     X bank
     X rhi
     X rlo
@@ -507,13 +507,13 @@ MACRO NZ16 lo hi
 ENDMACRO
 
 ; compute the Z flag from an 8-bit value
-MACRO Z8 r
-    GET r
-    SET ZFLAG
+MACRO Z8 r              ; = 4
+    GET r               ; 3
+    SET ZFLAG           ; 1
 ENDMACRO
 
 ; compute N and Z flags from an 8-bit value
-MACRO NZ8 r
+MACRO NZ8 r    ; = 5
     GET r
     SET ZFLAG
     SET NFLAG
@@ -626,7 +626,7 @@ ENDMACRO
 ; add source to destination, using the provided carry input 
 ; and also set the output carry in CFLAG
 ; uses storage: TMP0, TMP1
-MACRO ADC8 destination source carryin
+MACRO ADC8 destination source carryin      ; 14
     OP ADD
     X destination
     X source
@@ -645,7 +645,7 @@ ENDMACRO
 
 ; like ADC, but also sets the VFLAG accordingly
 ; uses storage: TMP0, TMP1
-MACRO ADC8V destination source carryin
+MACRO ADC8V destination source carryin                  ; = 47
     ; compute the carry from bit 6 to bit 7 in the sum
     ; this is done by shifting both operands by one bit and
     ; inserting the carry on both of them (to force a carry propagation)
@@ -667,14 +667,13 @@ MACRO ADC8V destination source carryin
     X TMP0
     X TMP1
     SET VFLAG  ; preliminary: only carry from bit 6
-
-    ADC8 destination source carryin    
-    
-    EOR8 VFLAG CFLAG ; combine carry from bit7 with carry from bit6 
+    ADC8 destination source carryin                       ; 14
+    ; combine carry from bit7 with carry from bit6 
+    EOR8 VFLAG CFLAG                                      ; 16
 ENDMACRO
 
 ; perform a 8-bit AND combining destination and source
-MACRO AND8 destination source
+MACRO AND8 destination source       ; 7
     OP NAND
     X destination
     X source
@@ -701,7 +700,7 @@ ENDMACRO
 
 ; perform a 8-bit X-OR combining destination and source
 ; temporary: TMP0,TMP1
-MACRO EOR8 destination source
+MACRO EOR8 destination source   ; = 
     OP NAND
     X destination
     X destination
@@ -739,7 +738,7 @@ ENDMACRO
 
 ; Use bits 7 and 6 from the operand and set the
 ; N and V flags.
-MACRO SETNVFROMHIGHBITS r
+MACRO SETNVFROMHIGHBITS r       ; 10
     X r
     X r
     OP B
