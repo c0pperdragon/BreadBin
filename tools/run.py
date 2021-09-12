@@ -64,29 +64,40 @@ class BreadBoard(Board):
         elif (address & 0xC00000) == 0x400000:  # writing to IO
             self.output(value)
         elif (address & 0xC00000) == 0x800000:  # writing to ROM
+            lowadr = address & 0x7FFF
             if self.romwritesequence == 0:
-                self.romwritesequence = 1 if address==0x805555 and value==0xAA else 0
+                self.romwritesequence = 1 if lowadr==0x5555 and value==0xAA else 0
             elif self.romwritesequence == 1:
-                self.romwritesequence = 2 if address==0x802AAA and value==0x55 else 0
+                self.romwritesequence = 2 if lowadr==0x2AAA and value==0x55 else 0
             elif self.romwritesequence == 2:
-                self.romwritesequence = 3 if address==0x805555 and value==0xA0 else 0
+                self.romwritesequence = 0
+                if lowadr==0x5555 and value==0x80:  # continue with sector erase trigger
+                    self.romwritesequence = 3
+                if lowadr==0x5555 and value==0xA0:  # complete write-byte trigger
+                    self.romwritesequence = 6
             elif self.romwritesequence == 3:
-#                print("ROM",format(address,"06x"),"<-",format(value,"02x"))
-                self.extrarom[address&0x7ffff] = value
-                self.romwritesequence = 4
+                self.romwritesequence = 4 if lowadr==0x5555 and value==0xAA else 0
+            elif self.romwritesequence == 4:
+                self.romwritesequence = 5 if lowadr==0x2AAA and value==0x55 else 0
+            elif self.romwritesequence == 5:
+                if value==0x30:                 # sector erase sequence complete
+                    for i in range(4096):
+                        self.extrarom[(address&0x7F000) + i] = 0xff
+                    self.romwritesequence = 7
+            elif self.romwritesequence == 6:    # this actually writes the byte
+                self.extrarom[address&0x7ffff] = self.extrarom[address&0x7ffff] & value
+                self.romwritesequence = 7
     def rd(self,address):
-#        print(format(address,"06x"),"-> ", end="")
         v = 0
         if (address & 0xC00000) == 0x000000:     # reading from RAM 
             v = self.extraram[address & 0x7ffff]
             if v<0:
-#                print("read uninitialized from "+format(address,"06x"))
                 v=0
         elif (address & 0xC00000) == 0x400000:   # reading from IO
             v = self.input()
         else:
             v = self.extrarom[address & 0x7ffff] # reading from ROM
-            if self.romwritesequence<4 or self.romwritesequence>10:
+            if self.romwritesequence<7 or self.romwritesequence>12:
                 self.romwritesequence=0
             else:
                 self.romwritesequence = self.romwritesequence+1
