@@ -15,13 +15,12 @@ ORA_#_16bit:
 MACRO ORA_near amode opcode
     ORG opcode >< 00    
     FETCHADDRESS_ >< amode TMP4 TMP5
-    LOAD TMP4 TMP5 V0 TMP3
+    LOAD_POSTINC TMP4 TMP5 V0 TMP3
     OR8 ALO TMP3
     BRACCU16 ORA_ >< amode >< _16bit
     NZ8 ALO
     NEXT
 ORA_ >< amode >< _16bit:    
-    INC16 TMP4 TMP5
     LOAD TMP4 TMP5 V0 TMP3
     OR8 AHI TMP3
     NZ16 ALO AHI

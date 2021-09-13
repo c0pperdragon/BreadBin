@@ -13,12 +13,11 @@ LDA_#_16bit:
 MACRO LDA_near amode opcode
     ORG opcode >< 00    
     FETCHADDRESS_ >< amode TMP2 TMP3
-    LOAD TMP2 TMP3 V0 ALO
+    LOAD_POSTINC TMP2 TMP3 V0 ALO
     BRACCU16 LDA_ >< amode >< _16bit
     NZ8 ALO
     NEXT
 LDA_ >< amode >< _16bit:    
-    INC16 TMP2 TMP3
     LOAD TMP2 TMP3 V0 AHI
     NZ16 ALO AHI
     NEXT

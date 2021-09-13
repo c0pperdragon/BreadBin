@@ -44,8 +44,8 @@ MACRO LOAD_POSTINC rlo rhi bank value
     X bank
     X rhi
     X rlo
-    IN value
     OP CRY
+    IN value
     SET rhi
     X V255
     SET rlo
@@ -83,8 +83,8 @@ MACRO NEXT        ; = 9
     X PBR
     X PCHI
     X PCLO
-    IN TMP0
     OP CRY
+    IN TMP0
     SET PCHI
     X V255
     JMP TMP0
@@ -348,8 +348,7 @@ ENDMACRO
 ; Intermediate storage: TMP0,TMP1
 MACRO FETCHADDRESS_(d) rlo rhi rbank
     FETCHADDRESS_d TMP0 TMP1
-    LOAD TMP0 TMP1 V0 rlo
-    INC16 TMP0 TMP1
+    LOAD_POSTINC TMP0 TMP1 V0 rlo
     LOAD TMP0 TMP1 V0 rhi
     GET DBR
     SET rbank
@@ -361,10 +360,8 @@ ENDMACRO
 ; Intermediate storage: TMP0, TMP1
 MACRO FETCHADDRESS_[d] rlo rhi rbank
     FETCHADDRESS_d TMP0 TMP1
-    LOAD TMP0 TMP1 V0 rlo
-    INC16 TMP0 TMP1
-    LOAD TMP0 TMP1 V0 rhi
-    INC16 TMP0 TMP1
+    LOAD_POSTINC TMP0 TMP1 V0 rlo
+    LOAD_POSTINC TMP0 TMP1 V0 rhi
     LOAD TMP0 TMP1 V0 rbank
 ENDMACRO
 
@@ -374,8 +371,7 @@ ENDMACRO
 ; Intermediate storage: TMP0, TMP1
 MACRO FETCHADDRESS_(d_s)_y rlo rhi rbank
     FETCHADDRESS_d_s TMP0 TMP1
-    LOAD TMP0 TMP1 V0 rlo
-    INC16 TMP0 TMP1
+    LOAD_POSTINC TMP0 TMP1 V0 rlo
     LOAD TMP0 TMP1 V0 rhi
     GET DBR
     SET rbank
@@ -388,8 +384,7 @@ ENDMACRO
 ; temporary storage: TMP0 TMP1
 MACRO FETCHADDRESS_(d_x) rlo rhi rbank
     FETCHADDRESS_d_x TMP0 TMP1
-    LOAD TMP0 TMP0 V0 rlo
-    INC16 TMP0 TMP1
+    LOAD_POSTINC TMP0 TMP0 V0 rlo
     LOAD TMP0 TMP1 V0 rhi
     GET DBR
     SET rbank
@@ -401,9 +396,8 @@ ENDMACRO
 ; Intermediate storage: TMP0, TMP1
 MACRO FETCHADDRESS_(d)_y rlo rhi rbank
     FETCHADDRESS_d TMP0 TMP1
-    LOAD TMP0 TMP1 V0 rlo
-    INC16 TMP0 TMP1
-    LOAD TMP0 TMP1  V0 rhi
+    LOAD_POSTINC TMP0 TMP1 V0 rlo
+    LOAD TMP0 TMP1 V0 rhi
     GET DBR
     SET rbank
     ADD24_16 rlo rhi rbank YLO YHI
@@ -415,10 +409,8 @@ ENDMACRO
 ; Intermediate storage: TMP0, TMP1
 MACRO FETCHADDRESS_[d]_y rlo rhi rbank
     FETCHADDRESS_d TMP0 TMP1
-    LOAD TMP0 TMP1 V0 rlo
-    INC16 TMP0 TMP1
-    LOAD TMP0 TMP1 V0 rhi
-    INC16 TMP0 TMP1
+    LOAD_POSTINC TMP0 TMP1 V0 rlo
+    LOAD_POSTINC TMP0 TMP1 V0 rhi
     LOAD TMP0 TMP1 V0 rbank
     ADD24_16 rlo rhi rbank YLO YHI
 ENDMACRO
@@ -436,6 +428,7 @@ MACRO LOAD rlo rhi bank value      ; 4
     X bank
     X rhi
     X rlo
+    NOP
     IN value
 ENDMACRO 
 

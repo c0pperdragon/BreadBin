@@ -13,12 +13,11 @@ LDY_#_16bit:
 MACRO LDY_near amode opcode    
     ORG opcode >< 00    
     FETCHADDRESS_ >< amode TMP2 TMP3 
-    LOAD TMP2 TMP3 V0 YLO
+    LOAD_POSTINC TMP2 TMP3 V0 YLO
     BRINDEX16 LDY_ >< amode >< _16bit
     NZ8 YLO
     NEXT
 LDY_ >< amode >< _16bit:    
-    INC16 TMP2 TMP3
     LOAD TMP2 TMP3 V0 YHI
     NZ16 YLO YHI
     NEXT

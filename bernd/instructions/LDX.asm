@@ -13,12 +13,11 @@ LDX_#_16bit:
 MACRO LDX_near amode opcode    
     ORG opcode >< 00    
     FETCHADDRESS_ >< amode TMP2 TMP3 
-    LOAD TMP2 TMP3 V0 XLO
+    LOAD_POSTINC TMP2 TMP3 V0 XLO
     BRINDEX16 LDX_ >< amode >< _16bit
     NZ8 XLO
     NEXT
 LDX_ >< amode >< _16bit:    
-    INC16 TMP2 TMP3
     LOAD TMP2 TMP3 V0 XHI
     NZ16 XLO XHI
     NEXT

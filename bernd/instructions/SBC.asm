@@ -22,7 +22,7 @@ SBC_#_16bit:
 MACRO SBC_near amode opcode
     ORG opcode >< 00    
     FETCHADDRESS_ >< amode TMP4 TMP5
-    LOAD TMP4 TMP5 V0 TMP3
+    LOAD_POSTINC TMP4 TMP5 V0 TMP3
     INV8 TMP3
     BRACCU16 SBC_ >< amode >< _16bit
     ADC8V ALO TMP3 CFLAG
@@ -30,7 +30,6 @@ MACRO SBC_near amode opcode
     NEXT
 SBC_ >< amode >< _16bit:    
     ADC8 ALO TMP3 CFLAG
-    INC16 TMP4 TMP5
     LOAD TMP4 TMP5 V0 TMP3
     INV8 TMP3
     ADC8V AHI TMP3 CFLAG
