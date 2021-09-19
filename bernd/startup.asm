@@ -20,12 +20,9 @@
     SET XHI
     SET YLO
     SET YHI
-    ; bernd starts execution at $80FFF8
-    X V0       ; construct 128
-    X V255
-    OP ROR
-    SET PBR   ; $80
+    ; bernd starts execution at $FFFFF8
     GET255
+    SET PBR   ; $FF
     SET PCHI  ; $FF
     X V255
     X V255
