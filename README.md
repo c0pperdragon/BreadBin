@@ -9,7 +9,7 @@ With the CPU already built so nicely on an actual wooden board, I had the idea t
 the rest of the computer into a matching bread bin. Because the machine will not require any ventilation this
 will keep the dust out quite reliably.
 
-![alt text](gallery/Case.jpg "Generic wooden bread bin")
+![alt text](gallery/incase.jpg "In wooden bread bin")
  
 
 ## On bread boards
@@ -30,8 +30,6 @@ So this time I directly soldered together ground rails of parallel boards with s
 and then placed the boards on top of a large plane of aluminium foil. This foil should make good contact to all
 the silver ground wires to connect them together and additionally work as shielding. 
 So far this works pretty good. 
-
-![alt text](gallery/groundplane.jpg "Ground plane construction")
 
 ## Which 7400 logic?
 
