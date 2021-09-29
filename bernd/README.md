@@ -5,8 +5,6 @@ emulation of the 65C816 CPU. Execution speed is of course pretty slow compared t
 but you would not expect top-performance from a bread with such short arms and legs. 
 But as long as it gets the job done eventually, this is totally fine by me.
 
-![alt text](../gallery/Logo.jpg "Bernd logo")
-
 ## Unsupported features
 
 To keep the complexity down for the specific purpose of running C programs on the breadbin computer,
