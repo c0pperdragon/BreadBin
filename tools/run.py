@@ -63,7 +63,7 @@ class BreadBoard(Board):
             self.extraram[address&0x7ffff] = value
         elif (address & 0xC00000) == 0x400000:  # writing to IO
             self.output(value)
-        elif (address & 0xC00000) == 0x800000:  # writing to ROM
+        elif (address & 0xC00000) == 0xC00000:  # writing to ROM
             lowadr = address & 0x7FFF
             if self.romwritesequence == 0:
                 self.romwritesequence = 1 if lowadr==0x5555 and value==0xAA else 0
@@ -95,7 +95,7 @@ class BreadBoard(Board):
                 v=0
         elif (address & 0xC00000) == 0x400000:   # reading from IO
             v = self.input()
-        else:
+        elif (address & 0xC00000) == 0xC00000:
             v = self.extrarom[address & 0x7ffff] # reading from ROM
             if self.romwritesequence<7 or self.romwritesequence>12:
                 self.romwritesequence=0
@@ -119,8 +119,8 @@ class BreadBoard(Board):
                 v = self.extraram[address & 0x7ffff]
             elif (address & 0xC00000) == 0x400000:   # reading from IO
                 v = self.input()
-            else:
-                v = self.extrarom[address & 0x7ffff] # reading from ROM
+            elif (address & 0xC00000) == 0xC00000:   # reading from ROM
+                v = self.extrarom[address & 0x7ffff] 
             s = s + format(v,"02x")
         return s
 
