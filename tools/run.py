@@ -281,12 +281,10 @@ def execute(board,rom,stop,onlyjumps,afterjump):
         instr = ir & 0xe0
         param = ir & 0x1f
         didjump = didjump+1
-        if instr==0x00:    # SET
-            reg[param] = alu(a,b,op)
-  #          if param==18:
-  #              print ("Set V = "+format(reg[param], "x"));
-        elif instr==0x20:  # IN
+        if instr==0x00:    # IN
             reg[param] = board.rd((c<<16)|(b<<8)|a)
+        elif instr==0x20:  # SET
+            reg[param] = alu(a,b,op)
         elif instr==0x40:  # OUT
             board.wr((c<<16)|(b<<8)|a,reg[param])
         elif instr==0x60:  # OP

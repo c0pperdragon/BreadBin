@@ -183,9 +183,9 @@ def processline(identifiers, macros, finalpass, tokens, codeaddress, outbuffer,l
             raise AssemblerException("May only start segment on page boundary")
         codeaddress[0] = a
 
-    elif T[0]=="SET":
-        bytes = [ 0x00 | op(I,G,T, 1, 5) ]
     elif T[0]=="IN":
+        bytes = [ 0x00 | op(I,G,T, 1, 5) ]
+    elif T[0]=="SET":
         bytes = [ 0x20 | op(I,G,T, 1, 5) ]
     elif T[0]=="OUT":
         bytes = [ 0x40 | op(I,G,T, 1, 5) ]
